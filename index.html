@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  	<meta charset="utf-8" />
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <title>US National Grid Map</title>
+    <style type="text/css">
+    	@import "css/main.css";
+    	</style>
+    <!--Bootstrap to Google Maps API. Jack's Key -->
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD8fS3hJwOoP9lir5q-hGUanxUV0mKK0P0&libraries=places&sensor=false"></script>
+    <!--<script type="text/javascript" src="//maps.googleapis.com/maps/api/js?></script>-->
+	<!--Local versions of Xavier Irias scripts-->
+	<script type="text/javascript" src="js/marconistdlib.js"></script>
+	<script type="text/javascript" src="js/marconimap.js"></script>
+	<script type="text/javascript" src="js/marconiusnggraticule.js"></script>
+    <!-- Klassen USNG2.js, for UTM and Lat/Long conversions. Final document should bootstrap usng2.js from github if possible -->
+    <script type="text/javascript" src="js/usng2.js"></script> 
+    <!--markers.js, for custom labels and markers-->
+    <script type="text/javascript" src="js/markers.js"></script>
+    <!--Final: basic map.js for the application-->
+    <script type="text/javascript" src="js/map.js"></script>
+  </head>
+  <body onload="initialize()">
+    <div id="map_canvas" style="width:100%; height:100%">
+		<noscript>This web page requires Javascript to function properly. Please enable Javascript in your browser to continue.</noscript>
+		</div>
+    <div id="usng_search" style="display:block">
+    	<form id="srchFrm" method="post" name="frmSearch" action="javascript:startSearch(document.getElementById('srchFrm').inputAddrTxt.value,document.getElementById('srchFrm').inputUSNGTxt.value);">
+		  <input type="text" id="inputAddrTxt" name="inputAddrTxt" value="" onclick="setSearchType('address');" placeholder="Enter Long, Lat Coordinates"/>
+		  <input type="text" id="inputUSNGTxt" name="inputUSNGTxt" value="" onclick="setSearchType('usng');" placeholder="Enter a USNG value"/><br />
+		  <input type="submit" id="btnSearch" name="searchButton" value="Search"/>
+		  <p id="rdoAdd"><input id="radioAddress" type="radio" name="searchtype" value="Address" checked="checked" onclick="setSearchType('address');"/>Address</p>
+		  <p id="rdoUSNG"><input id="radioUSNG" type="radio" name="searchtype" onclick="setSearchType('usng');" value="USNG"/>USNG</p> <br />
+		 <!-- No need for this -->
+     <!-- <div id="gridcheckbox"><input type="checkbox" name="gridlines" onclick="toggleGridDisp();" />Grid Lines</div> -->
+		  <div id="coordinateInfo"></div></br><em id=" "></em>
+		  <div id="drawing"><img src="images/loading.gif" alt="loading"></div>
+		</form>
+    </div>
+  </body>
+</html>
