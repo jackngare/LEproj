@@ -869,9 +869,9 @@ Gridcell.prototype.drawOneCell = function() {
         // for each e-w line that covers the cell, with overedge
         northings[0] = this.slat;
         
-        if( !northings[0]) {
-            throw "Southern latitude is " + northings[0];
-        }
+        //if( !northings[0]) {
+          //  throw "Southern latitude is " + northings[0];
+        //}
         
         k=1;
         for (i=sw_utm_n, j=0 ; i < ne_utm_n ; i += this.interval * skipFactor, j++) {
