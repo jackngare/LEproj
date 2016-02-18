@@ -1158,6 +1158,13 @@ Gridcell.prototype.place100kLabels = function(east,north) {
    }
 }
 
+/**
+ * function to get the labels for the squares just under the equator to the south
+ *
+ * @param east1 to get square center longitude
+ * @param east2 to get square center longitude
+ * @param north polyline latitude nearest to equator
+ */
 Gridcell.prototype.markerBelowZero100k = function(east1, east2,north){
     console.log("north: " + north + " place1kLabels north[north.length - 1]: " + north );
     var zone;
