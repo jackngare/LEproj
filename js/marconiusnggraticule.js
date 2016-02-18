@@ -542,6 +542,7 @@ USNGZonelines.prototype.remove = function() {
 USNGZonelines.prototype.zonemarkerdraw = function() {
     function makeLabel(parent, latLong, labelText, className) {
         try {
+            //console.log("USNGZonelines zonemarkerdraw: " + labelText);
             var pixelPoint = parent.getProjection().fromLatLngToDivPixel(latLong);
 
             var d = document.createElement("div");
@@ -868,6 +869,7 @@ Gridcell.prototype.drawOneCell = function() {
 
         // for each e-w line that covers the cell, with overedge
         northings[0] = this.slat;
+        //console.log("drawOneCell this.slat: " + this.slat );
         
         //if( !northings[0]) {
           //  throw "Southern latitude is " + northings[0];
@@ -881,6 +883,7 @@ Gridcell.prototype.drawOneCell = function() {
             geocoords = USNG.UTMtoLL_GeoPoint(sw_utm_e+(2*this.interval), i, zone);
 
             if ((geocoords.y > this.slat) && (geocoords.y < this.nlat)) {
+                //console.log("drawOneCell geocoords.y: " + geocoords.y );
                 northings[k++] = geocoords.y;
             }
 
@@ -1053,7 +1056,7 @@ Gridcell.prototype.remove = function() {
 }
 
 
-
+//Actual drawing and placement of label on the grid
 
 Gridcell.prototype.makeLabel = function (parentGrid, latLong, labelText, horizontalAlignment, verticalAlignment, className) {
     var pixelPoint = this.parent.getProjection().fromLatLngToDivPixel(latLong);
@@ -1111,17 +1114,18 @@ Gridcell.prototype.place100kLabels = function(east,north) {
                 
             for (var j=0; north[j+1]; j++) {
                 // labeled marker
-                zone = MARCONI.map.getUTMZoneFromLatLong((north[j]+north[j+1])/2,(east[i]+east[i+1])/2 );
-
-                // lat and long of center of area
-                latitude = (north[j]+north[j+1])/2;
+                zone = MARCONI.map.getUTMZoneFromLatLong((north[j] + north[j + 1]) / 2, (east[i] + east[i + 1]) / 2);
+                latitude = (north[j] + north[j + 1]) / 2;
                 longitude = (east[i] + east[i+1])/2;
                 
                 labelText = USNG.LLtoUSNG(latitude, longitude);
-                //console.log("Initial label text in this 100klabels function is: "+labelText);
+
+                //my debug
+                //console.log("place1kLabels labelText1: " + labelText + " zone: " + zone);
                 
                 // if zoomed way out use a different label
                 // MD: Use this section to adjust when zoomed way in, to remove the zone portion
+
 
                 if (this._map.getZoom() < 10 || this._map.getZoom() > 13) {
                     if (zone > 9) {
@@ -1140,17 +1144,58 @@ Gridcell.prototype.place100kLabels = function(east,north) {
                     }
                     
                 }
-				//original vertical alignment was "middle". Changed to "bottom" to attempt a small offset
                 this.label_100k.push(this.makeLabel(
                     this.parent, new google.maps.LatLng(latitude,longitude), labelText, "center", "bottom",
                     this.parent.gridStyle.semiMajorLabelClass));
-              	//console.log("Placing 100k label: "+labelText);
             }
+            this.markerBelowZero100k(east[i], east[i + 1], north[j])
+
+
         }
     }
    catch(markerError) {
        throw("Error placing 100k markers: " + markerError);
    }
+}
+
+Gridcell.prototype.markerBelowZero100k = function(east1, east2,north){
+    console.log("north: " + north + " place1kLabels north[north.length - 1]: " + north );
+    var zone;
+    var labelText;
+    var latitude;
+    var longitude;
+
+    if(north < 0) {
+        zone = MARCONI.map.getUTMZoneFromLatLong((0 + north) / 2, (east1 + east2) / 2);
+        latitude = (0 + north) / 2;
+        longitude = (east1 + east2) / 2;
+
+        labelText = USNG.LLtoUSNG(latitude, longitude);
+        console.log("place1kLabels labelText2: " + labelText + " zone: " + zone + " latitude: " + latitude);
+        if (this._map.getZoom() < 10 || this._map.getZoom() > 13) {
+            if (zone > 9) {
+                labelText = labelText.substring(4, 6)
+            }
+            else {
+                labelText = labelText.substring(3, 5)
+            }
+        }
+        else {
+            if (zone > 9) {
+                labelText = labelText.substring(0, 3) + labelText.substring(4, 6)
+            }
+            else {
+                labelText = labelText.substring(0, 2) + labelText.substring(3, 5)
+            }
+
+        }
+        //my debug
+        //console.log("place1kLabels labelText2: " + labelText );
+        //original vertical alignment was "middle". Changed to "bottom" to attempt a small offset
+        this.label_100k.push(this.makeLabel(
+            this.parent, new google.maps.LatLng(latitude, longitude), labelText, "center", "bottom",
+            this.parent.gridStyle.semiMajorLabelClass));
+    }
 }
 
 Gridcell.prototype.place1kLabels = function(east,north) {

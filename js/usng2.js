@@ -680,7 +680,10 @@ window.USNG2 = function() {
 		
 		var grid_zone = GridZones[Math.floor((lat - (-80.0)) / 8)]; 
 		var utm_pt = utm_proj.proj(utm_zone, lon, lat);
-		
+
+		/*console.log("fromLonLat: "+ this.fromUTM(utm_zone, grid_zone, utm_pt.utm_easting, utm_pt.utm_northing, precision)
+            + " lon: " + lon + " lat: " + lat);*/
+
 		return this.fromUTM(utm_zone, grid_zone, utm_pt.utm_easting, utm_pt.utm_northing, precision);
 	}
 

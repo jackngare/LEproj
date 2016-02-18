@@ -1760,9 +1760,13 @@ MARCONI.map = function() {
             }
             else if( longitude >= 33 && longitude < 42 ) {
                  utmZone = 37;
+            }//My debug code
+            else {
+                //console.log("getUTMZoneFromLatLong longitude: " + longitude + " latitude: " + latitude + " utmZone: " + utmZone);
             }
-
-            
+        }//my debug code
+        else{
+            //console.log("getUTMZoneFromLatLong latitude: " + latitude + " utmZone: " + utmZone);
         }
 
         return  utmZone;
@@ -1791,7 +1795,7 @@ MARCONI.map = function() {
             originLatitude,
             originLongitude,
             originX,
-            originY,
+            0,
             centralScaleFactor );
 
         return utmRef;
