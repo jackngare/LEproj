@@ -214,8 +214,8 @@ function buildCoordString2(point)  {
 function buildCoordString3(point)  {
     var latLngStr = "";
 
-    latLngStr += "The outdated North American<br> Datum of 1927&nbsp;&nbsp;&nbsp;&nbsp;&nbsp";
-    latLngStr += "<a href = 'http://localhost/usng/help_usng.html' target=_blank >Help</a><br><br>";
+ //   latLngStr += "The outdated North American<br> Datum of 1927&nbsp;&nbsp;&nbsp;&nbsp;&nbsp";
+//    latLngStr += "<a href = 'http://localhost/usng/help_usng.html' target=_blank >Help</a><br><br>";
     var LL27 = new Object();
     nad83to27(point.y,point.x,LL27);
     latLngStr += "<i>D-M-S</i>: " + lat2dms(LL27.lat)+", " + lon2dms(LL27.lng)+ "<br>"

@@ -81,12 +81,12 @@ var searchType = "address";
 var defaultBounds = new google.maps.LatLngBounds(
   new google.maps.LatLng(24.20689,-124.291994),
   new google.maps.LatLng(48.922499,-56.879885));
+
 var autocOptions = {
 	  bounds: defaultBounds,
 	  types: ['geocode']
 	};
 var disableClickListener = false;
-
 /* *********USNG Graticule Styles**********
  * Objects/Globals for USNG Graticules
  * Graticules are another word for 'overlays', just implemented as a whole instead of individually
@@ -98,9 +98,9 @@ var gridstyle = {
     majorLineColor: "#0000ff",
     majorLineWeight: 4,
     majorLineOpacity: 0.2,
-    semiMajorLineColor: "#0000ff",
+    semiMajorLineColor: "#0000",
     semiMajorLineWeight: 2,
-    semiMajorLineOpacity: 0.5,
+    semiMajorLineOpacity: 0.2,
     minorLineColor: "blue",
     minorLineWeight: 1,
     minorLineOpacity: 0.3,
@@ -131,16 +131,21 @@ function initialize() {
       zoom:4,
       mapTypeId: google.maps.MapTypeId.ROADMAP
     };
+
+
     map = new google.maps.Map(document.getElementById("map_canvas"),
         mapOptions);
+
         
     //Input address text
     var inputAddrTxt = document.getElementById('inputAddrTxt');
     
     //Set initial USNG overlays as off
-    //Jack set this to true for the onset
+    
+    //Set this to true for the onset
     map.zoneon = true;    
-    //Jack instatiated the graticule
+    
+    //Instatiated the graticule
     graticule = new USNGGraticule(map,gridstyle);
 	map.grid100kon = false;
 	map.grid1kon=false;
@@ -153,7 +158,112 @@ function initialize() {
         curr_usng_view = new usngviewport(this);
     });
     */
-	
+
+//Incase you want to stylize the map.
+    var styles = [
+/*{
+        "featureType": "landscape",
+        "stylers": [
+            {
+                "saturation": -100
+            },
+            {
+                "lightness": 60
+            }
+        ]
+    },
+    {
+        "featureType": "road.local",
+        "stylers": [
+            {
+                "saturation": -100
+            },
+            {
+                "lightness": 40
+            },
+            {
+                "visibility": "on"
+            }
+        ]
+    },
+    {
+        "featureType": "transit",
+        "stylers": [
+            {
+                "saturation": -100
+            },
+            {
+                "visibility": "simplified"
+            }
+        ]
+    },
+    {
+        "featureType": "administrative.province",
+        "stylers": [
+            {
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "featureType": "water",
+        "stylers": [
+            {
+                "visibility": "on"
+            },
+            {
+                "lightness": 30
+            }
+        ]
+    },
+    {
+        "featureType": "road.highway",
+        "elementType": "geometry.fill",
+        "stylers": [
+            {
+                "color": "#ef8c25"
+            },
+            {
+                "lightness": 40
+            }
+        ]
+    },
+    {
+        "featureType": "road.highway",
+        "elementType": "geometry.stroke",
+        "stylers": [
+            {
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "featureType": "poi.park",
+        "elementType": "geometry.fill",
+        "stylers": [
+            {
+                "color": "#b6c54c"
+            },
+            {
+                "lightness": 40
+            },
+            {
+                "saturation": -40
+            }
+        ]
+    },
+    {}*/
+  ];
+
+  // Create a new StyledMapType object, passing it the array of styles,
+  // as well as the name to be displayed on the map type control.
+  var styledMap = new google.maps.StyledMapType(styles,
+    {name: "Styled Map"});
+
+//Associate the styled map with the MapTypeId and set it to display.
+  map.mapTypes.set('map_style', styledMap);
+  map.setMapTypeId('map_style');
+
 	//initialize the autocomplete function
 	autocomplete = new google.maps.places.Autocomplete(inputAddrTxt, autocOptions);
 	
@@ -183,7 +293,8 @@ function initialize() {
 			console.log("Current zoom level is: "+map.getZoom());
 		});
 	}
-	
+
+
 }
 
 
