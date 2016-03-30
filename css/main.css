@@ -1,4 +1,9 @@
-html { 
+/*
+main.css
+Author: Jack Ngare
+Description: Control of look and feel of some elements
+*/
+html {
 	height: 100%
 	}
 
@@ -8,7 +13,7 @@ body {
 	padding: 0
 	}
 
-#map_canvas { 
+#mapArea {
 	height: 100% 
 }
 
@@ -19,7 +24,7 @@ body {
     left: 1%; /*these positions absolute? */
     /*bottom: 5%;*/
     top: 5%;
-    min-width:25%; /*this makes the div size to the page */
+    min-width:25%;
     padding: 2%;
     font-size:100%;
     visibility: visible;
@@ -32,7 +37,7 @@ body {
 	opacity: 0.9;
 }
 
-#inputUSNGTxt,#inputAddrTxt {
+#inputUSNGTxt, #inputAddr {
 	top:5px;
 	position:relative;
 	min-width:40%;
@@ -44,7 +49,7 @@ body {
 	margin:-10px 0 0 0;
 }
 
-#rdoAdd,#inputAddrTxt {
+#rdoAdd, #inputAddr {
 	float:left;
 	margin:-10px 0 0 0;
 }
@@ -86,7 +91,6 @@ input[type=submit] {
 	display:none;
 }
 
-/*MIGHT DECIDE AGAINST USING THESE */
 #searchAddLaunch,#searchUSNGLaunch {
     height: auto;
     position: absolute;
@@ -105,10 +109,6 @@ input[type=submit] {
 
 }
 
-/*Classes for USNG labels
- * The element.style height and width on these labels is much bigger than we define with the CSS class.
- * How can we override that?
- *  */
 .majorGridLabel {
 	color: blue;
    /* background-color: #FFCCFF; #9FAAB4; A nice pink would be #FFCCFF */

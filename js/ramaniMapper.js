@@ -1,7 +1,9 @@
 /*
-' MARCONI.map core including useful constants, the GeoPoint class, and the SpatialReference class
+' Ramani.map core including useful constants, the GeoPoint class, and the SpatialReference class
 '
-' by Xavier Irias
+' Author Xavier Irias
+' Modified: Jack Ngare
+'
 '
 ' Purpose:  to convert between coordinate systems
 '           including:
@@ -66,8 +68,8 @@ UTM zone 18 xy is 323483, 4306479
 
 Sample use:
 
-var pt = new MARCONI.map.GeoPoint(1500000,450000);
-var spatialRefIn  = new MARCONI.map.SpatialReference(MARCONI.map.COORDSYS_CAZONE3, MARCONI.map.DATUM_HORIZ_1927, MARCONI.map.UNITS_SURVEYFEET);
+var pt = new RAMANI.map.GeoPoint(1500000,450000);
+var spatialRefIn  = new RAMANI.map.SpatialReference(MARCONI.map.COORDSYS_CAZONE3, MARCONI.map.DATUM_HORIZ_1927, MARCONI.map.UNITS_SURVEYFEET);
 var spatialRefOut = new MARCONI.map.SpatialReference(MARCONI.map.COORDSYS_CAZONE3, MARCONI.map.DATUM_HORIZ_1983, MARCONI.map.UNITS_SURVEYFEET);
 pt.convert(spatialRefIn, spatialRefOut);
 alert("Transformed point is " + pt.x + ", " + pt.y);
@@ -123,7 +125,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-MARCONI.map = function() {
+RAMANI.map = function() {
     var METERS_TO_SURVEY_FEET = 3.28083333333333;
     var SURVEY_FEET_TO_METERS = 1.0 / METERS_TO_SURVEY_FEET;
 
@@ -592,13 +594,13 @@ MARCONI.map = function() {
         try {
             _pendingAJAXCount--;
 
-            MARCONI.stdlib.log("Finished " + (msg ? msg : " asynch task") + ", " + _pendingAJAXCount + " tasks still running");
+            RAMANI.stdlib.log("Finished " + (msg ? msg : " asynch task") + ", " + _pendingAJAXCount + " tasks still running");
             
             if( _pendingAJAXCount === 0) {
                 
                 if( _onReadyFunc ) {
 
-                    // MARCONI.stdlib.log("All AJAX map.js calls completed, calling completion callback functions: " + _onReadyFunc);
+                    // RAMANI.stdlib.log("All AJAX map.js calls completed, calling completion callback functions: " + _onReadyFunc);
 
                     // copy the functions and then clear the original
                     // in case one of the functions is yet another ajax call to ourselves,
@@ -614,15 +616,15 @@ MARCONI.map = function() {
                     // now use our own private copy of the call stack
                     for( i = 0 ; i < callStack.length ; i++) {
                         
-                        callStack[i]("MARCONI map module is ready to use");
+                        callStack[i]("RAMANI map module is ready to use");
                     }
                 }
                 else {
-                    //MARCONI.stdlib.log("All AJAX map.js calls completed");
+                    //RAMANI.stdlib.log("All AJAX map.js calls completed");
                 }
             }
             else {
-                //MARCONI.stdlib.log(_pendingAJAXCount + " calls still pending" + (_onReadyFunc ? ", will call back" : ", no callback registered"));
+                //RAMANI.stdlib.log(_pendingAJAXCount + " calls still pending" + (_onReadyFunc ? ", will call back" : ", no callback registered"));
             }
         }
         catch(ex) {
@@ -634,7 +636,7 @@ MARCONI.map = function() {
         _pendingAJAXCount++;
 
         if( msg ) {
-            MARCONI.stdlib.log("Launched " + (msg ? msg : "asynch task") + ", pending task count is " + _pendingAJAXCount);
+            RAMANI.stdlib.log("Launched " + (msg ? msg : "asynch task") + ", pending task count is " + _pendingAJAXCount);
         }
     }
 
@@ -661,22 +663,22 @@ MARCONI.map = function() {
                     rawData = engine.getItem( storageDataKey(entity, queryString) );
                 }
                 catch(getEx) {
-                     MARCONI.stdlib.warn("Exception reading raw " + entity + " data from storage: " + getEx);
+                     RAMANI.stdlib.warn("Exception reading raw " + entity + " data from storage: " + getEx);
                 }
 
                 if( rawData ) {
 
-                    //MARCONI.stdlib.log("parsing raw " + entity + " data retrieved from storage");
+                    //RAMANI.stdlib.log("parsing raw " + entity + " data retrieved from storage");
                     
                     var dataObject = YAHOO.lang.JSON.parse(rawData);
 
                     var dataArray    = dataObject && dataObject.data || dataObject;
 
                     var dateStored   = dataObject && dataObject.dateStored ?
-                        (typeof(dataObject.dateStored)=="string" ? MARCONI.datetime.parseDate(dataObject.dateStored) : dataObject.dateStored) : null;
+                        (typeof(dataObject.dateStored)=="string" ? RAMANI.datetime.parseDate(dataObject.dateStored) : dataObject.dateStored) : null;
 
                     // establish minDate, the min cache date which we will accept -- anything earlier is too stale
-                    var minDate = typeof(cfg.minDate)=="string" ? MARCONI.datetime.parseDate(cfg.minDate) : cfg.minDate;
+                    var minDate = typeof(cfg.minDate)=="string" ? RAMANI.datetime.parseDate(cfg.minDate) : cfg.minDate;
 
                     // maxMinutes defaults only when minDate is not given
                     var maxMinutes = cfg.maxMinutes ? cfg.maxMinutes : (minDate ? null : MAX_AGE_MINUTES);
@@ -694,18 +696,18 @@ MARCONI.map = function() {
                     }
 
                     if( dateStored && (dateStored > minDate) ) {
-                        MARCONI.stdlib.log("Got useful " + entity + " data " + (queryString ? "for query " + queryString : "") +
+                        RAMANI.stdlib.log("Got useful " + entity + " data " + (queryString ? "for query " + queryString : "") +
                             " from DOM storage, date stored was " + dateStored + " versus min date of " + minDate);
 
                         return dataArray;
                     }
                     else {
-                        MARCONI.stdlib.log("Got expired " + entity + " data for query " + queryString + " from DOM storage, date stored was " +
+                        RAMANI.stdlib.log("Got expired " + entity + " data for query " + queryString + " from DOM storage, date stored was " +
                             dateStored + " versus min date of " + minDate);
                     }
                 }
                 else {
-                    MARCONI.stdlib.log("No useful " + entity + " data read from DOM storage" + (queryString ? ", " + queryString : ""));
+                    RAMANI.stdlib.log("No useful " + entity + " data read from DOM storage" + (queryString ? ", " + queryString : ""));
                 }
 
                 return null;
@@ -739,7 +741,7 @@ MARCONI.map = function() {
         if(engine) {
             if( engine.isReady ) {
                 
-                // MARCONI.stdlib.log("Engine already running, will get " + entity + " data immediately");
+                // RAMANI.stdlib.log("Engine already running, will get " + entity + " data immediately");
 
                 try {
                     var data = doGet(entity, queryString, cfg );
@@ -756,7 +758,7 @@ MARCONI.map = function() {
                 }
             }
             else {
-                //MARCONI.stdlib.log("Registering with storage engine to callback and get " + entity + queryString + " data from DOM storage");
+                //RAMANI.stdlib.log("Registering with storage engine to callback and get " + entity + queryString + " data from DOM storage");
 
                 engine.subscribe( engine.CE_READY, function(e) {
                     try {
@@ -788,22 +790,22 @@ MARCONI.map = function() {
 
     function putToStorage(entity, queryString, data, onSuccess, onError) {
         function doPut(entity, queryString, data, onSuccess, onError) {
-            MARCONI.stdlib.log("About to save " + entity + queryString + " data to DOM storage");
+            RAMANI.stdlib.log("About to save " + entity + queryString + " data to DOM storage");
 
             try {
 
-                var dataString = YAHOO.lang.JSON.stringify({data:data, dateStored: MARCONI.datetime.dateToString(new Date())});
+                var dataString = YAHOO.lang.JSON.stringify({data:data, dateStored: RAMANI.datetime.dateToString(new Date())});
 
                 engine.setItem(storageDataKey(entity, queryString), dataString);
 
-                MARCONI.stdlib.log("Saved " + entity + " data to DOM storage");
+                RAMANI.stdlib.log("Saved " + entity + " data to DOM storage");
 
                 if(onSuccess) {
                     onSuccess("data stored");
                 }
             }
             catch(ex) {
-                MARCONI.stdlib.warn("Error " + ex + " trying to save " + entity + " data to DOM storage");
+                RAMANI.stdlib.warn("Error " + ex + " trying to save " + entity + " data to DOM storage");
                 if( onError ) {
                     onError(ex);
                 }
@@ -815,7 +817,7 @@ MARCONI.map = function() {
         try {
             engine = YAHOO.util.StorageManager.get(YAHOO.util.StorageEngineHTML5.ENGINE_NAME, YAHOO.util.StorageManager.LOCATION_LOCAL, {force:true} );
             if(!engine) {
-                MARCONI.stdlib.log("No storage engine, cannot save " + entity + " data to DOM storage");
+                RAMANI.stdlib.log("No storage engine, cannot save " + entity + " data to DOM storage");
 
                 return null;
             }
@@ -828,12 +830,12 @@ MARCONI.map = function() {
 
             if( engine) {
                 if( engine.isReady ) {
-                    // MARCONI.stdlib.log("Storage engine already running, will save " + entity + queryString + " data to DOM storage");
+                    // RAMANI.stdlib.log("Storage engine already running, will save " + entity + queryString + " data to DOM storage");
                     
                     doPut(entity, queryString, data, onSuccess, onError);
                 }
                 else {
-                    MARCONI.stdlib.log("Subscribing to event to save " + entity + queryString + " data to DOM storage");
+                    RAMANI.stdlib.log("Subscribing to event to save " + entity + queryString + " data to DOM storage");
 
                     engine.subscribe( engine.CE_READY, function(e) {
                         doPut(entity, queryString, data, onSuccess, onError);
@@ -1122,14 +1124,14 @@ MARCONI.map = function() {
             ref = {coordSysTypeCD: sys.coordSysTypeCD,
                     coordSysCD: sys.coordSysCD,
                     coordSysName: sys.coordSysName,
-                    datumCD: MARCONI.map.DATUM_HORIZ_WGS84,
-                    mapUnitCD: MARCONI.map.UNITS_GRID,
+                    datumCD: RAMANI.map.DATUM_HORIZ_WGS84,
+                    mapUnitCD: RAMANI.map.UNITS_GRID,
                     spatialReferenceCD: "ad-hoc",
                     spatialReferenceName: "ad hoc spatial reference for atlas " + atlasGN
             };
             _spatialRefArray.push(ref);
         }
-        var refObj = new MARCONI.map.SpatialReference(ref.coordSysCD, ref.datumCD, ref.mapUnitCD);
+        var refObj = new RAMANI.map.SpatialReference(ref.coordSysCD, ref.datumCD, ref.mapUnitCD);
         if(!refObj) {
             throw( "Unable to get spatial reference for atlas " + atlasGN );
         }
@@ -1200,15 +1202,15 @@ MARCONI.map = function() {
 
     populateSpatialReferenceList : function(listControl, includeAuto, onlyGenericGrids) {
         try {
-            var oldValue = MARCONI.stdlib.listboxSelectedValue(listControl);
+            var oldValue = RAMANI.stdlib.listboxSelectedValue(listControl);
 
-            MARCONI.stdlib.listboxClear(listControl);
+            RAMANI.stdlib.listboxClear(listControl);
 
             if( includeAuto ) {
-                MARCONI.stdlib.listboxAddItem(listControl, "Automatic", "");
+                RAMANI.stdlib.listboxAddItem(listControl, "Automatic", "");
             }
 
-            MARCONI.stdlib.log("updating list control of spatial refs");
+            RAMANI.stdlib.log("updating list control of spatial refs");
 
             for( var i=0 ; i < _spatialRefArray.length ; i++) {
                 
@@ -1219,22 +1221,22 @@ MARCONI.map = function() {
                    (_spatialRefArray[i].coordSysTypeCD===this.COORDSYS_TYPE_GRID &&
                     _spatialRefArray[i].gridTemplate ))) {
 
-                    var newItem = MARCONI.stdlib.listboxAddItem(listControl, _spatialRefArray[i].spatialReferenceName, _spatialRefArray[i].spatialReferenceCD);
+                    var newItem = RAMANI.stdlib.listboxAddItem(listControl, _spatialRefArray[i].spatialReferenceName, _spatialRefArray[i].spatialReferenceCD);
 
                     if( newItem && _spatialRefArray[i].description ) {
                         newItem.title = _spatialRefArray[i].description;
                     }
                 }
                 else {
-                    MARCONI.stdlib.log("skipping ", _spatialRefArray[i]);
+                    RAMANI.stdlib.log("skipping ", _spatialRefArray[i]);
                 }
 
             }
 
-            MARCONI.stdlib.listboxSynchToValue(listControl, oldValue);
+            RAMANI.stdlib.listboxSynchToValue(listControl, oldValue);
 
-            if( MARCONI.stdlib.listboxSelectedIndex(listControl) < 0) {
-                MARCONI.stdlib.listboxSynchToValue(listControl, "");
+            if( RAMANI.stdlib.listboxSelectedIndex(listControl) < 0) {
+                RAMANI.stdlib.listboxSynchToValue(listControl, "");
             }
         }
         catch(ex) {
@@ -1245,14 +1247,14 @@ MARCONI.map = function() {
     spatialRefGivenCode : function(spatialRefCD) {
         for( var i=0 ; i < _spatialRefArray.length ; i++) {
             if( _spatialRefArray[i].spatialReferenceCD === spatialRefCD ) {
-                return new MARCONI.map.SpatialReference(_spatialRefArray[i].coordSysCD, _spatialRefArray[i].datumCD, _spatialRefArray[i].mapUnitCD);
+                return new RAMANI.map.SpatialReference(_spatialRefArray[i].coordSysCD, _spatialRefArray[i].datumCD, _spatialRefArray[i].mapUnitCD);
             }
         }
         return null;
     },
 
     spatialRefGivenComponents : function(coordSysCD, datumCD, mapUnitCD) {
-        var ref = new MARCONI.map.SpatialReference(coordSysCD, datumCD, mapUnitCD);
+        var ref = new RAMANI.map.SpatialReference(coordSysCD, datumCD, mapUnitCD);
         return ref;
     },
     parseLatLong : function (latLong) {
@@ -1279,7 +1281,7 @@ MARCONI.map = function() {
 
             var m = p.exec(latLong.trim());
 
-            // MARCONI.stdlib.log("Parsing " + latLong + " as possible lat-long");
+            // RAMANI.stdlib.log("Parsing " + latLong + " as possible lat-long");
 
             if( m && m.length == 9) {
                 var lat = m[1];
@@ -1319,9 +1321,9 @@ MARCONI.map = function() {
                 }
                 lng = lng * lngSign;
 
-                // MARCONI.stdlib.log("Lat-long match, lat-long =" + lat + ", " + lng);
+                // RAMANI.stdlib.log("Lat-long match, lat-long =" + lat + ", " + lng);
 
-                return new MARCONI.map.GeoPoint(lng, lat);
+                return new RAMANI.map.GeoPoint(lng, lat);
             }
         
             return null;
@@ -1348,7 +1350,7 @@ MARCONI.map = function() {
             }
             return parts;
         }
-        //MARCONI.stdlib.log("m is" + m);
+        //RAMANI.stdlib.log("m is" + m);
         return null;
         
     },
@@ -1370,7 +1372,7 @@ MARCONI.map = function() {
         var p = new RegExp(REGEX, "i");
         var m = p.exec(mapGridValue);
 
-        //MARCONI.stdlib.log("Grid " + mapGridValue + (m ? " is valid" : " is not valid"));
+        //RAMANI.stdlib.log("Grid " + mapGridValue + (m ? " is valid" : " is not valid"));
 
         if( !m ) {
             return null;
@@ -1413,12 +1415,12 @@ MARCONI.map = function() {
     },
     isValidUTM : function( gridRef) {
         try {
-            var parts = MARCONI.map.parseUTMGridRef(gridRef);
-            //MARCONI.stdlib.log("part is " + parts);
+            var parts = RAMANI.map.parseUTMGridRef(gridRef);
+            //RAMANI.stdlib.log("part is " + parts);
             return(parts != null);
         }
         catch(ex) {
-            throw("MARCONI.map.isValidUTM(): Error checking grid value " + gridRef + ", err is " + ex);
+            throw("RAMANI.map.isValidUTM(): Error checking grid value " + gridRef + ", err is " + ex);
         }
     },
     isValidUSNG : function ( gridRef) {
@@ -1430,34 +1432,34 @@ MARCONI.map = function() {
             return isValid;
         }
         catch(ex) {
-            throw("MARCONI.map.isValidUSNG(): Error checking grid value " + gridRef + ", err is " + ex);
+            throw("RAMANI.map.isValidUSNG(): Error checking grid value " + gridRef + ", err is " + ex);
         }
     },
     defaultSpatialRefGivenXY : function (x,y) {
         try {
             var ref=null;
 
-            if( MARCONI.map.isValidUSNG(x) ) {
-                ref= new MARCONI.map.SpatialReference( MARCONI.map.COORDSYS_USNG,  MARCONI.map.DATUM_HORIZ_1983, MARCONI.map.UNITS_GRID);
+            if( RAMANI.map.isValidUSNG(x) ) {
+                ref= new RAMANI.map.SpatialReference( RAMANI.map.COORDSYS_USNG,  RAMANI.map.DATUM_HORIZ_1983, RAMANI.map.UNITS_GRID);
             }
-            else if( MARCONI.map.isValidUTM(x) ) {
-                ref= new MARCONI.map.SpatialReference( MARCONI.map.COORDSYS_UTM,  MARCONI.map.DATUM_HORIZ_1983, MARCONI.map.UNITS_GRID);
+            else if( RAMANI.map.isValidUTM(x) ) {
+                ref= new RAMANI.map.SpatialReference( RAMANI.map.COORDSYS_UTM,  RAMANI.map.DATUM_HORIZ_1983, RAMANI.map.UNITS_GRID);
             }
-            else if( MARCONI.map.isDegrees(x) && MARCONI.map.isDegrees(y) ) {
-                ref = new MARCONI.map.SpatialReference( MARCONI.map.COORDSYS_WORLD, MARCONI.map.DATUM_HORIZ_WGS84, MARCONI.map.UNITS_DEGREES);
+            else if( RAMANI.map.isDegrees(x) && RAMANI.map.isDegrees(y) ) {
+                ref = new RAMANI.map.SpatialReference( RAMANI.map.COORDSYS_WORLD, RAMANI.map.DATUM_HORIZ_WGS84, RAMANI.map.UNITS_DEGREES);
             }
             else if( Math.abs(x) < 1800000 && Math.abs(y) < 700000 ) {
-                ref = new MARCONI.map.SpatialReference( MARCONI.map.COORDSYS_CAZONE3, MARCONI.map.DATUM_HORIZ_1927, MARCONI.map.UNITS_SURVEYFEET);
+                ref = new RAMANI.map.SpatialReference( RAMANI.map.COORDSYS_CAZONE3, RAMANI.map.DATUM_HORIZ_1927, RAMANI.map.UNITS_SURVEYFEET);
             }
             else {
-                ref = new MARCONI.map.SpatialReference( MARCONI.map.COORDSYS_CAZONE3, MARCONI.map.DATUM_HORIZ_1983, MARCONI.map.UNITS_SURVEYFEET);
+                ref = new RAMANI.map.SpatialReference( RAMANI.map.COORDSYS_CAZONE3, RAMANI.map.DATUM_HORIZ_1983, RAMANI.map.UNITS_SURVEYFEET);
             }
-            MARCONI.stdlib.log("Spatial ref is ", ref, " given x,y of " + x + ", " + y);
+            RAMANI.stdlib.log("Spatial ref is ", ref, " given x,y of " + x + ", " + y);
             
             return ref;
         }
         catch(ex) {
-            throw "MARCONI.map.defaultSpatialRefGivenXY(): " + ex + ", given x,y of " + x + ", " + y;
+            throw "RAMANI.map.defaultSpatialRefGivenXY(): " + ex + ", given x,y of " + x + ", " + y;
         }
     },
 
@@ -1467,8 +1469,8 @@ MARCONI.map = function() {
                 listControl = document.getElementById(listControl);
             }
 
-            var oldValue = MARCONI.stdlib.listboxSelectedValue(listControl);
-            MARCONI.stdlib.listboxClear(listControl);
+            var oldValue = RAMANI.stdlib.listboxSelectedValue(listControl);
+            RAMANI.stdlib.listboxClear(listControl);
 
             var destDatums = (!limitToDestinationDatumCD ? null : this.destinationDatums(limitToDestinationDatumCD));
 
@@ -1478,20 +1480,20 @@ MARCONI.map = function() {
                     if( (!coordSysCD || this.isDatumUsedByCoordSys(_datumArray[i].datumCD, coordSysCD)) &&
                         (!destDatums || destDatums.indexOf(_datumArray[i].datumCD))) {
 
-                        MARCONI.stdlib.listboxAddItem(listControl, _datumArray[i].datumName, _datumArray[i].datumCD);
+                        RAMANI.stdlib.listboxAddItem(listControl, _datumArray[i].datumName, _datumArray[i].datumCD);
                     }
 
                 }
 
             }
-            MARCONI.stdlib.listboxSynchToValue(listControl, oldValue);
+            RAMANI.stdlib.listboxSynchToValue(listControl, oldValue);
 
             if( listControl.options.length > 0 && listControl.selectedIndex < 0 ) {
                 listControl.selectedIndex = 0;
             }
         }
         catch(ex) {
-            throw("error in MARCONI.map.populateHorizontalDatumList(): " + ex);
+            throw("error in RAMANI.map.populateHorizontalDatumList(): " + ex);
         }
 
     },
@@ -1503,10 +1505,10 @@ MARCONI.map = function() {
             }
 
 
-            //MARCONI.stdlib.log("Generating list of shifts from ." + canonFromDatumCD + ". to ." + canonToDatumCD + ".");
+            //RAMANI.stdlib.log("Generating list of shifts from ." + canonFromDatumCD + ". to ." + canonToDatumCD + ".");
             
-            var oldValue = MARCONI.stdlib.listboxSelectedValue(listControl);
-            MARCONI.stdlib.listboxClear(listControl);
+            var oldValue = RAMANI.stdlib.listboxSelectedValue(listControl);
+            RAMANI.stdlib.listboxClear(listControl);
 
             for( var i=0 ; i < _datumShifts.length ; i++) {
                 if(_datumShifts[i].isActive) {
@@ -1515,7 +1517,7 @@ MARCONI.map = function() {
                     var canonShiftTo   = this.canonicalDatum(_datumShifts[i].toDatumCD);
 
                     /*
-                     *MARCONI.stdlib.log("Inspecting shift " + i + " of " + _datumShifts.length + ": " + _datumShifts[i].datumShiftMethodCD + " for shift from " + _datumShifts[i].fromDatumCD + " (" + canonShiftFrom + ") to " +
+                     *RAMANI.stdlib.log("Inspecting shift " + i + " of " + _datumShifts.length + ": " + _datumShifts[i].datumShiftMethodCD + " for shift from " + _datumShifts[i].fromDatumCD + " (" + canonShiftFrom + ") to " +
                             _datumShifts[i].toDatumCD + " (" + canonShiftTo + ")");
                     */
 
@@ -1537,24 +1539,24 @@ MARCONI.map = function() {
                         if( _datumShifts[i].datumShiftName) {
                             key += " " + _datumShifts[i].datumShiftName;
                         }
-                        MARCONI.stdlib.listboxAddItem(listControl, descript, key);
+                        RAMANI.stdlib.listboxAddItem(listControl, descript, key);
 
-                        //MARCONI.stdlib.log("Match, adding method " + _datumShifts[i].datumShiftMethodCD + " for shift from " + canonFromDatumCD + " to " + canonToDatumCD);
+                        //RAMANI.stdlib.log("Match, adding method " + _datumShifts[i].datumShiftMethodCD + " for shift from " + canonFromDatumCD + " to " + canonToDatumCD);
                     }
                     else {
-                        //MARCONI.stdlib.log("Rejecting method " + _datumShifts[i].datumShiftMethodCD + " which shifts from " + canonShiftFrom + " to " + canonShiftTo);
+                        //RAMANI.stdlib.log("Rejecting method " + _datumShifts[i].datumShiftMethodCD + " which shifts from " + canonShiftFrom + " to " + canonShiftTo);
                     }
 
                 }
             }
-            MARCONI.stdlib.listboxSynchToValue(listControl, oldValue);
+            RAMANI.stdlib.listboxSynchToValue(listControl, oldValue);
 
             if( listControl.options.length > 0 && listControl.selectedIndex < 0 ) {
                 listControl.selectedIndex = 0;
             }
         }
         catch(ex) {
-            throw("error in MARCONI.map.populateDatumShiftList(): " + ex);
+            throw("error in RAMANI.map.populateDatumShiftList(): " + ex);
         }
 
     },
@@ -1594,7 +1596,7 @@ MARCONI.map = function() {
             (!datumShift.latitudeMax  || datumShift.latitudeMax  > pt.y) &&
             (!datumShift.longitudeMax || datumShift.longitudeMax > pt.x) ) {
 
-            //MARCONI.stdlib.log("point " + pt.y + ", " + pt.x  + " is within box: " + datumShift.latitudeMin + ", " + datumShift.longitudeMin + " by " + datumShift.latitudeMax + ", " + datumShift.longitudeMax );
+            //RAMANI.stdlib.log("point " + pt.y + ", " + pt.x  + " is within box: " + datumShift.latitudeMin + ", " + datumShift.longitudeMin + " by " + datumShift.latitudeMax + ", " + datumShift.longitudeMax );
 
             return true;
         }
@@ -1610,9 +1612,9 @@ MARCONI.map = function() {
                 listControl = document.getElementById(listControl);
             }
 
-            var oldValue = MARCONI.stdlib.listboxSelectedValue(listControl);
+            var oldValue = RAMANI.stdlib.listboxSelectedValue(listControl);
 
-            MARCONI.stdlib.listboxClear(listControl);
+            RAMANI.stdlib.listboxClear(listControl);
 
             for( var i=0 ; i < _mapUnitArray.length ; i++) {
                 if( _mapUnitArray[i].isActive ) {
@@ -1622,45 +1624,45 @@ MARCONI.map = function() {
                            (unitType.toLowerCase()=="linear" && _mapUnitArray[i].isLinear ) ||
                             unitType.toLowerCase()=="areal"  && _mapUnitArray[i].isAreal ) {
 
-                           MARCONI.stdlib.listboxAddItem(listControl, _mapUnitArray[i].unitName, _mapUnitArray[i].mapUnitCD);
+                           RAMANI.stdlib.listboxAddItem(listControl, _mapUnitArray[i].unitName, _mapUnitArray[i].mapUnitCD);
                        }
                     }
                 }
 
             }
-            MARCONI.stdlib.listboxSynchToValue(listControl, oldValue);
+            RAMANI.stdlib.listboxSynchToValue(listControl, oldValue);
 
             if( listControl.options.length > 0  && listControl.selectedIndex < 0 ) {
                 listControl.selectedIndex = 0;
             }
         }
         catch(ex) {
-            throw("error in MARCONI.map.populateUnitsList(): " + ex);
+            throw("error in RAMANI.map.populateUnitsList(): " + ex);
         }
 
     },
 
     populateCoordSysList : function (listControl, includeAllActive) {
         try {
-            var oldValue = MARCONI.stdlib.listboxSelectedValue(listControl);
-            MARCONI.stdlib.listboxClear(listControl);
+            var oldValue = RAMANI.stdlib.listboxSelectedValue(listControl);
+            RAMANI.stdlib.listboxClear(listControl);
 
             for( var i=0 ; i < _coordSysArray.length ; i++) {
                 if( _coordSysArray[i].isActive ) {
 
                     if( includeAllActive || this.isCoordSysUsedByAnySpatialRef( _coordSysArray[i].coordSysCD ) ) {
-                        MARCONI.stdlib.listboxAddItem(listControl, _coordSysArray[i].coordSysName, _coordSysArray[i].coordSysCD);
+                        RAMANI.stdlib.listboxAddItem(listControl, _coordSysArray[i].coordSysName, _coordSysArray[i].coordSysCD);
                     }
                     else {
-                        //MARCONI.stdlib.log("Skipping coord sys " + _coordSysArray[i].coordSysCD);
+                        //RAMANI.stdlib.log("Skipping coord sys " + _coordSysArray[i].coordSysCD);
                     }
                 }
 
             }
-            MARCONI.stdlib.listboxSynchToValue(listControl, oldValue);
+            RAMANI.stdlib.listboxSynchToValue(listControl, oldValue);
         }
         catch(ex) {
-            throw("error in MARCONI.map.populateCoordSysList(): " + ex);
+            throw("error in RAMANI.map.populateCoordSysList(): " + ex);
         }
     },
 
@@ -1670,7 +1672,7 @@ MARCONI.map = function() {
                 return _mapUnitArray[i];
             }
         }
-        MARCONI.stdlib.log("Unknown unit " + mapUnitCD);
+        RAMANI.stdlib.log("Unknown unit " + mapUnitCD);
         return null;
     },
     
@@ -1777,7 +1779,7 @@ MARCONI.map = function() {
             datumCD = this.DATUM_HORIZ_1983;
         }
 
-        var utmRef          = new MARCONI.map.SpatialReference(this.COORDSYS_TMCUSTOM, datumCD, this.UNITS_METERS);
+        var utmRef          = new RAMANI.map.SpatialReference(this.COORDSYS_TMCUSTOM, datumCD, this.UNITS_METERS);
         var originLongitude = (zoneNumber-1)*6-180+3;  // center of 6-degree band
         var originLatitude = 0;
 
@@ -1832,17 +1834,17 @@ MARCONI.map = function() {
 
         // check right now
         if( _pendingAJAXCount === 0) {
-            MARCONI.stdlib.log("All AJAX map.js calls completed");
+            RAMANI.stdlib.log("All AJAX map.js calls completed");
 
             if(_onReadyFunc ) {
                 for( var i = 0 ; i < _onReadyFunc.length ; i++) {
-                    _onReadyFunc[i]("MARCONI map module is ready to use");
+                    _onReadyFunc[i]("RAMANI map module is ready to use");
                 }
                 _onReadyFunc=null;
             }
         }
         else {
-            MARCONI.stdlib.log(_pendingAJAXCount + " AJAX map.js calls pending");
+            RAMANI.stdlib.log(_pendingAJAXCount + " AJAX map.js calls pending");
 
         }
 
@@ -1859,7 +1861,7 @@ MARCONI.map = function() {
         var cfg;
         
         if( options ) {
-            cfg = MARCONI.stdlib.clone(options);
+            cfg = RAMANI.stdlib.clone(options);
         }
         else {
             cfg = {};
@@ -1875,7 +1877,7 @@ MARCONI.map = function() {
 
             if( window.YAHOO && YAHOO.util.Storage && !(cfg && (cfg.noStorage || cfg.noReadStorage)) ) {
                 
-                MARCONI.stdlib.log("Attempting to get spatial ref list from DOM storage " + args );
+                RAMANI.stdlib.log("Attempting to get spatial ref list from DOM storage " + args );
 
                 try {
 
@@ -1891,9 +1893,9 @@ MARCONI.map = function() {
                         },
                         function(msg, cfg) {
                             // some kind of error occurred with Storage retrieval
-                            MARCONI.stdlib.log(msg + ", spatial ref list not found in storage, calling again with noReadStorage option");
+                            RAMANI.stdlib.log(msg + ", spatial ref list not found in storage, calling again with noReadStorage option");
                             cfg.noReadStorage=true;
-                            MARCONI.map.updateSpatialRefList(cfg);
+                            RAMANI.map.updateSpatialRefList(cfg);
                         },
                         cfg)) {
 
@@ -1902,20 +1904,20 @@ MARCONI.map = function() {
                 }
                 catch(storageError) {
                     // some kind of error occurred with Storage retrieval
-                    MARCONI.stdlib.log("Exception " + storageError + " reading spatial ref list from DOM storage, calling again with noReadStorage option");
+                    RAMANI.stdlib.log("Exception " + storageError + " reading spatial ref list from DOM storage, calling again with noReadStorage option");
                     if(!cfg) {
                         cfg = {};
                     }
                     cfg.noReadStorage=true;
-                    MARCONI.map.updateSpatialRefList(cfg);
+                    RAMANI.map.updateSpatialRefList(cfg);
                     return;
                 }
 
                 // if we got a falsey value from getFromStorage(), it means we should not expect a callback, must forge on
-                MARCONI.stdlib.log("spatialref, " +  args + " data not available in DOM storage cache, fetching list with AJAX call");
+                RAMANI.stdlib.log("spatialref, " +  args + " data not available in DOM storage cache, fetching list with AJAX call");
             }
             else {
-                MARCONI.stdlib.log("DOM storage either not available, or noStorage option passed for spatialref " + args +
+                RAMANI.stdlib.log("DOM storage either not available, or noStorage option passed for spatialref " + args +
                     ", fetching list with AJAX call", "info", "clientinclude/map.js");
             }
 
@@ -1949,7 +1951,7 @@ MARCONI.map = function() {
                 },
                 failure: function(oRequest,oResponse,oPayload) {
                     //_updateRefs(null, oPayload);
-                    throw("Failed to get list of spatial references, response was " + MARCONI.stdlib.logObject(oResponse, "response"));
+                    throw("Failed to get list of spatial references, response was " + RAMANI.stdlib.logObject(oResponse, "response"));
                 },
                 scope: this,
                 argument: cfg
@@ -1959,7 +1961,7 @@ MARCONI.map = function() {
                     // if data not returned, look at error code and message
                     if( oFullResponse.data === undefined) {
                         if (oFullResponse.replyCode) {
-                            alert("error " + oFullResponse.replyCode + ": " + MARCONI.stdlib.friendlyErrorMessage(oFullResponse.replyText));
+                            alert("error " + oFullResponse.replyCode + ": " + RAMANI.stdlib.friendlyErrorMessage(oFullResponse.replyText));
                         }
                         else {
                             alert("Unknown error getting spatial reference list");
@@ -1970,7 +1972,7 @@ MARCONI.map = function() {
                 };
 
             
-            //MARCONI.stdlib.log("Sending AJAX request for spatial reference list: " + url + args, "info", "map.js");
+            //RAMANI.stdlib.log("Sending AJAX request for spatial reference list: " + url + args, "info", "map.js");
 
             myDataSource.sendRequest(args, oCallback);
             registerAJAXLaunch();
@@ -1996,14 +1998,14 @@ MARCONI.map = function() {
 
                             if( action === "Add" ) {
                                 addCount++;
-                                // MARCONI.stdlib.log("added " + dataArray[i].spatialReferenceCD + " to list of spatial references");
+                                // RAMANI.stdlib.log("added " + dataArray[i].spatialReferenceCD + " to list of spatial references");
                                 if( args.onAdd ) {
                                     args.onAdd( dataArray[i] );
                                 }
                             }
                             else if(action === "Update") {
                                 updateCount++;
-                                // MARCONI.stdlib.log("updated " + dataArray[i].spatialReferenceCD + " in list of spatial references");
+                                // RAMANI.stdlib.log("updated " + dataArray[i].spatialReferenceCD + " in list of spatial references");
 
                                 if( args.onUpdate ) {
                                     args.onUpdate( dataArray[i]);
@@ -2017,20 +2019,20 @@ MARCONI.map = function() {
                                 try {
                                     if( a.collatingValue === undefined || b.collatingValue===undefined ||
                                             a.collatingValue === b.collatingValue ) {
-                                        return (MARCONI.stdlib.strcmp(a.spatialReferenceName, b.spatialReferenceName ));
+                                        return (RAMANI.stdlib.strcmp(a.spatialReferenceName, b.spatialReferenceName ));
                                     }
                                     else {
                                         return a.collatingValue - b.collatingValue;
                                     }
                                 }
                                 catch(innerSortErr) {
-                                    MARCONI.stdlib.log("error in sort compare func for spatial ref, working around it, err is " + innerSortErr);
+                                    RAMANI.stdlib.log("error in sort compare func for spatial ref, working around it, err is " + innerSortErr);
                                     return 0;
                                 }
                                 });
                             }
                             catch(outerError) {
-                                MARCONI.stdlib.log("error trying to sort spatial refs:" + outerError);
+                                RAMANI.stdlib.log("error trying to sort spatial refs:" + outerError);
                             }
                         }
 
@@ -2057,14 +2059,14 @@ MARCONI.map = function() {
             try {
                 var spatialReferenceCD=spatialReference.spatialReferenceCD;
                 if( !spatialReferenceCD ) {
-                    throw "Got bad data in place of a spatial reference: " + MARCONI.stdlib.logObject(spatialReference);
+                    throw "Got bad data in place of a spatial reference: " + RAMANI.stdlib.logObject(spatialReference);
                 }
                 
                 var isFound=false;
                 var indexToUpdate = null;
                 var action="";
                 
-                // MARCONI.stdlib.log("checking " + refArray.length + " spatialRefArray elements looking for " + spatialReferenceCD);
+                // RAMANI.stdlib.log("checking " + refArray.length + " spatialRefArray elements looking for " + spatialReferenceCD);
                 
                 for( var i=0; i < refArray.length ; i++) {
                     if( refArray[i].spatialReferenceCD === spatialReferenceCD ) {
@@ -2074,7 +2076,7 @@ MARCONI.map = function() {
                     }
                 }
                 if(!isFound) {
-                    // MARCONI.stdlib.log("adding spatial ref since " + spatialReferenceCD + " not found");
+                    // RAMANI.stdlib.log("adding spatial ref since " + spatialReferenceCD + " not found");
                 
                     refArray.push(spatialReference);
                     indexToUpdate=refArray.length-1;
@@ -2090,19 +2092,19 @@ MARCONI.map = function() {
                     }
                     /*
                     if( action == "Update") {
-                        MARCONI.stdlib.log("Done updating existing spatial reference " + spatialReferenceCD);
+                        RAMANI.stdlib.log("Done updating existing spatial reference " + spatialReferenceCD);
                     }
                     else {
-                        MARCONI.stdlib.log("Spatial reference " + spatialReferenceCD + " already up to date");
+                        RAMANI.stdlib.log("Spatial reference " + spatialReferenceCD + " already up to date");
                     }
                     */
                 }
                 
 
-                // MARCONI.stdlib.log("Updated/added spatial reference ", spatialReference);
+                // RAMANI.stdlib.log("Updated/added spatial reference ", spatialReference);
 
                 if(refArray[indexToUpdate].baseCoordSysCD ){
-                    //MARCONI.stdlib.log(spatialReferenceCD + ", base coordsys is " + refArray[indexToUpdate].baseCoordSysCD + ", gridsize is " +
+                    //RAMANI.stdlib.log(spatialReferenceCD + ", base coordsys is " + refArray[indexToUpdate].baseCoordSysCD + ", gridsize is " +
                     //refArray[indexToUpdate].gridCellSizeHorizontal + ", " + refArray[indexToUpdate].gridCellSizeVertical);
                 }
                 return action;
@@ -2125,7 +2127,7 @@ MARCONI.map = function() {
 
             if( options ) {
                 // clone because we want to be able to copy and modify for local storage callback
-                cfg = MARCONI.stdlib.clone(options);
+                cfg = RAMANI.stdlib.clone(options);
                 // functions not being cloned...
                 cfg.onComplete = options.onComplete;
                 cfg.onError    = options.onError;
@@ -2140,7 +2142,7 @@ MARCONI.map = function() {
 
             if( window.YAHOO && YAHOO.util.Storage && !(cfg && (cfg.noReadStorage || cfg.noStorage) ) ) {
 
-                //MARCONI.stdlib.log("Attempting to get coordsys list from DOM storage " + args );
+                //RAMANI.stdlib.log("Attempting to get coordsys list from DOM storage " + args );
                 try {
 
 
@@ -2156,9 +2158,9 @@ MARCONI.map = function() {
                         },
                         function(msg, cfg) {
                             // some kind of error occurred with Storage retrieval
-                            MARCONI.stdlib.warn(msg + ", coordinate system list not read from storage, calling again with noReadStorage option");
+                            RAMANI.stdlib.warn(msg + ", coordinate system list not read from storage, calling again with noReadStorage option");
                             cfg.noReadStorage=true;
-                            MARCONI.map.updateCoordSysList(cfg);
+                            RAMANI.map.updateCoordSysList(cfg);
                         },
                         cfg)) {
 
@@ -2167,20 +2169,20 @@ MARCONI.map = function() {
                 }
                 catch(storageError) {
                     // some kind of error occurred with Storage retrieval
-                    MARCONI.stdlib.log("Exception reading coord sys list from DOM storage: " + storageError + ", calling again with noReadStorage option");
+                    RAMANI.stdlib.log("Exception reading coord sys list from DOM storage: " + storageError + ", calling again with noReadStorage option");
                     if( !cfg ) {
                         cfg = {};
                     }
                     cfg.noReadStorage=true;
-                    MARCONI.map.updateCoordSysList(cfg);
+                    RAMANI.map.updateCoordSysList(cfg);
                     return;
                 }
 
                 // if we got a falsey value from getFromStorage(), it means we should not expect a callback, must forge on
-                MARCONI.stdlib.log("coordsys, " +  args + " data not available in DOM storage cache, fetching list with AJAX call");
+                RAMANI.stdlib.log("coordsys, " +  args + " data not available in DOM storage cache, fetching list with AJAX call");
             }
             else {
-                //MARCONI.stdlib.log("DOM storage either not available, or noStorage option passed for coordsys " + args +
+                //RAMANI.stdlib.log("DOM storage either not available, or noStorage option passed for coordsys " + args +
                 //    ", fetching list with AJAX call", "info", "clientinclude/map.js");
             }
 
@@ -2213,7 +2215,7 @@ MARCONI.map = function() {
                     registerAJAXCompletion("AJAX load of coordsys list");
                 },
                 failure: function(oRequest,oResponse,oPayload) {
-                    throw("Failed to get list of coordinate systems, response was " + MARCONI.stdlib.logObject(oResponse, "response"));
+                    throw("Failed to get list of coordinate systems, response was " + RAMANI.stdlib.logObject(oResponse, "response"));
                     //_updateCoordSystems(null, oPayload);
                 },
                 scope: this,
@@ -2224,7 +2226,7 @@ MARCONI.map = function() {
                     // if data not returned, look at error code and message
                     if( oFullResponse.data === undefined) {
                         if (oFullResponse.replyCode) {
-                            alert("error " + oFullResponse.replyCode + ": " + MARCONI.stdlib.friendlyErrorMessage(oFullResponse.replyText));
+                            alert("error " + oFullResponse.replyCode + ": " + RAMANI.stdlib.friendlyErrorMessage(oFullResponse.replyText));
                         }
                         else {
                             alert("Unknown error getting list of coordinate systems");
@@ -2234,7 +2236,7 @@ MARCONI.map = function() {
                     return oFullResponse;
                 };
 
-            //MARCONI.stdlib.log("Sending AJAX request for coordinate system list: " + url, "info", "map.js");
+            //RAMANI.stdlib.log("Sending AJAX request for coordinate system list: " + url, "info", "map.js");
 
             myDataSource.sendRequest(args,oCallback);
             registerAJAXLaunch();
@@ -2275,12 +2277,12 @@ MARCONI.map = function() {
                                 }
                             }
 
-                            //MARCONI.stdlib.log(action + " of coord sys " + dataArray[i].coordSysCD);
+                            //RAMANI.stdlib.log(action + " of coord sys " + dataArray[i].coordSysCD);
                         }
 
                         if( addCount > 0 || updateCount > 0 ) {
                             stage="sorting";
-                            //MARCONI.stdlib.log("sorting coord sys list");
+                            //RAMANI.stdlib.log("sorting coord sys list");
 
                             try {
                                 
@@ -2290,22 +2292,22 @@ MARCONI.map = function() {
                                         if( a.collatingValue === undefined || b.collatingValue===undefined || 
                                             a.collatingValue === b.collatingValue ) {
 
-                                            //MARCONI.stdlib.log(a.coordSysName +  " and " + b.coordSysName + ", collatingValue=" + a.collatingValue||0);
-                                            return MARCONI.stdlib.strcmp(a.coordSysName, b.coordSysName);
+                                            //RAMANI.stdlib.log(a.coordSysName +  " and " + b.coordSysName + ", collatingValue=" + a.collatingValue||0);
+                                            return RAMANI.stdlib.strcmp(a.coordSysName, b.coordSysName);
                                         }
                                         else {
-                                            //MARCONI.stdlib.log("" + a.collatingValue +  " and " + b.collatingValue + " trump " + a.coordSysName +  " and " + b.coordSysName);
+                                            //RAMANI.stdlib.log("" + a.collatingValue +  " and " + b.collatingValue + " trump " + a.coordSysName +  " and " + b.coordSysName);
                                             return a.collatingValue - b.collatingValue;
                                         }
                                     }
                                     catch(sortErr) {
-                                        MARCONI.stdlib.log("sorter returning zero to work around error: " + sortErr);
+                                        RAMANI.stdlib.log("sorter returning zero to work around error: " + sortErr);
                                         return 0;
                                     }
                                 });
                             }
                             catch(bigSortErr) {
-                                MARCONI.stdlib.log("non-fatal error sorting coordinate systems: " + bigSortErr);
+                                RAMANI.stdlib.log("non-fatal error sorting coordinate systems: " + bigSortErr);
                             }
 
                         }
@@ -2331,7 +2333,7 @@ MARCONI.map = function() {
             try {
                 var coordSysCD = coordSys.coordSysCD;
                 if( !coordSysCD ) {
-                    throw "Got bad data in place of a coordSysCD: " + MARCONI.stdlib.logObject(coordSys);
+                    throw "Got bad data in place of a coordSysCD: " + RAMANI.stdlib.logObject(coordSys);
                 }
 
                 var isFound=false;
@@ -2348,19 +2350,19 @@ MARCONI.map = function() {
                 if(!isFound) {
                     sysArray.push(coordSys);
                     indexToUpdate = sysArray.length-1;
-                    //MARCONI.stdlib.log("adding new coordinate system " + coordSysCD + ", count of coord systems is now " + sysArray.length);
+                    //RAMANI.stdlib.log("adding new coordinate system " + coordSysCD + ", count of coord systems is now " + sysArray.length);
                     action="Add";
                 }
                 else {
                     
                     for(var key in sysArray[indexToUpdate] ) {
                         if( sysArray[indexToUpdate][key] !== coordSys[key] ) {
-                            //MARCONI.stdlib.log("value " + key + " being updated from " + sysArray[indexToUpdate][key] + " to " + coordSys[key]);
+                            //RAMANI.stdlib.log("value " + key + " being updated from " + sysArray[indexToUpdate][key] + " to " + coordSys[key]);
                             action="Update";
                         }
                     }
                     if( action === "Update") {
-                        //MARCONI.stdlib.log("updating existing coordinate system " + coordSysCD);
+                        //RAMANI.stdlib.log("updating existing coordinate system " + coordSysCD);
                     }
                 }
                 sysArray[indexToUpdate] = coordSys;
@@ -2369,7 +2371,7 @@ MARCONI.map = function() {
                 return action;
             }
             catch(ex) {
-                throw "Error updating coordinate system " + MARCONI.stdlib.logObject(coordSys) + ": " + ex;
+                throw "Error updating coordinate system " + RAMANI.stdlib.logObject(coordSys) + ": " + ex;
             }
         }
     },
@@ -2385,8 +2387,8 @@ MARCONI.map = function() {
     dumpAtlases : function(atlasGN) {
         for( var key in _atlasArray ) {
             if( _atlasArray.hasOwnProperty(key)) {
-                MARCONI.stdlib.log("key is " + key + ", atlas is " + _atlasArray[key] +
-                    MARCONI.stdlib.logObject(_atlasArray[key]));
+                RAMANI.stdlib.log("key is " + key + ", atlas is " + _atlasArray[key] +
+                    RAMANI.stdlib.logObject(_atlasArray[key]));
             }
         }
     },
@@ -2410,13 +2412,13 @@ MARCONI.map = function() {
 
             var args = "&AtlasGN=" + cfg.atlasGN;
 
-            // MARCONI.stdlib.log("Loading atlas, cfg is " + MARCONI.stdlib.logObject(cfg) );
+            // RAMANI.stdlib.log("Loading atlas, cfg is " + RAMANI.stdlib.logObject(cfg) );
             
             // if Storage API is loaded, and not explicitly told to skip it, look in DOM storage first
 
             if( YAHOO.util.Storage && !(cfg && (cfg.noReadStorage || cfg.noStorage) ) ) {
 
-                MARCONI.stdlib.log("Attempting to get atlas page list from DOM storage, " + args );
+                RAMANI.stdlib.log("Attempting to get atlas page list from DOM storage, " + args );
                 try {
 
 
@@ -2429,9 +2431,9 @@ MARCONI.map = function() {
                         },
                         function(msg, cfg) {
                             // some kind of error occurred with Storage retrieval
-                            MARCONI.stdlib.log(msg + ", atlas pages not found in storage, calling again with noReadStorage option");
+                            RAMANI.stdlib.log(msg + ", atlas pages not found in storage, calling again with noReadStorage option");
                             cfg.noReadStorage=true;
-                            MARCONI.map.getAtlasByAjax(cfg);
+                            RAMANI.map.getAtlasByAjax(cfg);
                         },
                         cfg)) {
 
@@ -2440,24 +2442,24 @@ MARCONI.map = function() {
                 }
                 catch(storageError) {
                     // some kind of error occurred with Storage retrieval
-                    MARCONI.stdlib.log("Exception reading atlas pages: " + storageError + ", calling again with noReadStorage option");
+                    RAMANI.stdlib.log("Exception reading atlas pages: " + storageError + ", calling again with noReadStorage option");
                     cfg = cfg || {};
                     cfg.noReadStorage=true;
-                    MARCONI.map.getAtlasByAjax(cfg);
+                    RAMANI.map.getAtlasByAjax(cfg);
                     return;
                 }
 
                 // if we got a falsey value from getFromStorage(), it means we should not expect a callback, must forge on
-                MARCONI.stdlib.log("atlaspage, " +  args + " data not available in DOM storage cache, fetching list with AJAX call");
+                RAMANI.stdlib.log("atlaspage, " +  args + " data not available in DOM storage cache, fetching list with AJAX call");
             }
             else {
-                //MARCONI.stdlib.log("DOM storage either not available, or noStorage option passed for atlaspage list " + args +
+                //RAMANI.stdlib.log("DOM storage either not available, or noStorage option passed for atlaspage list " + args +
                 //    ", fetching list with AJAX call", "info", "clientinclude/map.js");
             }
 
             var url="../ajax/Lookup?entity=atlaspage";
 
-            MARCONI.stdlib.log("Loading atlas pages for atlas " + cfg.atlasGN);
+            RAMANI.stdlib.log("Loading atlas pages for atlas " + cfg.atlasGN);
 
             var myDataSource = new YAHOO.util.DataSource(url);
 
@@ -2485,7 +2487,7 @@ MARCONI.map = function() {
                     registerAJAXCompletion("AJAX fetch of atlas " + args.atlasGN);
                 },
                 failure: function(oRequest,oResponse,oPayload) {
-                    throw("Failed to get list of atlas pages, response was " + MARCONI.stdlib.logObject(oResponse, "response"));
+                    throw("Failed to get list of atlas pages, response was " + RAMANI.stdlib.logObject(oResponse, "response"));
                     //_updateAtlasPages(null, oPayload);
                 },
                 scope: this,
@@ -2496,7 +2498,7 @@ MARCONI.map = function() {
                     // if data not returned, look at error code and message
                     if( oFullResponse.data === undefined) {
                         if (oFullResponse.replyCode) {
-                            alert("error " + oFullResponse.replyCode + ": " + MARCONI.stdlib.friendlyErrorMessage(oFullResponse.replyText));
+                            alert("error " + oFullResponse.replyCode + ": " + RAMANI.stdlib.friendlyErrorMessage(oFullResponse.replyText));
                         }
                         else {
                             alert("Unknown error getting list of atlas pages");
@@ -2506,7 +2508,7 @@ MARCONI.map = function() {
                     return oFullResponse;
                 };
 
-            //MARCONI.stdlib.log("Sending AJAX request for atlas pages for atlas " + atlasGN + ": " + url, "info", "map.js");
+            //RAMANI.stdlib.log("Sending AJAX request for atlas pages for atlas " + atlasGN + ": " + url, "info", "map.js");
 
             myDataSource.sendRequest(args,oCallback);
 
@@ -2530,7 +2532,7 @@ MARCONI.map = function() {
 
                 var pagesAdded=0;
 
-                //MARCONI.stdlib.log("Processing atlas" + args.atlasGN);
+                //RAMANI.stdlib.log("Processing atlas" + args.atlasGN);
 
 
                 // if given a proper array of values, populate from it
@@ -2546,7 +2548,7 @@ MARCONI.map = function() {
                     args.onComplete(args.atlasGN, "Loaded " + pagesAdded + " pages for atlas " + args.atlasGN, args.callBackExtraArg);
                 }
                 else {
-                    MARCONI.stdlib.log("No onComplete func for atlas load, args is " + MARCONI.stdlib.logObject(args));
+                    RAMANI.stdlib.log("No onComplete func for atlas load, args is " + RAMANI.stdlib.logObject(args));
                 }
                 
                 
@@ -2569,7 +2571,7 @@ MARCONI.map = function() {
             var cfg;
 
             if( options ) {
-                cfg = MARCONI.stdlib.clone(options);
+                cfg = RAMANI.stdlib.clone(options);
             }
             else {
                 cfg = {};
@@ -2583,7 +2585,7 @@ MARCONI.map = function() {
 
             if( YAHOO.util.Storage && !(cfg && (cfg.noReadStorage || cfg.noStorage) ) ) {
 
-                //MARCONI.stdlib.log("Attempting to get datum list from DOM storage, " + args );
+                //RAMANI.stdlib.log("Attempting to get datum list from DOM storage, " + args );
 
                 try {
 
@@ -2599,9 +2601,9 @@ MARCONI.map = function() {
                         },
                         function(msg, cfg) {
                             // some kind of error occurred with Storage retrieval
-                            MARCONI.stdlib.log(msg + ", datum list not found in storage, calling again with noReadStorage option");
+                            RAMANI.stdlib.log(msg + ", datum list not found in storage, calling again with noReadStorage option");
                             cfg.noReadStorage=true;
-                            MARCONI.map.updateDatumList(cfg);
+                            RAMANI.map.updateDatumList(cfg);
                         },
                         cfg)) {
 
@@ -2611,20 +2613,20 @@ MARCONI.map = function() {
                 }
                 catch(storageError) {
                     // some kind of error occurred with Storage retrieval
-                    MARCONI.stdlib.log("Exception " + storageError + " reading datum list from storage, calling again with noReadStorage option");
+                    RAMANI.stdlib.log("Exception " + storageError + " reading datum list from storage, calling again with noReadStorage option");
                     if( !cfg ) {
                         cfg={};
                     }
                     cfg.noReadStorage=true;
-                    MARCONI.map.updateDatumList(cfg);
+                    RAMANI.map.updateDatumList(cfg);
                     return;
                 }
 
                 // if we got a falsey value from getFromStorage(), it means we should not expect a callback, must forge on
-                MARCONI.stdlib.log("datum, " +  args + " data not available in DOM storage cache, fetching list with AJAX call");
+                RAMANI.stdlib.log("datum, " +  args + " data not available in DOM storage cache, fetching list with AJAX call");
             }
             else {
-                //MARCONI.stdlib.log("DOM storage either not available, or noStorage option passed for datum " + args +
+                //RAMANI.stdlib.log("DOM storage either not available, or noStorage option passed for datum " + args +
                 //    ", fetching list with AJAX call", "info", "clientinclude/map.js");
             }
 
@@ -2655,7 +2657,7 @@ MARCONI.map = function() {
                     registerAJAXCompletion("AJAX fetch of datum list");
                 },
                 failure: function(oRequest,oResponse,oPayload) {
-                    throw("Failed to get list of datums, response was " + MARCONI.stdlib.logObject(oResponse, "response"));
+                    throw("Failed to get list of datums, response was " + RAMANI.stdlib.logObject(oResponse, "response"));
                     //_updateDatums(null, oPayload);
                 },
                 scope: this,
@@ -2666,7 +2668,7 @@ MARCONI.map = function() {
                     // if data not returned, look at error code and message
                     if( oFullResponse.data === undefined) {
                         if (oFullResponse.replyCode) {
-                            alert("error " + oFullResponse.replyCode + ": " + MARCONI.stdlib.friendlyErrorMessage(oFullResponse.replyText));
+                            alert("error " + oFullResponse.replyCode + ": " + RAMANI.stdlib.friendlyErrorMessage(oFullResponse.replyText));
                         }
                         else {
                             alert("Unknown error getting datum list");
@@ -2676,7 +2678,7 @@ MARCONI.map = function() {
                     return oFullResponse;
                 };
 
-            //MARCONI.stdlib.log("Sending AJAX request for datum list: " + url, "info", "map.js");
+            //RAMANI.stdlib.log("Sending AJAX request for datum list: " + url, "info", "map.js");
 
             myDataSource.sendRequest(args,oCallback);
 
@@ -2726,20 +2728,20 @@ MARCONI.map = function() {
                                        if( a.collatingValue === undefined || b.collatingValue===undefined ||
                                             a.collatingValue == b.collatingValue ) {
 
-                                            return MARCONI.stdlib.strcmp(a.datumName, b.datumName);
+                                            return RAMANI.stdlib.strcmp(a.datumName, b.datumName);
                                         }
                                         else {
                                             return a.collatingValue - b.collatingValue;
                                         }
                                     }
                                     catch(innerError) {
-                                        MARCONI.stdlib.log("Error comparing datums: " + innerError);
+                                        RAMANI.stdlib.log("Error comparing datums: " + innerError);
                                         return 0;
                                     }
                                 });
                             }
                             catch(outerError) {
-                                MARCONI.stdlib.log("Error sorting datums: " + outerError);
+                                RAMANI.stdlib.log("Error sorting datums: " + outerError);
                             }
                         }
                     }
@@ -2749,7 +2751,7 @@ MARCONI.map = function() {
                 }
                 // trigger datum shift update also
                 
-                MARCONI.map.updateDatumShiftList(args);
+                RAMANI.map.updateDatumShiftList(args);
 
                 
 
@@ -2765,7 +2767,7 @@ MARCONI.map = function() {
             try {
                 var datumCD=datum.datumCD;
                 if( !datumCD ) {
-                    throw "Got bad data in place of a datum: " + MARCONI.stdlib.logObject(datum);
+                    throw "Got bad data in place of a datum: " + RAMANI.stdlib.logObject(datum);
                 }
 
                 var isFound=false;
@@ -2782,29 +2784,29 @@ MARCONI.map = function() {
                 if(!isFound) {
                     datumArray.push(datum);
                     indexToUpdate = datumArray.length-1;
-                    //MARCONI.stdlib.log("adding new datum " + datumCD + ", count of datums is now " + datumArray.length);
+                    //RAMANI.stdlib.log("adding new datum " + datumCD + ", count of datums is now " + datumArray.length);
                     action="Add";
                 }
                 else {
 
                     for(var key in datumArray[indexToUpdate] ) {
                         if( datumArray[indexToUpdate][key] !== datum[key] ) {
-                            //MARCONI.stdlib.log("value " + key + " being updated from " + datumArray[indexToUpdate][key] + " to " + datum[key]);
+                            //RAMANI.stdlib.log("value " + key + " being updated from " + datumArray[indexToUpdate][key] + " to " + datum[key]);
                             action="Update";
                         }
                     }
                     if( action === "Update") {
-                        //MARCONI.stdlib.log("updating existing datum " + datumCD);
+                        //RAMANI.stdlib.log("updating existing datum " + datumCD);
                     }
                 }
                 datumArray[indexToUpdate] = datum;
                 
-                // MARCONI.stdlib.log("new/updated datum ", datumArray[indexToUpdate]);
+                // RAMANI.stdlib.log("new/updated datum ", datumArray[indexToUpdate]);
                 
                 return action;
             }
             catch(ex) {
-                throw "Error updating datum " + MARCONI.stdlib.logObject(datum) + ": " + ex;
+                throw "Error updating datum " + RAMANI.stdlib.logObject(datum) + ": " + ex;
             }
         }
     },
@@ -2820,7 +2822,7 @@ MARCONI.map = function() {
             var cfg;
 
             if( options ) {
-                cfg = MARCONI.stdlib.clone(options);
+                cfg = RAMANI.stdlib.clone(options);
             }
             else {
                 cfg = {};
@@ -2833,7 +2835,7 @@ MARCONI.map = function() {
 
             if( YAHOO.util.Storage && !(cfg && (cfg.noReadStorage || cfg.noStorage) ) ) {
 
-                //MARCONI.stdlib.log("Attempting to get datumshift list from DOM storage, " + args );
+                //RAMANI.stdlib.log("Attempting to get datumshift list from DOM storage, " + args );
                 try {
 
 
@@ -2849,9 +2851,9 @@ MARCONI.map = function() {
                         },
                         function(msg, cfg) {
                             // some kind of error occurred with Storage retrieval
-                            MARCONI.stdlib.log(msg + ", datumshift list not found in storage, calling again with noReadStorage option");
+                            RAMANI.stdlib.log(msg + ", datumshift list not found in storage, calling again with noReadStorage option");
                             cfg.noReadStorage=true;
-                            MARCONI.map.updateDatumShiftList(cfg);
+                            RAMANI.map.updateDatumShiftList(cfg);
                         },
                         cfg)) {
 
@@ -2860,20 +2862,20 @@ MARCONI.map = function() {
                 }
                 catch(storageError) {
                     // some kind of error occurred with Storage retrieval
-                    MARCONI.stdlib.log("Exception reading datum shifts from storage: " + storageError + ", calling again with noReadStorage option");
+                    RAMANI.stdlib.log("Exception reading datum shifts from storage: " + storageError + ", calling again with noReadStorage option");
                     if(!cfg) {
                         cfg={};
                     }
                     cfg.noReadStorage=true;
-                    MARCONI.map.updateDatumShiftList(cfg);
+                    RAMANI.map.updateDatumShiftList(cfg);
                     return;
                 }
 
                 // if we got a falsey value from getFromStorage(), it means we should not expect a callback, must forge on
-                MARCONI.stdlib.log("coordsys, " +  args + " data not available in DOM storage cache, fetching list with AJAX call");
+                RAMANI.stdlib.log("coordsys, " +  args + " data not available in DOM storage cache, fetching list with AJAX call");
             }
             else {
-                //MARCONI.stdlib.log("DOM storage either not available, or noStorage option passed for datumshift " + args +
+                //RAMANI.stdlib.log("DOM storage either not available, or noStorage option passed for datumshift " + args +
                 //    ", fetching list with AJAX call", "info", "clientinclude/map.js");
             }
 
@@ -2904,7 +2906,7 @@ MARCONI.map = function() {
                     registerAJAXCompletion("AJAX fetch of datum shift list");
                 },
                 failure: function(oRequest,oResponse,oPayload) {
-                    throw("Failed to get list of datum shifts, response was " + MARCONI.stdlib.logObject(oResponse, "response"));
+                    throw("Failed to get list of datum shifts, response was " + RAMANI.stdlib.logObject(oResponse, "response"));
                     //_updateDatumShifts(null, oPayload);
                 },
                 scope: this,
@@ -2915,7 +2917,7 @@ MARCONI.map = function() {
                     // if data not returned, look at error code and message
                     if( oFullResponse.data === undefined) {
                         if (oFullResponse.replyCode) {
-                            alert("error " + oFullResponse.replyCode + ": " + MARCONI.stdlib.friendlyErrorMessage(oFullResponse.replyText));
+                            alert("error " + oFullResponse.replyCode + ": " + RAMANI.stdlib.friendlyErrorMessage(oFullResponse.replyText));
                         }
                         else {
                             alert("Unknown error getting list of datum shifts");
@@ -2925,7 +2927,7 @@ MARCONI.map = function() {
                     return oFullResponse;
                 };
 
-            //MARCONI.stdlib.log("Sending AJAX request for datum shift list: " + url, "info", "map.js");
+            //RAMANI.stdlib.log("Sending AJAX request for datum shift list: " + url, "info", "map.js");
 
             myDataSource.sendRequest(args,oCallback);
             registerAJAXLaunch();
@@ -2975,10 +2977,10 @@ MARCONI.map = function() {
                                     }
                                     
                                     if( a.fromDatumCD !== b.fromDatumCD) {
-                                        return MARCONI.stdlib.strcmp(a.fromDatumCD, b.fromDatumCD);
+                                        return RAMANI.stdlib.strcmp(a.fromDatumCD, b.fromDatumCD);
                                     }
                                     else if( a.toDatumCD !== b.toDatumCD) {
-                                        return MARCONI.stdlib.strcmp(a.toDatumCD, b.toDatumCD);
+                                        return RAMANI.stdlib.strcmp(a.toDatumCD, b.toDatumCD);
                                     }
                                     else {
                                         return methodRank(a.datumShiftMethodCD)- methodRank(b.datumShiftMethodCD);
@@ -2988,11 +2990,11 @@ MARCONI.map = function() {
                                 });
                             }
                             catch(outerError) {
-                                MARCONI.stdlib.log("Error sorting datum shifts: " + outerError);
+                                RAMANI.stdlib.log("Error sorting datum shifts: " + outerError);
                             }
                         }
 
-                        MARCONI.map.getCanonicalDatumSet(true); // force rebuilding lists of datum synonyms
+                        RAMANI.map.getCanonicalDatumSet(true); // force rebuilding lists of datum synonyms
 
                     }
                 }
@@ -3017,7 +3019,7 @@ MARCONI.map = function() {
             try {
                 var fromDatumCD=datumShift.fromDatumCD;
                 if( !fromDatumCD ) {
-                    throw "Got bad data in place of a datum shift: " + MARCONI.stdlib.logObject(datumShift);
+                    throw "Got bad data in place of a datum shift: " + RAMANI.stdlib.logObject(datumShift);
                 }
 
                 var isFound=false;
@@ -3038,14 +3040,14 @@ MARCONI.map = function() {
                 if(!isFound) {
                     datumShiftArray.push(datumShift);
                     indexToUpdate = datumShiftArray.length-1;
-                    MARCONI.stdlib.log("adding new datum shift from " + fromDatumCD + " to " + datumShift["toDatumCD"] + ", method " + datumShift["datumShiftMethodCD"] + ", count of datum shifts is now " + datumShiftArray.length);
+                    RAMANI.stdlib.log("adding new datum shift from " + fromDatumCD + " to " + datumShift["toDatumCD"] + ", method " + datumShift["datumShiftMethodCD"] + ", count of datum shifts is now " + datumShiftArray.length);
                     action="Add";
                 }
                 else {
                     // log any differences
                     for(var key in datumShift) {
                         if( !datumShiftArray[indexToUpdate][key] || datumShiftArray[indexToUpdate][key] !== datumShift[key] ) {
-                            //MARCONI.stdlib.log("value " + key + " being updated from " + datumShiftArray[indexToUpdate][key] + " to " + datumShift[key]);
+                            //RAMANI.stdlib.log("value " + key + " being updated from " + datumShiftArray[indexToUpdate][key] + " to " + datumShift[key]);
                             action="Update";
                         }
                     }
@@ -3054,14 +3056,14 @@ MARCONI.map = function() {
                 return action;
             }
             catch(ex) {
-                throw "Error updating datum shift " + MARCONI.stdlib.logObject(datumShift) + ": " + ex;
+                throw "Error updating datum shift " + RAMANI.stdlib.logObject(datumShift) + ": " + ex;
             }
         }
     },
     
     getPointShifted : function(latitude, longitude, eastShift, northShift, linearUnitCD) {
         try {
-            var units = MARCONI.map.mapUnitGivenCode((linearUnitCD ? linearUnitCD : "m"));
+            var units = RAMANI.map.mapUnitGivenCode((linearUnitCD ? linearUnitCD : "m"));
             if(!units) {
                 throw "Could not resolve units code " + linearUnitCD;
             }
@@ -3069,9 +3071,9 @@ MARCONI.map = function() {
                 throw "Meters per unit unknown for unit " + linearUnitCD;
             }
 
-            var latitudeRad = parseFloat(latitude) * MARCONI.map.DEGREES_TO_RADIANS;
+            var latitudeRad = parseFloat(latitude) * RAMANI.map.DEGREES_TO_RADIANS;
 
-            var latitudeDegreesPerMeter = 180/(MARCONI.map.RADIUS_WGS84_METERS*Math.PI);  // roughly 111km per degree
+            var latitudeDegreesPerMeter = 180/(RAMANI.map.RADIUS_WGS84_METERS*Math.PI);  // roughly 111km per degree
 
             var longitudeDegreesPerMeter = latitudeDegreesPerMeter / Math.cos(latitudeRad);
             
@@ -3081,7 +3083,7 @@ MARCONI.map = function() {
 
             //alert("lat, long of " + latitude + ", " + longitude + " has shift of x,y " + eastShift + ", " + northShift + ", or " + deltaLatitude + ", " + deltaLongitude);
 
-            var newPt= new MARCONI.map.GeoPoint(parseFloat(longitude) + deltaLongitude, parseFloat(latitude) + deltaLatitude);
+            var newPt= new RAMANI.map.GeoPoint(parseFloat(longitude) + deltaLongitude, parseFloat(latitude) + deltaLatitude);
 
             
             return newPt;
@@ -3102,7 +3104,7 @@ MARCONI.map = function() {
             var cfg;
 
             if( options ) {
-                cfg = MARCONI.stdlib.clone(options);
+                cfg = RAMANI.stdlib.clone(options);
                 cfg.onComplete = options.onComplete;
             }
             else {
@@ -3117,7 +3119,7 @@ MARCONI.map = function() {
 
             if( window.YAHOO && YAHOO.util.Storage && !(cfg && (cfg.noReadStorage || cfg.noStorage) ) ) {
 
-                //MARCONI.stdlib.log("Attempting to get mapunit list from DOM storage, " + args + (cfg && cfg.minDate ? ", newer than " + cfg.minDate : ""));
+                //RAMANI.stdlib.log("Attempting to get mapunit list from DOM storage, " + args + (cfg && cfg.minDate ? ", newer than " + cfg.minDate : ""));
 
                 try {
 
@@ -3132,9 +3134,9 @@ MARCONI.map = function() {
                         function(msg, cfg) {
                             // some kind of error occurred with Storage retrieval
                             // call ourselves with flag
-                            MARCONI.stdlib.log(msg + ", mapunit list not found in storage, calling again with noReadStorage option");
+                            RAMANI.stdlib.log(msg + ", mapunit list not found in storage, calling again with noReadStorage option");
                             cfg.noReadStorage=true;
-                            MARCONI.map.updateMapUnitList(cfg);
+                            RAMANI.map.updateMapUnitList(cfg);
                         },
                         cfg)) {
 
@@ -3144,20 +3146,20 @@ MARCONI.map = function() {
                 catch(storageError) {
                     // some kind of error occurred with Storage retrieval
                     // call ourselves with flag
-                    MARCONI.stdlib.log("Exception reading map units from DOM storage: " + storageError + ", calling again with noReadStorage option");
+                    RAMANI.stdlib.log("Exception reading map units from DOM storage: " + storageError + ", calling again with noReadStorage option");
                     if(!cfg) {
                         cfg={};
                     }
                     cfg.noReadStorage=true;
-                    MARCONI.map.updateMapUnitList(cfg);
+                    RAMANI.map.updateMapUnitList(cfg);
                     return;
                 }
 
                 // if we got a falsey value from getFromStorage(), it means we should not expect a callback, must forge on
-                MARCONI.stdlib.log("mapunit, " +  args + " data not available in DOM storage cache, fetching list with AJAX call");
+                RAMANI.stdlib.log("mapunit, " +  args + " data not available in DOM storage cache, fetching list with AJAX call");
             }
             else {
-                //MARCONI.stdlib.log("DOM storage either not available, or noStorage option passed for mapunit " + args +
+                //RAMANI.stdlib.log("DOM storage either not available, or noStorage option passed for mapunit " + args +
                 //    ", fetching list with AJAX call", "info", "clientinclude/map.js");
             }
 
@@ -3189,7 +3191,7 @@ MARCONI.map = function() {
                     registerAJAXCompletion("AJAX fetch of mapunit list");
                 },
                 failure: function(oRequest,oResponse,oPayload) {
-                    throw("Failed to get list of mapping units, response was " + MARCONI.stdlib.logObject(oResponse, "response"));
+                    throw("Failed to get list of mapping units, response was " + RAMANI.stdlib.logObject(oResponse, "response"));
                     //_updateMapUnits(null, oPayload);
                 },
                 scope: this,
@@ -3200,10 +3202,10 @@ MARCONI.map = function() {
                     // if data not returned, look at error code and message
                     if( oFullResponse.data === undefined) {
                         if (oFullResponse.replyCode) {
-                            MARCONI.stdlib.log("error " + oFullResponse.replyCode + ": " + MARCONI.stdlib.friendlyErrorMessage(oFullResponse.replyText));
+                            RAMANI.stdlib.log("error " + oFullResponse.replyCode + ": " + RAMANI.stdlib.friendlyErrorMessage(oFullResponse.replyText));
                         }
                         else {
-                            MARCONI.stdlib.log("Unknown error getting list of mapping units");
+                            RAMANI.stdlib.log("Unknown error getting list of mapping units");
                         }
                     }
 
@@ -3211,7 +3213,7 @@ MARCONI.map = function() {
                 };
 
 
-            //MARCONI.stdlib.log("Sending AJAX request for map unit list: " + url + (cfg ? ", cfg=" + MARCONI.stdlib.logObject(cfg)  : ""), "info", "map.js");
+            //RAMANI.stdlib.log("Sending AJAX request for map unit list: " + url + (cfg ? ", cfg=" + RAMANI.stdlib.logObject(cfg)  : ""), "info", "map.js");
 
             myDataSource.sendRequest(args,oCallback);
             
@@ -3258,7 +3260,7 @@ MARCONI.map = function() {
                                 _mapUnitArray.sort(function(a,b) {
                                     if( a.collatingValue === undefined || b.collatingValue===undefined ||
                                             a.collatingValue == b.collatingValue ) {
-                                        return MARCONI.stdlib.strcmp(a.mapUnitName, b.mapUnitName);
+                                        return RAMANI.stdlib.strcmp(a.mapUnitName, b.mapUnitName);
                                     }
                                     else {
                                         return a.collatingValue - b.collatingValue;
@@ -3266,7 +3268,7 @@ MARCONI.map = function() {
                                 });
                             }
                             catch(outerError) {
-                                MARCONI.stdlib.log("Error sorting map unit list: " + outerError);
+                                RAMANI.stdlib.log("Error sorting map unit list: " + outerError);
                             }
                         }
                     }
@@ -3290,7 +3292,7 @@ MARCONI.map = function() {
             try {
                 var mapUnitCD=mapUnit.mapUnitCD;
                 if( !mapUnitCD ) {
-                    throw "Got bad data in place of a map unit: " + MARCONI.stdlib.logObject(mapUnit);
+                    throw "Got bad data in place of a map unit: " + RAMANI.stdlib.logObject(mapUnit);
                 }
 
                 var isFound=false;
@@ -3307,14 +3309,14 @@ MARCONI.map = function() {
                 if(!isFound) {
                     mapUnitArray.push({mapUnitCD: mapUnitCD});
                     indexToUpdate = mapUnitArray.length-1;
-                    //MARCONI.stdlib.log("adding new map unit " + mapUnitCD + ", count of map units is now " + mapUnitArray.length);
+                    //RAMANI.stdlib.log("adding new map unit " + mapUnitCD + ", count of map units is now " + mapUnitArray.length);
                     action="Add";
                 }
                 else {
 
                     for(var key in mapUnitArray[indexToUpdate] ) {
                         if( mapUnitArray[indexToUpdate][key] != mapUnit[key] ) {
-                            //MARCONI.stdlib.log("value " + key + " being updated from " + mapUnitArray[indexToUpdate][key] + " to " + mapUnit[key]);
+                            //RAMANI.stdlib.log("value " + key + " being updated from " + mapUnitArray[indexToUpdate][key] + " to " + mapUnit[key]);
                             action="Update";
                         }
                     }
@@ -3323,32 +3325,32 @@ MARCONI.map = function() {
                 return action;
             }
             catch(ex) {
-                throw "Error updating map unit " + MARCONI.stdlib.logObject(mapUnit) + ": " + ex;
+                throw "Error updating map unit " + RAMANI.stdlib.logObject(mapUnit) + ": " + ex;
             }
         }
     }};
-}();   // end of MARCONI.map singleton function
+}();   // end of RAMANI.map singleton function
 
 
 // two main classes:  GeoPoint to hold x-y or lat-long
 // and SpatialReference
-MARCONI.map.GeoPoint = function( x, y ) {
+RAMANI.map.GeoPoint = function(x, y ) {
     this.x = x;
     this.y = y;
 };
 
-MARCONI.map.GeoPoint.prototype.setMapGridValue = function( mapGridValue ) {
+RAMANI.map.GeoPoint.prototype.setMapGridValue = function(mapGridValue ) {
     this.mapGridValue = mapGridValue;
 };
 
-MARCONI.map.SpatialReference = function( coordSysCD, datumCD, mapUnitCD  ) {
+RAMANI.map.SpatialReference = function(coordSysCD, datumCD, mapUnitCD  ) {
     // constructor -- clearly the three params if given should uniquely specify a spatial ref
 
     var spatialRefInfo = null;
 
     if( coordSysCD && datumCD && mapUnitCD ) {
         // look to see if the indicated spatial reference is a stock one
-        spatialRefInfo = MARCONI.map.spatialRefInfoLookup( coordSysCD, datumCD, mapUnitCD );
+        spatialRefInfo = RAMANI.map.spatialRefInfoLookup( coordSysCD, datumCD, mapUnitCD );
     }
     
     // if a stock one, just set params and return
@@ -3356,7 +3358,7 @@ MARCONI.map.SpatialReference = function( coordSysCD, datumCD, mapUnitCD  ) {
         for(var key in spatialRefInfo ) {
             if( spatialRefInfo.hasOwnProperty(key)) {
                 this[key] = spatialRefInfo[key];
-                //MARCONI.stdlib.log(key + "=" + spatialRefInfo[key]);
+                //RAMANI.stdlib.log(key + "=" + spatialRefInfo[key]);
             }
         }
 
@@ -3364,11 +3366,11 @@ MARCONI.map.SpatialReference = function( coordSysCD, datumCD, mapUnitCD  ) {
             this.eSquared = this.eccentricity * this.eccentricity;
         }
         
-        if( this.mapUnitCD == MARCONI.map.UNITS_SURVEYFEET ) {
-            this.equitorialAxis       = this.equitorialAxisMeters * MARCONI.map.METERS_TO_SURVEY_FEET;
+        if( this.mapUnitCD == RAMANI.map.UNITS_SURVEYFEET ) {
+            this.equitorialAxis       = this.equitorialAxisMeters * RAMANI.map.METERS_TO_SURVEY_FEET;
         }
-        else if( this.mapUnitCD == MARCONI.map.UNITS_INTERNATIONALFEET) {
-            this.equitorialAxis       = this.equitorialAxisMeters * MARCONI.map.METERS_TO_INTERNATIONAL_FEET;
+        else if( this.mapUnitCD == RAMANI.map.UNITS_INTERNATIONALFEET) {
+            this.equitorialAxis       = this.equitorialAxisMeters * RAMANI.map.METERS_TO_INTERNATIONAL_FEET;
         }
         else {
             this.equitorialAxis       = this.equitorialAxisMeters;
@@ -3381,16 +3383,16 @@ MARCONI.map.SpatialReference = function( coordSysCD, datumCD, mapUnitCD  ) {
     // by assigning the stuff we can.  Most params will be user-set
     // but we set stuff based on units and datum
 
-    if( coordSysCD == MARCONI.map.COORDSYS_LAMBERTCUSTOM) {
+    if( coordSysCD == RAMANI.map.COORDSYS_LAMBERTCUSTOM) {
         
-        this.coordSysTypeCD = MARCONI.map.COORDSYS_TYPE_LAMBERT;
+        this.coordSysTypeCD = RAMANI.map.COORDSYS_TYPE_LAMBERT;
         this.coordSysCD     = coordSysCD;
         this.datumCD        = datumCD;
         this.mapUnitCD      = mapUnitCD;
     }
-    else if( coordSysCD == MARCONI.map.COORDSYS_TMCUSTOM )  {
+    else if( coordSysCD == RAMANI.map.COORDSYS_TMCUSTOM )  {
 
-        this.coordSysTypeCD = MARCONI.map.COORDSYS_TYPE_TM;
+        this.coordSysTypeCD = RAMANI.map.COORDSYS_TYPE_TM;
         this.coordSysCD     = coordSysCD;
         this.datumCD        = datumCD;
         this.mapUnitCD      = mapUnitCD;
@@ -3413,52 +3415,52 @@ MARCONI.map.SpatialReference = function( coordSysCD, datumCD, mapUnitCD  ) {
     this.centralScaleFactor=1.0;
 
     // Assign geometry of the ellipsoid depending on the datum and units
-    if(datumCD == MARCONI.map.DATUM_HORIZ_1927) {
-          this.equitorialAxisMeters = MARCONI.map.RADIUS_CLARKE1866_METERS;
+    if(datumCD == RAMANI.map.DATUM_HORIZ_1927) {
+          this.equitorialAxisMeters = RAMANI.map.RADIUS_CLARKE1866_METERS;
 
-          this.eSquared = MARCONI.map.eSquared_CLARKE1866;
+          this.eSquared = RAMANI.map.eSquared_CLARKE1866;
     }
-    else if( datumCD == MARCONI.map.DATUM_HORIZ_1983 )  {
+    else if( datumCD == RAMANI.map.DATUM_HORIZ_1983 )  {
 
-        this.equitorialAxisMeters = MARCONI.map.RADIUS_GRS80_METERS;
+        this.equitorialAxisMeters = RAMANI.map.RADIUS_GRS80_METERS;
 
-        this.eSquared = MARCONI.map.eSquared_GRS80;
+        this.eSquared = RAMANI.map.eSquared_GRS80;
     }
-    else if( datumCD == MARCONI.map.DATUM_HORIZ_WGS84) {
-        this.equitorialAxisMeters = MARCONI.map.RADIUS_WGS84_METERS;
+    else if( datumCD == RAMANI.map.DATUM_HORIZ_WGS84) {
+        this.equitorialAxisMeters = RAMANI.map.RADIUS_WGS84_METERS;
 
-        this.eSquared = MARCONI.map.eSquared_WGS84;
+        this.eSquared = RAMANI.map.eSquared_WGS84;
     }
     else {
-        throw ("Datum " + datumCD + " not recognized, must be " + MARCONI.map.DATUM_HORIZ_1927 + " for NAD27 or " + MARCONI.map.DATUM_HORIZ_1983 + " for NAD83");
+        throw ("Datum " + datumCD + " not recognized, must be " + RAMANI.map.DATUM_HORIZ_1927 + " for NAD27 or " + RAMANI.map.DATUM_HORIZ_1983 + " for NAD83");
     }
 
-    if( mapUnitCD == MARCONI.map.UNITS_SURVEYFEET) {
-        this.equitorialAxis = this.equitorialAxisMeters * MARCONI.map.METERS_TO_SURVEY_FEET;
+    if( mapUnitCD == RAMANI.map.UNITS_SURVEYFEET) {
+        this.equitorialAxis = this.equitorialAxisMeters * RAMANI.map.METERS_TO_SURVEY_FEET;
     }
-    else if( mapUnitCD == MARCONI.map.UNITS_METERS ) {
+    else if( mapUnitCD == RAMANI.map.UNITS_METERS ) {
         this.equitorialAxis = this.equitorialAxisMeters;
     }
-    else if( this.mapUnitCD == MARCONI.map.UNITS_INTERNATIONALFEET) {
-        this.equitorialAxis = this.equitorialAxisMeters * MARCONI.map.METERS_TO_INTERNATIONAL_FEET;
+    else if( this.mapUnitCD == RAMANI.map.UNITS_INTERNATIONALFEET) {
+        this.equitorialAxis = this.equitorialAxisMeters * RAMANI.map.METERS_TO_INTERNATIONAL_FEET;
     }
-    else if( mapUnitCD != MARCONI.map.UNITS_DEGREES ) {
-        throw ("Units not supported, must be " + UNITS_SURVEYFEET + " for survey feet, " + MARCONI.map.UNITS_INTERNATIONALFEET + " for int. feet, " +
-            MARCONI.map.UNITS_METERS +
-            " for meters, or " + MARCONI.map.UNITS_DEGREES + " for degrees.");
+    else if( mapUnitCD != RAMANI.map.UNITS_DEGREES ) {
+        throw ("Units not supported, must be " + UNITS_SURVEYFEET + " for survey feet, " + RAMANI.map.UNITS_INTERNATIONALFEET + " for int. feet, " +
+            RAMANI.map.UNITS_METERS +
+            " for meters, or " + RAMANI.map.UNITS_DEGREES + " for degrees.");
     }
 
 
     // alert("projection radius is " + this.equitorialAxisMeters + "m");
 };
 
-MARCONI.map.SpatialReference.prototype.toString = function() {
+RAMANI.map.SpatialReference.prototype.toString = function() {
     return "Coord sys " + this.coordSysCD + " of type " + this.coordSysTypeCD + ", datum " +
         this.datumCD + ", units " + this.mapUnitCD;
 };
 
 // this is called for custom TM or Lambert spatial references
-MARCONI.map.SpatialReference.prototype.setCustomParams = function(
+RAMANI.map.SpatialReference.prototype.setCustomParams = function(
     parallelOne,
     parallelTwo,
     originLatitude,
@@ -3496,18 +3498,18 @@ MARCONI.map.SpatialReference.prototype.setCustomParams = function(
     }
 };
 
-MARCONI.map.GeoPoint.prototype.toString = function() {
+RAMANI.map.GeoPoint.prototype.toString = function() {
     return "x=" + this.x + ", y=" + this.y;
 };
 
-MARCONI.map.GeoPoint.prototype.setUTMzoneStyle = function(style) {
+RAMANI.map.GeoPoint.prototype.setUTMzoneStyle = function(style) {
     this.utmZoneStyle = style;  // Letter or Hemisphere
 };
-MARCONI.map.GeoPoint.prototype.getUTMzoneStyle = function() {
+RAMANI.map.GeoPoint.prototype.getUTMzoneStyle = function() {
     return this.utmZoneStyle || "Letter";
 };
 
-MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, datumShiftMethodCD, format )  {
+RAMANI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, datumShiftMethodCD, format )  {
     // we use the idiom that=this to allow our inner funcs to access the GeoPoint via a "that" reference
     var that=this;
     
@@ -3543,7 +3545,7 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
                     // note the wacky logic about cellIndexes 8 and over, designed to skip over the letter I
                     cellIndex = Math.floor(ratio*cellCount);
 
-                    cellValue = (MARCONI.stdlib.isDigit(baseGridValue) ?
+                    cellValue = (RAMANI.stdlib.isDigit(baseGridValue) ?
                         1*baseGridValue + cellIndex :
                         String.fromCharCode(baseGridValue.charCodeAt(0) + cellIndex + (cellIndex < 8 ? 0 : 1)) );
                 }
@@ -3558,23 +3560,23 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
         
         try {
 
-            var coordSys = MARCONI.map.coordSysGivenCode(atlasSpatialRef.coordSysCD);
+            var coordSys = RAMANI.map.coordSysGivenCode(atlasSpatialRef.coordSysCD);
             if( !coordSys || !coordSys.atlasGN ) {
                 throw "Coordinate system is of type atlas, but atlasGN is not known for coord sys with code " + atlasSpatialRef.coordSysCD;
             }
             
-            if( ! MARCONI.map.isAtlasLoaded(coordSys.atlasGN) ) {
+            if( ! RAMANI.map.isAtlasLoaded(coordSys.atlasGN) ) {
                 // fire off an AJAX request so a retry might work
-                MARCONI.stdlib.log("Auto-loading atlasGN " + coordSys.atlasGN);
+                RAMANI.stdlib.log("Auto-loading atlasGN " + coordSys.atlasGN);
                 
-                MARCONI.map.getAtlasByAjax({atlasGN: coordSys.atlasGN});
+                RAMANI.map.getAtlasByAjax({atlasGN: coordSys.atlasGN});
 
-                // MARCONI.map.dumpAtlases();
+                // RAMANI.map.dumpAtlases();
 
                 throw("BUSY -- atlas " + coordSys.atlasGN + " is being loaded.");
             }
             
-            var atlas = MARCONI.map.getAtlas(coordSys.atlasGN);
+            var atlas = RAMANI.map.getAtlas(coordSys.atlasGN);
             
             if( typeof(atlas) == "undefined") {
                 throw "Atlas " + coordSys.atlasGN + " is not available";
@@ -3633,7 +3635,7 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
                 
             }
             else {
-                ratio = ( MARCONI.stdlib.isDigit(baseGridValue) ? (gridValue-baseGridValue)/cellCount :
+                ratio = ( RAMANI.stdlib.isDigit(baseGridValue) ? (gridValue-baseGridValue)/cellCount :
                 (gridValue.charCodeAt(0) - baseGridValue.charCodeAt(0) - (gridValue.toUpperCase()  < 'J' ? 0 : 1))/cellCount) + 0.5/cellCount;
 
 
@@ -3654,19 +3656,19 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
         }
         
         try {
-            var coordSys = MARCONI.map.coordSysGivenCode(atlasSpatialRef.coordSysCD);
+            var coordSys = RAMANI.map.coordSysGivenCode(atlasSpatialRef.coordSysCD);
             if( !coordSys || !coordSys.atlasGN ) {
                 throw "Coordinate system is of type atlas, but atlasGN is not known for coord sys with code " + atlasSpatialRef.coordSysCD;
             }
             
-            if(!MARCONI.map.isAtlasLoaded(coordSys.atlasGN) ) {
+            if(!RAMANI.map.isAtlasLoaded(coordSys.atlasGN) ) {
                 // fire off an AJAX request that will call back when done
-                MARCONI.map.getAtlasByAjax({atlasGN: coordSys.atlasGN});
+                RAMANI.map.getAtlasByAjax({atlasGN: coordSys.atlasGN});
 
                 throw("BUSY -- atlas " + coordSys.atlasGN + " is being loaded.");
             }
 
-            var atlas = MARCONI.map.getAtlas(coordSys.atlasGN);
+            var atlas = RAMANI.map.getAtlas(coordSys.atlasGN);
             if( !atlas ) {
                 throw "Atlas " + coordSys.atlasGN + " is not available";
             }
@@ -3705,7 +3707,7 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
                     that.x = atlas[i].longitudeMin + ratioX * (atlas[i].longitudeMax - atlas[i].longitudeMin);
                     that.y = atlas[i].latitudeMin  + ratioY * (atlas[i].latitudeMax  - atlas[i].latitudeMin);
 
-                    //MARCONI.stdlib.log("returning for page " + pageIdentifier + ", grid " + gridHorizontal + ", " + gridVertical);
+                    //RAMANI.stdlib.log("returning for page " + pageIdentifier + ", grid " + gridHorizontal + ", " + gridVertical);
 
                     return;
                 }
@@ -3728,34 +3730,34 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
             throw("call setMapGridValue or set x before calling convert()");
         }
 
-        if( spatialRef.spatialReferenceCD == MARCONI.map.SPATIALREF_USNG ||
-            spatialRef.spatialReferenceCD == MARCONI.map.SPATIALREF_MGRS ) {
+        if( spatialRef.spatialReferenceCD == RAMANI.map.SPATIALREF_USNG ||
+            spatialRef.spatialReferenceCD == RAMANI.map.SPATIALREF_MGRS ) {
 
             determineLatLongFromUSNG(spatialRef, mapGridValue);
         }
-        else if( spatialRef.spatialReferenceCD == MARCONI.map.SPATIALREF_GARS ) {
+        else if( spatialRef.spatialReferenceCD == RAMANI.map.SPATIALREF_GARS ) {
 
             determineLatLongFromGARS(mapGridValue);
         }
         // UTM grid can use varying datums, but all use the same coord sys
-        else if( spatialRef.coordSysCD == MARCONI.map.COORDSYS_UTM ) {
+        else if( spatialRef.coordSysCD == RAMANI.map.COORDSYS_UTM ) {
 
             determineLatLongFromUTM(spatialRef, mapGridValue);
         }
-        else if( spatialRef.spatialReferenceCD == MARCONI.map.SPATIALREF_CAP_CLASSIC ) {
+        else if( spatialRef.spatialReferenceCD == RAMANI.map.SPATIALREF_CAP_CLASSIC ) {
             determineLatLongFromCAPClassic(mapGridValue);
         }
-        else if( spatialRef.spatialReferenceCD == MARCONI.map.SPATIALREF_CAP_CELL ) {
+        else if( spatialRef.spatialReferenceCD == RAMANI.map.SPATIALREF_CAP_CELL ) {
 
             determineLatLongFromCAPCell(mapGridValue);
         }
-        else if( spatialRef.spatialReferenceCD == MARCONI.map.SPATIALREF_OSGB ) {
+        else if( spatialRef.spatialReferenceCD == RAMANI.map.SPATIALREF_OSGB ) {
             determineLatLongFromOSGB(spatialRef, mapGridValue);
         }
-        else if( spatialRef.spatialReferenceCD == MARCONI.map.SPATIALREF_IRISH ) {
+        else if( spatialRef.spatialReferenceCD == RAMANI.map.SPATIALREF_IRISH ) {
             determineLatLongFromIrishGrid(spatialRef, mapGridValue);
         }
-        else if( spatialRef.coordSysTypeCD == MARCONI.map.COORDSYS_TYPE_GRID  && spatialRef.baseCoordSysCD ) {
+        else if( spatialRef.coordSysTypeCD == RAMANI.map.COORDSYS_TYPE_GRID  && spatialRef.baseCoordSysCD ) {
            
             determineLatLongFromGenericGrid(spatialRef, mapGridValue);
         }
@@ -3779,7 +3781,7 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
                 
                 var numLength = (typeof(formatModel) == "string" ? formatModel.length : 4);
 
-                var retVal = MARCONI.stdlib.fixedFormatNumber(num, numLength, 0);
+                var retVal = RAMANI.stdlib.fixedFormatNumber(num, numLength, 0);
                 
                 return retVal;
             }
@@ -3823,7 +3825,7 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
                 return gridValue;
             }
             else {
-                MARCONI.stdlib.log("template ", template, ", ", " does not match ", REGEX);
+                RAMANI.stdlib.log("template ", template, ", ", " does not match ", REGEX);
             }
             return "";
         }
@@ -3839,15 +3841,15 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
                 throw("Coord sys " + spatialRef.coordSysCD + " needs to define a base coord sys in order to compute grid values");
             }
 
-            var baseRef = new MARCONI.map.SpatialReference( spatialRef.baseCoordSysCD, spatialRef.datumCD, spatialRef.inputResolutionUnitCD);
+            var baseRef = new RAMANI.map.SpatialReference( spatialRef.baseCoordSysCD, spatialRef.datumCD, spatialRef.inputResolutionUnitCD);
 
             if( !baseRef ) {
                 throw("Cannot determine underlying spatial reference for grid reference frame " + spatialRef.spatialReferenceCD);
             }
 
-            // MARCONI.stdlib.log("determined base ref system of " + MARCONI.stdlib.logObject(baseRef));
+            // RAMANI.stdlib.log("determined base ref system of " + RAMANI.stdlib.logObject(baseRef));
             
-            if( baseRef.coordSysTypeCD == MARCONI.map.COORDSYS_TYPE_LAMBERT ) {
+            if( baseRef.coordSysTypeCD == RAMANI.map.COORDSYS_TYPE_LAMBERT ) {
                 
                 Lambert_LatLongToCartesian(
                     baseRef.equitorialAxis,
@@ -3860,7 +3862,7 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
                     baseRef.originY);
 
             }
-            else if( baseRef.coordSysTypeCD == MARCONI.map.COORDSYS_TYPE_TM) {
+            else if( baseRef.coordSysTypeCD == RAMANI.map.COORDSYS_TYPE_TM) {
                 TM_LatLongToCartesian(
                     baseRef.equitorialAxis,
                     baseRef.eSquared,
@@ -3870,7 +3872,7 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
                     baseRef.originY,
                     baseRef.centralScaleFactor);
             }
-            else if( baseRef.coordSysTypeCD == MARCONI.map.COORDSYS_TYPE_ALBERS) {
+            else if( baseRef.coordSysTypeCD == RAMANI.map.COORDSYS_TYPE_ALBERS) {
                 Albers_LatLongToCartesian(
                     baseRef.equitorialAxis,
                     baseRef.eSquared,
@@ -3881,7 +3883,7 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
                     baseRef.originX,
                     baseRef.originY);
             }
-            else if( baseRef.coordSysTypeCD == MARCONI.map.COORDSYS_TYPE_STEREO ) {
+            else if( baseRef.coordSysTypeCD == RAMANI.map.COORDSYS_TYPE_STEREO ) {
                 Stereo_LatLongToCartesian(
                     baseRef.equitorialAxis,
                     baseRef.eSquared,
@@ -3891,7 +3893,7 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
                     baseRef.originY,
                     baseRef.centralScaleFactor);
             }
-            else if( baseRef.coordSysTypeCD == MARCONI.map.COORDSYS_TYPE_MERCATOR ) {
+            else if( baseRef.coordSysTypeCD == RAMANI.map.COORDSYS_TYPE_MERCATOR ) {
                 Mercator_LatLongToCartesian(
                     baseRef.equitorialAxis,
                     baseRef.eSquared,
@@ -3911,14 +3913,14 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
             var x = (horizMult * Math.floor( that.x / spatialRef.gridCellSizeHorizontal));
             var y = (vertMult *  Math.floor( that.y / spatialRef.gridCellSizeVertical));
 
-            // MARCONI.stdlib.log("Formatting ", x, ", ", y, " as a grid value with template ", spatialRef.gridTemplate);
+            // RAMANI.stdlib.log("Formatting ", x, ", ", y, " as a grid value with template ", spatialRef.gridTemplate);
             
             var gridVal= formatXY(spatialRef.gridTemplate, x, y);
 
             that.x=gridVal;
             that.y="";
             
-            // MARCONI.stdlib.log("Got ", gridVal);
+            // RAMANI.stdlib.log("Got ", gridVal);
             
             return gridVal;
         }
@@ -3967,7 +3969,7 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
         }
 
         try {
-            var baseRef = new MARCONI.map.SpatialReference(spatialRef.baseCoordSysCD, spatialRef.datumCD, spatialRef.inputResolutionUnitCD);
+            var baseRef = new RAMANI.map.SpatialReference(spatialRef.baseCoordSysCD, spatialRef.datumCD, spatialRef.inputResolutionUnitCD);
 
             if( !baseRef ) {
                 throw("Cannot determine underlying spatial reference for grid reference frame " + spatialRef.spatialReferenceCD);
@@ -4014,7 +4016,7 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
                 that.y = y;
 
                 switch( baseRef.coordSysTypeCD ) {
-                    case MARCONI.map.COORDSYS_TYPE_LAMBERT:
+                    case RAMANI.map.COORDSYS_TYPE_LAMBERT:
                        Lambert_CartesianToLatLong(
                             baseRef.equitorialAxis,
                             baseRef.eSquared,
@@ -4027,7 +4029,7 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
                             );
                         break;
         
-                    case MARCONI.map.COORDSYS_TYPE_TM:
+                    case RAMANI.map.COORDSYS_TYPE_TM:
                         TM_CartesianToLatLong(
                             baseRef.equitorialAxis,
                             baseRef.eSquared,
@@ -4038,7 +4040,7 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
                             baseRef.centralScaleFactor);
                         break;
 
-                    case MARCONI.map.COORDSYS_TYPE_ALBERS:
+                    case RAMANI.map.COORDSYS_TYPE_ALBERS:
                        Albers_CartesianToLatLong(
                             baseRef.equitorialAxis,
                             baseRef.eSquared,
@@ -4051,7 +4053,7 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
                             );
                         break;
                         
-                    case MARCONI.map.COORDSYS_TYPE_STEREO:
+                    case RAMANI.map.COORDSYS_TYPE_STEREO:
                        Stereo_CartesianToLatLong(
                             baseRef.equitorialAxis,
                             baseRef.eSquared,
@@ -4063,7 +4065,7 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
                             );
                         break;
                         
-                    case MARCONI.map.COORDSYS_TYPE_MERCATOR:
+                    case RAMANI.map.COORDSYS_TYPE_MERCATOR:
                        Mercator_CartesianToLatLong(
                             baseRef.equitorialAxis,
                             baseRef.eSquared,
@@ -4094,39 +4096,39 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
                 throw("Cannot determine grid value since given lat-long of " + that.y + ", " + that.x + " is not a valid lat-long");
             }
 
-            if( spatialRef.spatialReferenceCD == MARCONI.map.SPATIALREF_USNG ) {
+            if( spatialRef.spatialReferenceCD == RAMANI.map.SPATIALREF_USNG ) {
                 
                 determineUSNGFromLatLong(false);
             }
-            else if( spatialRef.spatialReferenceCD == MARCONI.map.SPATIALREF_MGRS ) {
+            else if( spatialRef.spatialReferenceCD == RAMANI.map.SPATIALREF_MGRS ) {
                 
                 determineUSNGFromLatLong(true);
             }
-            else if( spatialRef.coordSysCD == MARCONI.map.COORDSYS_UTM ) {
+            else if( spatialRef.coordSysCD == RAMANI.map.COORDSYS_UTM ) {
                 
                 determineUTMFromLatLong(spatialRef, that.getUTMzoneStyle().toLowerCase() == "hemisphere");
             }
-            else if( spatialRef.spatialReferenceCD == MARCONI.map.SPATIALREF_GARS ) {
+            else if( spatialRef.spatialReferenceCD == RAMANI.map.SPATIALREF_GARS ) {
                 
                 determineGARSFromLatLong();
             }
-            else if( spatialRef.spatialReferenceCD == MARCONI.map.SPATIALREF_CAP_CLASSIC ) {
+            else if( spatialRef.spatialReferenceCD == RAMANI.map.SPATIALREF_CAP_CLASSIC ) {
                 
                 determineCAPClassicFromLatLong();
             }
-            else if( spatialRef.spatialReferenceCD == MARCONI.map.SPATIALREF_CAP_CELL ) {
+            else if( spatialRef.spatialReferenceCD == RAMANI.map.SPATIALREF_CAP_CELL ) {
             
                 determineCAPCellFromLatLong();
             }
-            else if( spatialRef.coordSysTypeCD == MARCONI.map.COORDSYS_TYPE_GRID && spatialRef.baseCoordSysCD ) {
+            else if( spatialRef.coordSysTypeCD == RAMANI.map.COORDSYS_TYPE_GRID && spatialRef.baseCoordSysCD ) {
                 
                 determineGenericGridValueFromLatLong(spatialRef);
             }
-            else if( spatialRef.spatialReferenceCD == MARCONI.map.COORDSYS_OSGB ) {
+            else if( spatialRef.spatialReferenceCD == RAMANI.map.COORDSYS_OSGB ) {
                 
                 determineOSGBFromLatLong(spatialRef, format);
             }
-            else if( spatialRef.spatialReferenceCD == MARCONI.map.COORDSYS_IRISH ) {
+            else if( spatialRef.spatialReferenceCD == RAMANI.map.COORDSYS_IRISH ) {
                 
                 determineIrishGridFromLatLong(spatialRef, format);
             }
@@ -4151,7 +4153,7 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
             
             var letter= letters.substr( index,1);
             
-            // MARCONI.stdlib.log("Value at ", x, y, "=", letter, ", measured from lower left");
+            // RAMANI.stdlib.log("Value at ", x, y, "=", letter, ", measured from lower left");
             
             return letter;
         }
@@ -4183,7 +4185,7 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
                     var xFirstOrdinal  =    Math.floor( x/500000 )+2;
                     var yFirstOrdinal  =    Math.floor( y/500000 )+1; 
 
-                    // MARCONI.stdlib.log(x, y, " give coordinates of large square as", xFirstOrdinal, yFirstOrdinal, " from top left");
+                    // RAMANI.stdlib.log(x, y, " give coordinates of large square as", xFirstOrdinal, yFirstOrdinal, " from top left");
 
                     var firstLetter = OSGBGridGivenOrdinals(xFirstOrdinal, yFirstOrdinal);
 
@@ -4195,13 +4197,13 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
                     x = x % 100000;
                     y = y % 100000;
 
-                    that.x = firstLetter + secondLetter + " " + MARCONI.stdlib.fixedFormatNumber(x, 5, 0, false) + " " + MARCONI.stdlib.fixedFormatNumber(y, 5, 0, false);
+                    that.x = firstLetter + secondLetter + " " + RAMANI.stdlib.fixedFormatNumber(x, 5, 0, false) + " " + RAMANI.stdlib.fixedFormatNumber(y, 5, 0, false);
                 }
                 else {  // numeric
                     x -= 2E6;
                     y -= 1E6;
 
-                    that.x = MARCONI.stdlib.fixedFormatNumber(x, 5, 0, false) + " " + MARCONI.stdlib.fixedFormatNumber(y, 5, 0, false);
+                    that.x = RAMANI.stdlib.fixedFormatNumber(x, 5, 0, false) + " " + RAMANI.stdlib.fixedFormatNumber(y, 5, 0, false);
                 }
             }
             that.y = "";
@@ -4251,7 +4253,7 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
                     var xFirstOrdinal  =    Math.floor( x/100000 );
                     var yFirstOrdinal  =    Math.floor( y/100000 ); 
 
-                    // MARCONI.stdlib.log(x, y, " give coordinates of large square as", xFirstOrdinal, yFirstOrdinal, " from top left");
+                    // RAMANI.stdlib.log(x, y, " give coordinates of large square as", xFirstOrdinal, yFirstOrdinal, " from top left");
 
                     var letter = IrishGridGivenOrdinals(xFirstOrdinal, yFirstOrdinal);
 
@@ -4260,11 +4262,11 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
                     x = x % 100000;
                     y = y % 100000;
 
-                    that.x = letter  + " " + MARCONI.stdlib.fixedFormatNumber(x, 5, 0, false) + " " + MARCONI.stdlib.fixedFormatNumber(y, 5, 0, false);
+                    that.x = letter  + " " + RAMANI.stdlib.fixedFormatNumber(x, 5, 0, false) + " " + RAMANI.stdlib.fixedFormatNumber(y, 5, 0, false);
                 }
                 else {  // numeric
                     
-                    that.x = MARCONI.stdlib.fixedFormatNumber(x, 5, 0, false) + " " + MARCONI.stdlib.fixedFormatNumber(y, 5, 0, false);
+                    that.x = RAMANI.stdlib.fixedFormatNumber(x, 5, 0, false) + " " + RAMANI.stdlib.fixedFormatNumber(y, 5, 0, false);
                 }
             }
             that.y = "";
@@ -4281,7 +4283,7 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
             }
             var band = 1 + Math.floor((longitude + 180.0)*2.0);  // 1-based not zero-based, eg., code is 001 at longitude -179.9
 
-            return MARCONI.stdlib.padLeft(band, 3);
+            return RAMANI.stdlib.padLeft(band, 3);
         }
         function getLatitudeBand(latitude) {
             var LETTER_ARRAY = "ABCDEFGHJKLMNPQRSTUVWXYZ";  // no I or O
@@ -4409,14 +4411,14 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
                 return null;
             }
             var i;
-            var sections = MARCONI.map.getCAPClassicGridSections();
+            var sections = RAMANI.map.getCAPClassicGridSections();
             
             for( i = 0 ; i < sections.length ; i++ ) {
 
                 if( sections[i].north >= latitude  && sections[i].south <= latitude && 
                     sections[i].west  <= longitude && sections[i].east  >= longitude ) {
 
-                    //MARCONI.stdlib.log("latlong within section " + sections[i].code );
+                    //RAMANI.stdlib.log("latlong within section " + sections[i].code );
             
                     return sections[i];
                 }
@@ -4464,7 +4466,7 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
             that.x = gridSection.code + " " + cellOrdinal + letter; 
             that.y = "";
             
-            // MARCONI.stdlib.log("CAP grid value is " + that.x);
+            // RAMANI.stdlib.log("CAP grid value is " + that.x);
         
         }
         catch(ex) {
@@ -4503,11 +4505,11 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
                 degreesPerQuad = degreesPerQuad/2;
             }
             
-            var gridValue = "" + MARCONI.stdlib.fixedFormatNumber(
+            var gridValue = "" + RAMANI.stdlib.fixedFormatNumber(
                 Math.abs(wholeLat),2,0,true) + 
-                MARCONI.stdlib.fixedFormatNumber(Math.abs(wholeLong+1.0),3,0,true) + letters.join("");
+                RAMANI.stdlib.fixedFormatNumber(Math.abs(wholeLong+1.0),3,0,true) + letters.join("");
             
-            //MARCONI.stdlib.log(gridValue +" from lat,long of " + that.y + ", " + that.x);
+            //RAMANI.stdlib.log(gridValue +" from lat,long of " + that.y + ", " + that.x);
             
             that.x = gridValue
             that.y = "";
@@ -4532,7 +4534,7 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
             var latitude  = that.y;
             var longitude = that.x;
 
-            var utmZoneNumber = MARCONI.map.getUTMZoneFromLatLong(latitude, longitude);
+            var utmZoneNumber = RAMANI.map.getUTMZoneFromLatLong(latitude, longitude);
 
             // zone letter designation could be either a MGRS letter or North-South; if the latter, we spell out to avoid confusion
             var zoneLetter    = hemiSphereOnly ? (latitude > 0 ? 'North' : 'South') : getZoneLetter(latitude, longitude);
@@ -4543,7 +4545,7 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
             var originY= ( latitude < 0 ? 10000000 : 0);  // equator is 10M for southern hemisphere, else zero
             var centralScaleFactor=0.9996;
             
-            //MARCONI.stdlib.log("Getting UTM from lat-long, latitude is " + latitude + ", originY is " + originY);
+            //RAMANI.stdlib.log("Getting UTM from lat-long, latitude is " + latitude + ", originY is " + originY);
 
             TM_LatLongToCartesian(
                 spatialRef.equitorialAxisMeters,
@@ -4555,10 +4557,10 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
             var y = that.y;
 
 
-            that.x =  utmZoneNumber + zoneLetter + " " + MARCONI.stdlib.fixedFormatNumber(x, 1, 1, true) + " " + MARCONI.stdlib.fixedFormatNumber(y, 1, 1, true);
+            that.x =  utmZoneNumber + zoneLetter + " " + RAMANI.stdlib.fixedFormatNumber(x, 1, 1, true) + " " + RAMANI.stdlib.fixedFormatNumber(y, 1, 1, true);
             that.y = "";
 
-            //MARCONI.stdlib.log("UTM value is " + that.x);
+            //RAMANI.stdlib.log("UTM value is " + that.x);
 
             return that.x;
         }
@@ -4572,7 +4574,7 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
             var latitude  = that.y;
             var longitude = that.x;
 
-            var utmZoneNumber = MARCONI.map.getUTMZoneFromLatLong(latitude, longitude);
+            var utmZoneNumber = RAMANI.map.getUTMZoneFromLatLong(latitude, longitude);
             var zoneLetter    = getZoneLetter(latitude, longitude);
 
             var isUPS = "ABYZ".indexOf(zoneLetter) >= 0;
@@ -4585,8 +4587,8 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
                 centralScaleFactor=0.994;
 
                 Polar_LatLongToCartesian(
-                    MARCONI.map.RADIUS_GRS80_METERS,
-                    MARCONI.map.eSquared_GRS80,
+                    RAMANI.map.RADIUS_GRS80_METERS,
+                    RAMANI.map.eSquared_GRS80,
                     originX,
                     originY,
                     centralScaleFactor);
@@ -4604,8 +4606,8 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
                 centralScaleFactor=0.9996;
 
                 TM_LatLongToCartesian(
-                    MARCONI.map.RADIUS_GRS80_METERS,
-                    MARCONI.map.eSquared_GRS80,
+                    RAMANI.map.RADIUS_GRS80_METERS,
+                    RAMANI.map.eSquared_GRS80,
                     originLatitude, originLongitude,
                     originX, originY, centralScaleFactor);
 
@@ -4618,7 +4620,7 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
                 that.y = "";
             }
 
-            //MARCONI.stdlib.log("got " + that.x + (isUPS ? ", polar, " : ", ") );
+            //RAMANI.stdlib.log("got " + that.x + (isUPS ? ", polar, " : ", ") );
             return that.x;
         }
         catch(ex) {
@@ -4650,7 +4652,7 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
         // throughout we use floor not round, part of MRGS/USNG spec...
 
         if( precision == 5 ) {
-            str = MARCONI.stdlib.padLeft(Math.floor(num),precision);
+            str = RAMANI.stdlib.padLeft(Math.floor(num),precision);
         }
         else {
             num = Math.floor(num*Math.pow(10,5-precision))/Math.pow(10,5-precision);
@@ -4660,11 +4662,11 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
                 str = str.substr(0, precision);
             }
             else {
-                str = MARCONI.stdlib.fixedFormatNumber(num, 1, precision-5);
+                str = RAMANI.stdlib.fixedFormatNumber(num, 1, precision-5);
             }
         }
 
-        //MARCONI.stdlib.log("Returning " + str + " for " + num);
+        //RAMANI.stdlib.log("Returning " + str + " for " + num);
         
         return str;
     }
@@ -4689,7 +4691,7 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
         var yLetter = yLetters.charAt(cellY + yLetters.indexOf(hemiSphere=="N" ? "H" : "N"));
 
         if( useMGRSformat ) {  // rigid format with no delimiters, fixed precision
-            return zoneLetter + xLetter + yLetter + MARCONI.stdlib.padLeft(Math.round(x),5) + MARCONI.stdlib.padLeft(Math.round(y),5);
+            return zoneLetter + xLetter + yLetter + RAMANI.stdlib.padLeft(Math.round(x),5) + RAMANI.stdlib.padLeft(Math.round(y),5);
         }
         else {  // usng, which has adjustable precision and is space-delimited
 
@@ -4731,8 +4733,8 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
         cellX = cellX % cellXrepeatCycle;
         cellY = cellY % cellYrepeatCycle;
 
-        var zoneSet = MARCONI.map.getUSNGZoneSet(utmZoneNumber);
-        //MARCONI.stdlib.log("zone set is " + zoneSet + ", cellX is " + cellX + ", cellY is " + cellY);
+        var zoneSet = RAMANI.map.getUSNGZoneSet(utmZoneNumber);
+        //RAMANI.stdlib.log("zone set is " + zoneSet + ", cellX is " + cellX + ", cellY is " + cellY);
 
         var yLetter;
 
@@ -4756,7 +4758,7 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
         }
 
         if( useMGRSformat ) {  // rigid format with no delimiters, fixed precision
-            return utmZoneNumber + zoneLetter + xLetter + yLetter + MARCONI.stdlib.padLeft(Math.floor(x),5) + MARCONI.stdlib.padLeft(Math.floor(y),5);
+            return utmZoneNumber + zoneLetter + xLetter + yLetter + RAMANI.stdlib.padLeft(Math.floor(x),5) + RAMANI.stdlib.padLeft(Math.floor(y),5);
         }
         else {  // usng, which has adjustable precision and is space-delimited
             
@@ -4844,7 +4846,7 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
     
     function determineLatLongFromCAPClassic( mapGridValue ) {
         function gridSectionGivenCode(code) {
-            var sections = MARCONI.map.getCAPClassicGridSections();
+            var sections = RAMANI.map.getCAPClassicGridSections();
             if( sections ) {
                 for( var i = 0 ; i < sections.length ; i++ ) {
 
@@ -4941,7 +4943,7 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
             var p = new RegExp(REGEX_CONV, "i");
             var m = p.exec(mapGridValue);
 
-            //MARCONI.stdlib.log("Grid " + mapGridValue + (m ? " is valid CAP conventional gridvalue" : " is not valid CAP conventional gridvalue"));
+            //RAMANI.stdlib.log("Grid " + mapGridValue + (m ? " is valid CAP conventional gridvalue" : " is not valid CAP conventional gridvalue"));
 
             if( !m ) {
                 return null;
@@ -4969,7 +4971,7 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
         var p = new RegExp(REGEX_CELL, "i");
         var m = p.exec(mapGridValue);
 
-        // MARCONI.stdlib.log("Grid " + mapGridValue + (m ? " is valid CAP cell-style gridvalue" : " is not valid CAP cell-style gridvalue"));
+        // RAMANI.stdlib.log("Grid " + mapGridValue + (m ? " is valid CAP cell-style gridvalue" : " is not valid CAP cell-style gridvalue"));
 
         if( !m ) {
             return null;
@@ -5092,7 +5094,7 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
                 var p = new RegExp(REGEX, "i");
                 var m = p.exec(mapGridValue);
 
-                // MARCONI.stdlib.log("Grid " + mapGridValue + (m ? " is valid OSGB gridvalue" : " is not a valid OSGB gridvalue"));
+                // RAMANI.stdlib.log("Grid " + mapGridValue + (m ? " is valid OSGB gridvalue" : " is not a valid OSGB gridvalue"));
 
                 if( !m ) {
                     return null;
@@ -5110,7 +5112,7 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
                         return null;
                     }
                     
-                    // MARCONI.stdlib.log("Chopping single numeric string ", easting, " into easting and northing");
+                    // RAMANI.stdlib.log("Chopping single numeric string ", easting, " into easting and northing");
                     
                     northing = easting.substr(easting.length/2);
                     easting  = easting.substr(0, easting.length/2);
@@ -5124,7 +5126,7 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
                     y: northing==="" ? 0 : parseInt(northing,10), 
                     precision: letters.length ? easting.length : 5};
                 
-                // MARCONI.stdlib.log("Grid ", mapGridValue, " parses as ", parsed);
+                // RAMANI.stdlib.log("Grid ", mapGridValue, " parses as ", parsed);
                 
                 
                 return parsed;
@@ -5149,7 +5151,7 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
                 var xIndex = index%5;
                 var yIndex = 4-Math.floor(index/5);
 
-                // MARCONI.stdlib.log("Letter " + letter + " is at position xy=", xIndex, ", ", yIndex, " measured from lower left");
+                // RAMANI.stdlib.log("Letter " + letter + " is at position xy=", xIndex, ", ", yIndex, " measured from lower left");
 
                 x += xIndex * cellSize;
                 y += yIndex * cellSize;
@@ -5188,18 +5190,18 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
 
             // add offsets such that we center point in the square, if precision is less than a meter
             if( parsed.precision < 5 ) {
-                // MARCONI.stdlib.log("Adjusting for low-precision x and y given as ", parsed.x, "," , parsed.y);
+                // RAMANI.stdlib.log("Adjusting for low-precision x and y given as ", parsed.x, "," , parsed.y);
 
                 parsed.x += 0.5 * Math.pow(10, 5 - parsed.precision);
                 parsed.y += 0.5 * Math.pow(10, 5 - parsed.precision);
             }
             
-            // MARCONI.stdlib.log("Adjusted x and y are ", parsed.x, "," , parsed.y);
+            // RAMANI.stdlib.log("Adjusted x and y are ", parsed.x, "," , parsed.y);
             
             var x = parsed.x + offSet.x;
             var y = parsed.y + offSet.y;
             
-            // MARCONI.stdlib.log("Final x,y values are ", x, y );
+            // RAMANI.stdlib.log("Final x,y values are ", x, y );
             
             var eSquared = spatialRef.eSquared || (spatialRef.eccentricity * spatialRef.eccentricity);
 
@@ -5234,7 +5236,7 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
                 var p = new RegExp(REGEX, "i");
                 var m = p.exec(mapGridValue);
 
-                // MARCONI.stdlib.log("Grid " + mapGridValue + (m ? " is valid Irish gridvalue" : " is not a valid Irish gridvalue"));
+                // RAMANI.stdlib.log("Grid " + mapGridValue + (m ? " is valid Irish gridvalue" : " is not a valid Irish gridvalue"));
 
                 if( !m ) {
                     return null;
@@ -5252,7 +5254,7 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
                         return null;
                     }
                     
-                    // MARCONI.stdlib.log("Chopping single numeric string ", easting, " into easting and northing");
+                    // RAMANI.stdlib.log("Chopping single numeric string ", easting, " into easting and northing");
                     
                     northing = easting.substr(easting.length/2);
                     easting  = easting.substr(0, easting.length/2);
@@ -5265,7 +5267,7 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
                     y: northing==="" ? 0 : parseInt(northing,10), 
                     precision: letter.length ? easting.length : 5};
                 
-                // MARCONI.stdlib.log("Grid ", mapGridValue, " parses as ", parsed);
+                // RAMANI.stdlib.log("Grid ", mapGridValue, " parses as ", parsed);
                 
                 
                 return parsed;
@@ -5303,7 +5305,7 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
 
             var parsed = parseIrish(mapGridValue);
             
-            // MARCONI.stdlib.log(parsed);
+            // RAMANI.stdlib.log(parsed);
             
             if( !parsed ) {
                 throw "Gridvalue " + mapGridValue + " is not a valid Irish grid value";
@@ -5311,27 +5313,27 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
             
             var offSet = IrishGridOffsetGivenLetter(parsed.letter);
             
-            // MARCONI.stdlib.log(parsed, " gives offset of ", offSet);
+            // RAMANI.stdlib.log(parsed, " gives offset of ", offSet);
             
-            // MARCONI.stdlib.log("With correction, offset for ", parsed.letters, " is ", offSet);
+            // RAMANI.stdlib.log("With correction, offset for ", parsed.letters, " is ", offSet);
 
             parsed.x = parsed.x * Math.pow(10, 5-parsed.precision );
             parsed.y = parsed.y * Math.pow(10, 5-parsed.precision );
 
             // add offsets such that we center point in the square, if precision is less than a meter
             if( parsed.precision < 5 ) {
-                // MARCONI.stdlib.log("Adjusting for low-precision x and y given as ", parsed.x, "," , parsed.y);
+                // RAMANI.stdlib.log("Adjusting for low-precision x and y given as ", parsed.x, "," , parsed.y);
 
                 parsed.x += 0.5 * Math.pow(10, 5 - parsed.precision);
                 parsed.y += 0.5 * Math.pow(10, 5 - parsed.precision);
             }
             
-            // MARCONI.stdlib.log("Adjusted x and y are ", parsed.x, "," , parsed.y);
+            // RAMANI.stdlib.log("Adjusted x and y are ", parsed.x, "," , parsed.y);
             
             var x = parsed.x + offSet.x;
             var y = parsed.y + offSet.y;
             
-            // MARCONI.stdlib.log("Final x,y, refvalues are ", x, y, spatialRef );
+            // RAMANI.stdlib.log("Final x,y, refvalues are ", x, y, spatialRef );
             
             var eSquared = spatialRef.eSquared || (spatialRef.eccentricity * spatialRef.eccentricity);
 
@@ -5357,7 +5359,7 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
         // regression test against http://gisdata.usgs.gov/XMLWebServices/USNG.asmx?op=Get_XY&AspxAutoDetectCookieSupport=1
         
         try {
-            var parts = MARCONI.map.parseUSNGGridRef(mapGridValue);
+            var parts = RAMANI.map.parseUSNGGridRef(mapGridValue);
 
             if(!parts) {
                 throw mapGridValue + " is not a valid USNG value";
@@ -5473,7 +5475,7 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
                 var latitudeBandMinY = latitudeBandMinYarray[latitudeBandIndex];   // e.g., 0 for zone 10S
 
 
-                //MARCONI.stdlib.log("cellIndexY is " + cellIndexY +", latitudeBandIndex is " + latitudeBandIndex );
+                //RAMANI.stdlib.log("cellIndexY is " + cellIndexY +", latitudeBandIndex is " + latitudeBandIndex );
 
 
                 var yMillions = latitudeBandYOriginarray[latitudeBandIndex] + cellIndexY/10;
@@ -5484,7 +5486,7 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
                     yMillions += 2.0;
                 }
 
-                //MARCONI.stdlib.log("yMillions is " + yMillions);
+                //RAMANI.stdlib.log("yMillions is " + yMillions);
                 
                 var utmY = yMillions * 1000000.0 + parseGridNumber(gridY);
 
@@ -5509,7 +5511,7 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
                 that.x=utmX;
                 that.y=utmY;
 
-                //MARCONI.stdlib.log("approx x is " + approxX + ", full x,y are " + utmX + ", " + utmY);
+                //RAMANI.stdlib.log("approx x is " + approxX + ", full x,y are " + utmX + ", " + utmY);
 
                 // now call standard utm to lat-long function for
                 // USNG-standard ellipsoid
@@ -5544,7 +5546,7 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
     function determineLatLongFromUTM(spatialRef, mapGridValue) {
         try {
             
-            var parts = MARCONI.map.parseUTMGridRef(mapGridValue);
+            var parts = RAMANI.map.parseUTMGridRef(mapGridValue);
 
             if( !parts ) {
                 throw mapGridValue + " is not a valid UTM grid reference. UTM grid refs take the form zza xxxx yyyy where zz is a zone number, a is a letter from C-X, North, or South, and xxxx and yyyy are x and y values in meters";
@@ -5640,7 +5642,7 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
 
 
             /*
-             *MARCONI.stdlib.log("converting " + that.x + "," + that.y + " from long-lat to XY using radius " + equitorialAxisMeters +
+             *RAMANI.stdlib.log("converting " + that.x + "," + that.y + " from long-lat to XY using radius " + equitorialAxisMeters +
                 ", eSquared=" + eSquared + ", parallels of " + parallelOne + " and " + parallelTwo +
                 ", origin in lat-long of " + originLatitude + ", " + originLongitude +
                 ", origin in x-y of " + originX + ", " + originY);
@@ -5656,20 +5658,20 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
             }
 
             // convert info given in degrees to radians
-            parallelOne        = parallelOne      * MARCONI.map.DEGREES_TO_RADIANS;
-            parallelTwo        = parallelTwo      * MARCONI.map.DEGREES_TO_RADIANS;
-            originLatitude     = originLatitude   * MARCONI.map.DEGREES_TO_RADIANS;
-            originLongitude    = originLongitude  * MARCONI.map.DEGREES_TO_RADIANS;
+            parallelOne        = parallelOne      * RAMANI.map.DEGREES_TO_RADIANS;
+            parallelTwo        = parallelTwo      * RAMANI.map.DEGREES_TO_RADIANS;
+            originLatitude     = originLatitude   * RAMANI.map.DEGREES_TO_RADIANS;
+            originLongitude    = originLongitude  * RAMANI.map.DEGREES_TO_RADIANS;
 
-            var latitude  = that.y*MARCONI.map.DEGREES_TO_RADIANS;
-            var longitude = that.x*MARCONI.map.DEGREES_TO_RADIANS;
+            var latitude  = that.y*RAMANI.map.DEGREES_TO_RADIANS;
+            var longitude = that.x*RAMANI.map.DEGREES_TO_RADIANS;
             var e = Math.sqrt(eSquared);
 
             // yes, M is defined the same for Albers as for Lambert...
             var m1 = Lambert_M(parallelOne, eSquared);
             var m2 = Lambert_M(parallelTwo, eSquared);
 
-            //MARCONI.stdlib.log("m1=" + m1 + ", m2=" + m2);
+            //RAMANI.stdlib.log("m1=" + m1 + ", m2=" + m2);
         
         
             var q0 = Q(originLatitude,  e, eSquared);
@@ -5677,7 +5679,7 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
             var q2 = Q(parallelTwo,     e, eSquared);
             var q =  Q(latitude,        e, eSquared);
 
-            //MARCONI.stdlib.log("q0=" + q0 + ", q1=" + q1 + ", q2=" + q2 + ", q=" + q);
+            //RAMANI.stdlib.log("q0=" + q0 + ", q1=" + q1 + ", q2=" + q2 + ", q=" + q);
 
             var n = (m1*m1 - m2*m2)/(q2-q1);
 
@@ -5735,16 +5737,16 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
                 throw "Illegal x,y of " + that.x + ", " + that.y + ", must be numeric";
             }
             
-            //MARCONI.stdlib.log("Albers_CartesianToLatLong: converting " + that.x + "," + that.y + " to lat-long using radius" + equitorialAxisMeters +
+            //RAMANI.stdlib.log("Albers_CartesianToLatLong: converting " + that.x + "," + that.y + " to lat-long using radius" + equitorialAxisMeters +
             //", eSquared=" + eSquared + ", parallels of " + parallelOne + " and " + parallelTwo +
             //", origin in lat-long of " + originLatitude + ", " + originLongitude +
             //", origin in x-y of " + originX + ", " + originY);
 
             // convert info given in degrees to radians
-            parallelOne        = parallelOne      * MARCONI.map.DEGREES_TO_RADIANS;
-            parallelTwo        = parallelTwo      * MARCONI.map.DEGREES_TO_RADIANS;
-            originLatitude     = originLatitude   * MARCONI.map.DEGREES_TO_RADIANS;
-            originLongitude    = originLongitude  * MARCONI.map.DEGREES_TO_RADIANS;
+            parallelOne        = parallelOne      * RAMANI.map.DEGREES_TO_RADIANS;
+            parallelTwo        = parallelTwo      * RAMANI.map.DEGREES_TO_RADIANS;
+            originLatitude     = originLatitude   * RAMANI.map.DEGREES_TO_RADIANS;
+            originLongitude    = originLongitude  * RAMANI.map.DEGREES_TO_RADIANS;
 
             // alert("Lambert_CartesianToLatLong(): pt is " + that.x + ", " + that.y);
 
@@ -5759,7 +5761,7 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
             // map constants
             var e  = Math.sqrt(eSquared);
 
-            //MARCONI.stdlib.log("parallelOne is " +  parallelOne + ", eSquared is " + eSquared);
+            //RAMANI.stdlib.log("parallelOne is " +  parallelOne + ", eSquared is " + eSquared);
 
             
             // m1, m2, q0, q1, q2, n, C, rhoKnot are identical to those used for the latlong-to-cartesian conversions
@@ -5772,7 +5774,7 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
             var n = (m1*m1 - m2*m2)/(q2-q1);
             var C = m1*m1 + n*q1;
 
-            //MARCONI.stdlib.log("m1, m2 are " + m1 + ", " + m2 + " for Albers point " + x + ", " + y);
+            //RAMANI.stdlib.log("m1, m2 are " + m1 + ", " + m2 + " for Albers point " + x + ", " + y);
 
             var rhoKnot = equitorialAxis * Math.sqrt(C-n*q0)/n;
 
@@ -5791,11 +5793,11 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
             var theta = n> 0 ? Math.atan2(x, rhoKnot-y) : Math.atan2(-x, y-rhoKnot);
 
             // Convert to degrees
-            that.y = phi * MARCONI.map.RADIANS_TO_DEGREES;
-            that.x = (theta / n + originLongitude) * MARCONI.map.RADIANS_TO_DEGREES;
+            that.y = phi * RAMANI.map.RADIANS_TO_DEGREES;
+            that.x = (theta / n + originLongitude) * RAMANI.map.RADIANS_TO_DEGREES;
 
             
-            //MARCONI.stdlib.log("returning lat-long of " + that.y + ", " + that.x + " for Albers point " + x + ", " + y);
+            //RAMANI.stdlib.log("returning lat-long of " + that.y + ", " + that.x + " for Albers point " + x + ", " + y);
 
             return true;  // success
         }
@@ -5828,7 +5830,7 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
 
 
 
-             MARCONI.stdlib.log("converting " + that.x + "," + that.y + " from long-lat to XY using radius " + equitorialAxis +
+             RAMANI.stdlib.log("converting " + that.x + "," + that.y + " from long-lat to XY using radius " + equitorialAxis +
                 ", eSquared=" + eSquared + ", parallels of " + parallelOne + " and " + parallelTwo +
                 ", origin in lat-long of " + originLatitude + ", " + originLongitude +
                 ", origin in x-y of " + originX + ", " + originY);
@@ -5846,13 +5848,13 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
             }
 
             // convert info given in degrees to radians
-            parallelOne        = parallelOne      * MARCONI.map.DEGREES_TO_RADIANS;
-            parallelTwo        = parallelTwo      * MARCONI.map.DEGREES_TO_RADIANS;
-            originLatitude     = originLatitude   * MARCONI.map.DEGREES_TO_RADIANS;
-            originLongitude    = originLongitude  * MARCONI.map.DEGREES_TO_RADIANS;
+            parallelOne        = parallelOne      * RAMANI.map.DEGREES_TO_RADIANS;
+            parallelTwo        = parallelTwo      * RAMANI.map.DEGREES_TO_RADIANS;
+            originLatitude     = originLatitude   * RAMANI.map.DEGREES_TO_RADIANS;
+            originLongitude    = originLongitude  * RAMANI.map.DEGREES_TO_RADIANS;
 
-            var latitude = that.y*MARCONI.map.DEGREES_TO_RADIANS;
-            var longitude = that.x*MARCONI.map.DEGREES_TO_RADIANS;
+            var latitude = that.y*RAMANI.map.DEGREES_TO_RADIANS;
+            var longitude = that.x*RAMANI.map.DEGREES_TO_RADIANS;
             var e = Math.sqrt(eSquared);
 
             var m1 = Lambert_M(parallelOne, eSquared);
@@ -5914,17 +5916,17 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
                 throw "Illegal x,y of " + that.x + ", " + that.y + ", must be numeric";
             }
             
-            //MARCONI.stdlib.log("Lambert_CartesianToLatLong: converting " + that.x + "," + that.y + " to lat-long using radius" + equitorialAxis +
+            //RAMANI.stdlib.log("Lambert_CartesianToLatLong: converting " + that.x + "," + that.y + " to lat-long using radius" + equitorialAxis +
             //", eSquared=" + eSquared + ", parallels of " + parallelOne + " and " + parallelTwo +
             //", origin in lat-long of " + originLatitude + ", " + originLongitude +
             //", origin in x-y of " + originX + ", " + originY);
             
 
             // convert info given in degrees to radians
-            parallelOne        = parallelOne      * MARCONI.map.DEGREES_TO_RADIANS;
-            parallelTwo        = parallelTwo      * MARCONI.map.DEGREES_TO_RADIANS;
-            originLatitude     = originLatitude   * MARCONI.map.DEGREES_TO_RADIANS;
-            originLongitude    = originLongitude  * MARCONI.map.DEGREES_TO_RADIANS;
+            parallelOne        = parallelOne      * RAMANI.map.DEGREES_TO_RADIANS;
+            parallelTwo        = parallelTwo      * RAMANI.map.DEGREES_TO_RADIANS;
+            originLatitude     = originLatitude   * RAMANI.map.DEGREES_TO_RADIANS;
+            originLongitude    = originLongitude  * RAMANI.map.DEGREES_TO_RADIANS;
             
             // alert("Lambert_CartesianToLatLong(): pt is " + that.x + ", " + that.y);
             
@@ -5992,14 +5994,14 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
             phi = phi + Math.sin(8 * chi) * (4279.0 / 161280.0 * Math.pow(eSquared,4));
 
             // Convert to degrees
-            that.y = phi * MARCONI.map.RADIANS_TO_DEGREES;
+            that.y = phi * RAMANI.map.RADIANS_TO_DEGREES;
 
             // Longitude is trivial, with the exception of its sign
             // This formula returns negative longitudes, as it should
             // but many people assume it's positive
             var theta = Math.atan(x / (rhoKnot - y));
             
-            that.x = (theta / n + originLongitude) * MARCONI.map.RADIANS_TO_DEGREES;
+            that.x = (theta / n + originLongitude) * RAMANI.map.RADIANS_TO_DEGREES;
 
             
             // uncomment to calculate map scale
@@ -6010,7 +6012,7 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
             //m_CalcDetail.mapScaleFactorK = k
             //m_CalcDetail.mapScaleFactorH = k
 
-            //MARCONI.stdlib.log("returning lat-long of " + that.y + ", " + that.x);
+            //RAMANI.stdlib.log("returning lat-long of " + that.y + ", " + that.x);
             return true;  // success
         }
         catch(ex) {
@@ -6063,9 +6065,9 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
             var lamda = x/equitorialAxis + originLongitude;
 
             // Convert to degrees
-            that.y = phi * MARCONI.map.RADIANS_TO_DEGREES;
+            that.y = phi * RAMANI.map.RADIANS_TO_DEGREES;
 
-            that.x = lamda * MARCONI.map.RADIANS_TO_DEGREES;
+            that.x = lamda * RAMANI.map.RADIANS_TO_DEGREES;
 
             return true;  // success
         }
@@ -6086,15 +6088,15 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
                 throw "Illegal lat-long " + that.y + ", " + that.x + ", must be numeric";
             }
             
-            MARCONI.stdlib.log("Converting " + that.y + ", " + that.x + " to mercator with origin " + originX + ", " + originY);
+            RAMANI.stdlib.log("Converting " + that.y + ", " + that.x + " to mercator with origin " + originX + ", " + originY);
             
             var originLongitude    = 0.0;   // non-zero reference longitude basically unheard of
 
-            var x = (that.x - originLongitude)* MARCONI.map.DEGREES_TO_RADIANS * equitorialAxis - originX;
+            var x = (that.x - originLongitude)* RAMANI.map.DEGREES_TO_RADIANS * equitorialAxis - originX;
 
             var e = Math.sqrt(eSquared);
 
-            var sinPhi = Math.sin(that.y * MARCONI.map.DEGREES_TO_RADIANS);
+            var sinPhi = Math.sin(that.y * RAMANI.map.DEGREES_TO_RADIANS);
 
             var y = 0.5 * equitorialAxis * Math.log(((1+sinPhi)/(1-sinPhi))*Math.pow((1-e*sinPhi)/(1+e*sinPhi), e) ) - originY;
 
@@ -6130,11 +6132,11 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
             var e = Math.sqrt(eSquared);
             
             // get given lat-long, and origin, in radians
-            originLatitude  = originLatitude  * MARCONI.map.DEGREES_TO_RADIANS;
-            originLongitude = originLongitude * MARCONI.map.DEGREES_TO_RADIANS;
+            originLatitude  = originLatitude  * RAMANI.map.DEGREES_TO_RADIANS;
+            originLongitude = originLongitude * RAMANI.map.DEGREES_TO_RADIANS;
             
-            var latitude  = that.y * MARCONI.map.DEGREES_TO_RADIANS;
-            var longitude = that.x * MARCONI.map.DEGREES_TO_RADIANS;
+            var latitude  = that.y * RAMANI.map.DEGREES_TO_RADIANS;
+            var longitude = that.x * RAMANI.map.DEGREES_TO_RADIANS;
             
             var x,y;
             
@@ -6210,8 +6212,8 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
             var e = Math.sqrt(eSquared);
             
             // get origin in radians
-            originLatitude  = originLatitude  * MARCONI.map.DEGREES_TO_RADIANS;
-            originLongitude = originLongitude * MARCONI.map.DEGREES_TO_RADIANS;
+            originLatitude  = originLatitude  * RAMANI.map.DEGREES_TO_RADIANS;
+            originLongitude = originLongitude * RAMANI.map.DEGREES_TO_RADIANS;
             
             // remove false eastings and northings
             var x = that.x - originX;
@@ -6293,9 +6295,9 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
             }
 
             
-            var latitude  = phi    * MARCONI.map.RADIANS_TO_DEGREES;
+            var latitude  = phi    * RAMANI.map.RADIANS_TO_DEGREES;
             
-            var longitude = lambda * MARCONI.map.RADIANS_TO_DEGREES;
+            var longitude = lambda * RAMANI.map.RADIANS_TO_DEGREES;
             
             that.x = longitude;
             that.y = latitude;
@@ -6320,10 +6322,10 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
                     throw("shiftZ must be defined for Molodensky transform");
                 }
 
-                var fromDatum = MARCONI.map.datumGivenCode(datumShift.fromDatumCD);
-                var toDatum   = MARCONI.map.datumGivenCode(datumShift.toDatumCD);
+                var fromDatum = RAMANI.map.datumGivenCode(datumShift.fromDatumCD);
+                var toDatum   = RAMANI.map.datumGivenCode(datumShift.toDatumCD);
                 
-                // MARCONI.stdlib.log("Converting datum from/to ", fromDatum, toDatum);
+                // RAMANI.stdlib.log("Converting datum from/to ", fromDatum, toDatum);
 
 
                 if( typeof(fromDatum.flatteningInverse) === "undefined" && fromDatum.eccentricity > 0 ) {
@@ -6340,10 +6342,10 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
 
                 // see NIMA TR8350.2 section 7.4 for the math
 
-                var sinPhi    = Math.sin(pt.y * MARCONI.map.DEGREES_TO_RADIANS);
-                var cosPhi    = Math.cos(pt.y * MARCONI.map.DEGREES_TO_RADIANS);
-                var cosLambda = Math.cos(pt.x * MARCONI.map.DEGREES_TO_RADIANS);
-                var sinLambda = Math.sin(pt.x * MARCONI.map.DEGREES_TO_RADIANS);
+                var sinPhi    = Math.sin(pt.y * RAMANI.map.DEGREES_TO_RADIANS);
+                var cosPhi    = Math.cos(pt.y * RAMANI.map.DEGREES_TO_RADIANS);
+                var cosLambda = Math.cos(pt.x * RAMANI.map.DEGREES_TO_RADIANS);
+                var sinLambda = Math.sin(pt.x * RAMANI.map.DEGREES_TO_RADIANS);
 
 
                 var a = fromDatum.equitorialAxisMeters;
@@ -6355,7 +6357,7 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
                 var Rm = a*(1-eSquared)/Math.pow(1-eSquared*sinPhi*sinPhi,1.5);
 
                 var h = pt.z ? pt.z : 0;  // geodetic height, i.e. height above "from" ellipsoid
-                var sinOne = Math.sin(1/3600*MARCONI.map.DEGREES_TO_RADIANS);
+                var sinOne = Math.sin(1/3600*RAMANI.map.DEGREES_TO_RADIANS);
 
                 var deltaF = fTo - fFrom;
 
@@ -6366,7 +6368,7 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
 
                 var shiftLong = (-datumShift.shiftX * sinLambda + datumShift.shiftY * cosLambda) / ((Rn+h)*cosPhi * sinOne);
 
-                //MARCONI.stdlib.log("Molodensky-based shift is " + shiftLat + " and " + shiftLong + " seconds for lat and long");
+                //RAMANI.stdlib.log("Molodensky-based shift is " + shiftLat + " and " + shiftLong + " seconds for lat and long");
 
                 pt.x += shiftLong/3600;
                 pt.y += shiftLat/3600;
@@ -6389,8 +6391,8 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
                     throw("shiftZ must be defined for Helmert transform");
                 }
 
-                var fromDatum = MARCONI.map.datumGivenCode(datumShift.fromDatumCD);
-                var toDatum   = MARCONI.map.datumGivenCode(datumShift.toDatumCD);
+                var fromDatum = RAMANI.map.datumGivenCode(datumShift.fromDatumCD);
+                var toDatum   = RAMANI.map.datumGivenCode(datumShift.toDatumCD);
 
 
                 if( typeof(fromDatum.equitorialAxisMeters) === "undefined" || typeof(fromDatum.eccentricitySquared) === "undefined" ) {
@@ -6404,8 +6406,8 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
 
                 var a = fromDatum.equitorialAxisMeters;
 
-                var latitude  = pt.y * MARCONI.map.DEGREES_TO_RADIANS;
-                var longitude = pt.x * MARCONI.map.DEGREES_TO_RADIANS;
+                var latitude  = pt.y * RAMANI.map.DEGREES_TO_RADIANS;
+                var longitude = pt.x * RAMANI.map.DEGREES_TO_RADIANS;
 
                 var eSquared = fromDatum.eccentricitySquared;
                 var h = pt.z || 0;  // geodetic height, i.e. height above "from" ellipsoid
@@ -6419,7 +6421,7 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
                 var zr = datumShift.rotationZ;  // e.g. -0.8421 seconds
                 var s  = datumShift.scaleFactor;  // assumed to be in ppm, e.g., 20.4894;
 
-                //MARCONI.stdlib.log("Helmert shift with dx,dy,dz=" + xp + ", " + yp + ", " + zp + ", rx,ry,rz= " + xr + ", " + yr + ", " + zr + ", scale=" + s);
+                //RAMANI.stdlib.log("Helmert shift with dx,dy,dz=" + xp + ", " + yp + ", " + zp + ", rx,ry,rz= " + xr + ", " + yr + ", " + zr + ", scale=" + s);
 
                 // convert given lat-long to earth-centered cartesian
                 var sf = s * 0.000001;
@@ -6429,9 +6431,9 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
                 var z = ((1 - eSquared) * v + h) * Math.sin(latitude);
 
                 // transform cartesian
-                var xrot = (xr / 3600) * MARCONI.map.DEGREES_TO_RADIANS;
-                var yrot = (yr / 3600) * MARCONI.map.DEGREES_TO_RADIANS;
-                var zrot = (zr / 3600) * MARCONI.map.DEGREES_TO_RADIANS;
+                var xrot = (xr / 3600) * RAMANI.map.DEGREES_TO_RADIANS;
+                var yrot = (yr / 3600) * RAMANI.map.DEGREES_TO_RADIANS;
+                var zrot = (zr / 3600) * RAMANI.map.DEGREES_TO_RADIANS;
                 var hx = x + (x * sf) - (y * zrot) + (z * yrot) + xp;
                 var hy = (x * zrot) + y + (y * sf) - (z * xrot) + yp;
                 var hz = (-1 * x * yrot) + (y * xrot) + z + (z * sf) + zp;
@@ -6452,8 +6454,8 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
                 }
 
                 // converted point is in degrees
-                pt.y = newLat * MARCONI.map.RADIANS_TO_DEGREES;
-                pt.x = newLon * MARCONI.map.RADIANS_TO_DEGREES;
+                pt.y = newLat * RAMANI.map.RADIANS_TO_DEGREES;
+                pt.x = newLon * RAMANI.map.RADIANS_TO_DEGREES;
             }
             catch(ex) {
                 throw "Error " + ex + " attempting datum-shift using Helmert transformation matrix method";
@@ -6467,7 +6469,7 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
 
                 //for test data, U= -0.11593597351655573, V=0.4408093939615561
 
-                //MARCONI.stdlib.log("U= " + U + ", V=" + V);
+                //RAMANI.stdlib.log("U= " + U + ", V=" + V);
                 var coeff=null;
                 var i=null;
 
@@ -6476,7 +6478,7 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
                     for( i = 0 ; i < datumShift.latitudeCoefficients.length ; i++) {
                         coeff=datumShift.latitudeCoefficients[i];
 
-                        //MARCONI.stdlib.log("Applying coefficient " + MARCONI.stdlib.logObject(coeff));
+                        //RAMANI.stdlib.log("Applying coefficient " + RAMANI.stdlib.logObject(coeff));
                         shiftLat += coeff.value * Math.pow(U, coeff.expLat) * Math.pow(V, coeff.expLong);
                     }
                 }
@@ -6486,12 +6488,12 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
                     for( i = 0 ; i <  datumShift.longitudeCoefficients.length ; i++) {
                         coeff=datumShift.longitudeCoefficients[i];
 
-                        //MARCONI.stdlib.log("Applying coefficient " + coeff.value + " to U" + coeff.expLat + "V" + coeff.expLong + ": " + Math.pow(U, coeff.expLat) * Math.pow(V, coeff.expLong) + ", val= " + coeff.value *  Math.pow(U, coeff.expLat) * Math.pow(V, coeff.expLong));
+                        //RAMANI.stdlib.log("Applying coefficient " + coeff.value + " to U" + coeff.expLat + "V" + coeff.expLong + ": " + Math.pow(U, coeff.expLat) * Math.pow(V, coeff.expLong) + ", val= " + coeff.value *  Math.pow(U, coeff.expLat) * Math.pow(V, coeff.expLong));
                         shiftLong += coeff.value * Math.pow(U, 1*coeff.expLat) * Math.pow(V, 1*coeff.expLong);
                     }
                 }
 
-                //MARCONI.stdlib.log("MRE-based shift is " + shiftLat + " and " + shiftLong + " seconds for lat and long");
+                //RAMANI.stdlib.log("MRE-based shift is " + shiftLat + " and " + shiftLong + " seconds for lat and long");
 
                 pt.x += shiftLong/3600;
                 pt.y += shiftLat/3600;
@@ -6501,7 +6503,7 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
             }
         }
 
-        //MARCONI.stdlib.log("converting " + pt.y + ", " + pt.x + " generically using " + MARCONI.stdlib.logObject(datumShift, "obj", "-", 3));
+        //RAMANI.stdlib.log("converting " + pt.y + ", " + pt.x + " generically using " + RAMANI.stdlib.logObject(datumShift, "obj", "-", 3));
         
         if( !datumShift || !datumShift.fromDatumCD || !datumShift.toDatumCD ) {
             
@@ -6534,8 +6536,8 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
             
             var ITERATION_COUNT_MAX = 50;
 
-            var oldDatumCanonical = MARCONI.map.canonicalDatum(oldDatum);
-            var newDatumCanonical = MARCONI.map.canonicalDatum(newDatum);
+            var oldDatumCanonical = RAMANI.map.canonicalDatum(oldDatum);
+            var newDatumCanonical = RAMANI.map.canonicalDatum(newDatum);
 
 
             if( oldDatumCanonical == newDatumCanonical ){
@@ -6557,12 +6559,12 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
             var isSpecificShiftGiven = datumShiftMethodCD && datumShiftMethodCD.indexOf(" ") > 0;
             var pt = (isSpecificShiftGiven ? null : that);
 
-            var datumShift = MARCONI.map.getDatumShift(oldDatumCanonical, newDatumCanonical, datumShiftMethodCD, pt);
+            var datumShift = RAMANI.map.getDatumShift(oldDatumCanonical, newDatumCanonical, datumShiftMethodCD, pt);
             var rejectedDatumShiftInfo= "" ;
 
             if( datumShift ) {
                 // if a very specific shift was given, we check and report bounding box compliance separately so user is not baffled
-                if( !MARCONI.map.isDatumShiftOkayForGivenPoint(datumShift, that) ) {
+                if( !RAMANI.map.isDatumShiftOkayForGivenPoint(datumShift, that) ) {
                     rejectedDatumShiftInfo= "Datum shift " + datumShift.datumShiftMethodCD + " [" + datumShift.datumShiftName + "] is valid only for bounds of " +
                             datumShift.latitudeMin + ", " + datumShift.longitudeMin + " by " + datumShift.latitudeMax + ", " + datumShift.longitudeMax + ", not suitable for lat,long of " +
                             that.y + ", " + that.x;
@@ -6577,10 +6579,10 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
             }
 
             // reverse shifts require iteration, often 10x the processing time, so they are a second choice
-            var reverseShift = datumShift ? null : MARCONI.map.getDatumShift(newDatumCanonical, oldDatumCanonical, datumShiftMethodCD, pt);
+            var reverseShift = datumShift ? null : RAMANI.map.getDatumShift(newDatumCanonical, oldDatumCanonical, datumShiftMethodCD, pt);
 
             if( reverseShift ) {
-                if( !MARCONI.map.isDatumShiftOkayForGivenPoint(reverseShift, that) ) {
+                if( !RAMANI.map.isDatumShiftOkayForGivenPoint(reverseShift, that) ) {
                     if( isSpecificShiftGiven ) {
                         throw("Datum shift " + reverseShift.datumShiftMethodCD + " [" + reverseShift.datumShiftName + "] is valid only for bounds of " +
                         reverseShift.latitudeMin + ", " + reverseShift.longitudeMin + " by " + reverseShift.latitudeMax + ", " + reverseShift.longitudeMax +
@@ -6592,7 +6594,7 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
                     }
                 }
                 else {
-                    //MARCONI.stdlib.log("Selected reverse shift " + reverseShift.datumShiftName + MARCONI.stdlib.logObject(reverseShift));
+                    //RAMANI.stdlib.log("Selected reverse shift " + reverseShift.datumShiftName + RAMANI.stdlib.logObject(reverseShift));
                 }
             }
 
@@ -6615,12 +6617,12 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
                 // iterative method of datum shifting
 
                 // initially guess that lat and long are unchanged -- not a bad guess since shifts are pretty small
-                var initPt  = new MARCONI.map.GeoPoint(that.x, that.y);
-                var trialPt = new MARCONI.map.GeoPoint(that.x, that.y);
-                var  calcPt = new MARCONI.map.GeoPoint(that.x, that.y);
+                var initPt  = new RAMANI.map.GeoPoint(that.x, that.y);
+                var trialPt = new RAMANI.map.GeoPoint(that.x, that.y);
+                var  calcPt = new RAMANI.map.GeoPoint(that.x, that.y);
 
                 for( var iterationCount = 0 ; iterationCount < ITERATION_COUNT_MAX ; iterationCount++ ) {
-                    //MARCONI.stdlib.log( "Iteration #" + iterationCount + ": trying long-lat of " + trialPt.x + " / " + trialPt.y );
+                    //RAMANI.stdlib.log( "Iteration #" + iterationCount + ": trying long-lat of " + trialPt.x + " / " + trialPt.y );
 
                     calcPt.x = trialPt.x;
                     calcPt.y = trialPt.y;
@@ -6632,7 +6634,7 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
                     var errorX = calcPt.x - initPt.x;
                     var errorY = calcPt.y - initPt.y;
 
-                    //MARCONI.stdlib.log("shift errors are " + errorX + ", " + errorY);
+                    //RAMANI.stdlib.log("shift errors are " + errorX + ", " + errorY);
 
                     if( Math.abs(errorX) < EPSILON && Math.abs(errorY) < EPSILON) {
                         that.x = trialPt.x;
@@ -6754,19 +6756,19 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
                 throw "Illegal x,y of " + that.x + ", " + that.y + ", must be numeric";
             }
             
-            // MARCONI.stdlib.log("converting TM " + parseFloat(that.x) + ", " + parseFloat(that.y) + " to lat-long, radius " + equitorialAxis + ", esqu=" + eSquared +", lat-long of origin is " + originLatitude + ", " + originLongitude + " at xy " + originX + ", " + originY +", scale is " + centralScaleFactor);
+            // RAMANI.stdlib.log("converting TM " + parseFloat(that.x) + ", " + parseFloat(that.y) + " to lat-long, radius " + equitorialAxis + ", esqu=" + eSquared +", lat-long of origin is " + originLatitude + ", " + originLongitude + " at xy " + originX + ", " + originY +", scale is " + centralScaleFactor);
             
             if( !centralScaleFactor ) {
                 centralScaleFactor = 0.9996;  // typical default, standard for UTM
             }
             
             // convert from degrees to radians
-            originLatitude  = originLatitude  * MARCONI.map.DEGREES_TO_RADIANS;
-            originLongitude = originLongitude * MARCONI.map.DEGREES_TO_RADIANS;
+            originLatitude  = originLatitude  * RAMANI.map.DEGREES_TO_RADIANS;
+            originLongitude = originLongitude * RAMANI.map.DEGREES_TO_RADIANS;
 
             var ePrimeSquared = eSquared / (1 - eSquared);
 
-            var mKnot = MARCONI.map.trueDistanceAlongCentralMeridian(equitorialAxis, eSquared, originLatitude);
+            var mKnot = RAMANI.map.trueDistanceAlongCentralMeridian(equitorialAxis, eSquared, originLatitude);
 
             var m = mKnot + (parseFloat(that.y) - originY) / centralScaleFactor;
             
@@ -6786,21 +6788,21 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
 
             var D = (parseFloat(that.x) - originX) / (nOne * centralScaleFactor);
 
-            // MARCONI.stdlib.log("m=" + m + ", mKnot is ",mKnot, ", meow=", meow, ", phiOne=", phiOne, ", cOne=", cOne, " tOne=", tOne, "nOne=", nOne, ", rOne=", rOne, ", D=", D);
+            // RAMANI.stdlib.log("m=" + m + ", mKnot is ",mKnot, ", meow=", meow, ", phiOne=", phiOne, ", cOne=", cOne, " tOne=", tOne, "nOne=", nOne, ", rOne=", rOne, ", D=", D);
 
             // test
             //originLatitude=0;
             
-            var latitude  = (phiOne - (nOne * Math.tan(phiOne) / rOne) * (D * D / 2 - (5 + 3 * tOne + 10 * cOne - 4 * cOne * cOne - 9 * ePrimeSquared) * Math.pow(D,4) / 24 + (61 + 90 * tOne + 298 * cOne + 45 * tOne * tOne - 252 * ePrimeSquared - 3 * cOne * cOne) * Math.pow(D,6) / 720))* MARCONI.map.RADIANS_TO_DEGREES;
+            var latitude  = (phiOne - (nOne * Math.tan(phiOne) / rOne) * (D * D / 2 - (5 + 3 * tOne + 10 * cOne - 4 * cOne * cOne - 9 * ePrimeSquared) * Math.pow(D,4) / 24 + (61 + 90 * tOne + 298 * cOne + 45 * tOne * tOne - 252 * ePrimeSquared - 3 * cOne * cOne) * Math.pow(D,6) / 720))* RAMANI.map.RADIANS_TO_DEGREES;
 
-            var longitude = (originLongitude + (D - (1 + 2 * tOne + cOne) * Math.pow(D, 3) / 6 + (5 - 2 * cOne + 28 * tOne - 3 * cOne * cOne + 8 * ePrimeSquared + 24 * tOne * tOne) * Math.pow(D, 5) / 120) / Math.cos(phiOne))* MARCONI.map.RADIANS_TO_DEGREES;
+            var longitude = (originLongitude + (D - (1 + 2 * tOne + cOne) * Math.pow(D, 3) / 6 + (5 - 2 * cOne + 28 * tOne - 3 * cOne * cOne + 8 * ePrimeSquared + 24 * tOne * tOne) * Math.pow(D, 5) / 120) / Math.cos(phiOne))* RAMANI.map.RADIANS_TO_DEGREES;
 
-            // MARCONI.stdlib.log("Converted UTM to lat-long, xy is " + that.x + ", " + that.y + ", lat-long is " + latitude + ", " + longitude);
+            // RAMANI.stdlib.log("Converted UTM to lat-long, xy is " + that.x + ", " + that.y + ", lat-long is " + latitude + ", " + longitude);
 
             that.y = latitude;
             that.x = longitude;
 
-            // MARCONI.stdlib.log("done converting TM");
+            // RAMANI.stdlib.log("done converting TM");
 
             // m_CalcDetail.mapScaleFactorH = 0
             // m_CalcDetail.mapScaleFactorK = 0
@@ -6821,7 +6823,7 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
         originY,
         centralScaleFactor)
     {
-        //MARCONI.stdlib.log("converting lat-long of " + that.y + ", " + that.x + " to UTM with lat-long origin of " + originLatitude + ", " + originLongitude + ", cartesian origin of " + originX + ", " + originY + ", scale factor " + centralScaleFactor);
+        //RAMANI.stdlib.log("converting lat-long of " + that.y + ", " + that.x + " to UTM with lat-long origin of " + originLatitude + ", " + originLongitude + ", cartesian origin of " + originX + ", " + originY + ", scale factor " + centralScaleFactor);
         
         if( isNaN(that.x) || isNaN(that.y) ) {
             throw "Illegal lat-long " + that.y + ", " + that.x + ", must be numeric";
@@ -6835,9 +6837,9 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
             throw ("TM_LatLongToCartesian(): Longitude of " + that.x + " is illegal");
         }
 
-        var latitude = that.y * MARCONI.map.DEGREES_TO_RADIANS;
+        var latitude = that.y * RAMANI.map.DEGREES_TO_RADIANS;
 
-        var longitude = that.x * MARCONI.map.DEGREES_TO_RADIANS;
+        var longitude = that.x * RAMANI.map.DEGREES_TO_RADIANS;
 
         var ePrimeSquared = eSquared / (1 - eSquared);
 
@@ -6847,17 +6849,17 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
 
         var C = ePrimeSquared * Math.pow(Math.cos(latitude), 2);
 
-        var bigA = (longitude - MARCONI.map.DEGREES_TO_RADIANS * originLongitude) * Math.cos(latitude);
+        var bigA = (longitude - RAMANI.map.DEGREES_TO_RADIANS * originLongitude) * Math.cos(latitude);
 
-        var m = MARCONI.map.trueDistanceAlongCentralMeridian(equitorialAxis, eSquared, latitude);
+        var m = RAMANI.map.trueDistanceAlongCentralMeridian(equitorialAxis, eSquared, latitude);
 
-        var mKnot = MARCONI.map.trueDistanceAlongCentralMeridian(equitorialAxis, eSquared, originLatitude*MARCONI.map.DEGREES_TO_RADIANS);
+        var mKnot = RAMANI.map.trueDistanceAlongCentralMeridian(equitorialAxis, eSquared, originLatitude*RAMANI.map.DEGREES_TO_RADIANS);
 
         that.x = centralScaleFactor * n * (bigA + (1 - t + C) * Math.pow(bigA,3) / 6 + (5 - 18 * t + t * t + 72 * C - 58 * ePrimeSquared) * Math.pow(bigA,5) / 120) + originX;
 
         that.y = centralScaleFactor * (m - mKnot + (n * Math.tan(latitude)) * (bigA * bigA / 2 + (5 - t + 9 * C + 4 * C * C) * Math.pow(bigA,4) / 24 + (61 - 58 * t + t * t + 600 * C - 330 * ePrimeSquared) * Math.pow(bigA,6) / 720)) + originY;
 
-        //MARCONI.stdlib.log("x,y= " + that.x + ", " + that.y);
+        //RAMANI.stdlib.log("x,y= " + that.x + ", " + that.y);
     }
 
     // Map constants for Lambert conformal conic calcs
@@ -6874,7 +6876,7 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
         
         // convert to lat-long if coord sys type is not WORLD
         switch( spatialRefIn.coordSysTypeCD ) {
-            case MARCONI.map.COORDSYS_TYPE_LAMBERT:
+            case RAMANI.map.COORDSYS_TYPE_LAMBERT:
                Lambert_CartesianToLatLong(
                     spatialRefIn.equitorialAxis,
                     spatialRefIn.eSquared,
@@ -6887,7 +6889,7 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
                     );
                 break;
 
-            case MARCONI.map.COORDSYS_TYPE_TM:
+            case RAMANI.map.COORDSYS_TYPE_TM:
                 TM_CartesianToLatLong(
                     spatialRefIn.equitorialAxis,
                     spatialRefIn.eSquared,
@@ -6898,7 +6900,7 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
                     spatialRefIn.centralScaleFactor);
                 break;
 
-            case MARCONI.map.COORDSYS_TYPE_ALBERS:
+            case RAMANI.map.COORDSYS_TYPE_ALBERS:
                Albers_CartesianToLatLong(
                     spatialRefIn.equitorialAxis,
                     spatialRefIn.eSquared,
@@ -6912,15 +6914,15 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
                 break;
 
 
-            case MARCONI.map.COORDSYS_TYPE_GRID:
+            case RAMANI.map.COORDSYS_TYPE_GRID:
                 determineLatLongFromGridValue(spatialRefIn);         // will set x=longitude, y=latitude
                 break;
 
-            case MARCONI.map.COORDSYS_TYPE_ATLAS:
+            case RAMANI.map.COORDSYS_TYPE_ATLAS:
                 determineLatLongFromAtlasPageAndGrid(spatialRefIn);  // will set x=longitude, y=latitude
                 break;
 
-            case MARCONI.map.COORDSYS_TYPE_MERCATOR:
+            case RAMANI.map.COORDSYS_TYPE_MERCATOR:
                 Mercator_CartesianToLatLong(
                     spatialRefIn.equitorialAxis,
                     spatialRefIn.eSquared,
@@ -6929,7 +6931,7 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
                     );
                 break;
                 
-            case MARCONI.map.COORDSYS_TYPE_STEREO:
+            case RAMANI.map.COORDSYS_TYPE_STEREO:
                 Stereo_CartesianToLatLong(
                     spatialRefIn.equitorialAxis,
                     spatialRefIn.eSquared,
@@ -6942,10 +6944,10 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
                 break;
 
             default:  // degrees, might be in DMS form
-                this.x = MARCONI.map.DMStoDecimalDegrees(this.x);
-                this.y = MARCONI.map.DMStoDecimalDegrees(this.y);
+                this.x = RAMANI.map.DMStoDecimalDegrees(this.x);
+                this.y = RAMANI.map.DMStoDecimalDegrees(this.y);
 
-                //MARCONI.stdlib.log("lat-long input values are " + this.y + ", " +  this.x);
+                //RAMANI.stdlib.log("lat-long input values are " + this.y + ", " +  this.x);
 
                 break;
         }
@@ -6955,7 +6957,7 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
         if( spatialRefIn.datumCD != spatialRefOut.datumCD ) {
             convertToNewHorizDatum( spatialRefIn.datumCD, spatialRefOut.datumCD, datumShiftMethodCD );
             if( window.YAHOO ) {
-                //MARCONI.stdlib.log("lat-long values after datum shift are " + this.y + ", " +  this.x);
+                //RAMANI.stdlib.log("lat-long values after datum shift are " + this.y + ", " +  this.x);
             }
         }
 
@@ -6967,7 +6969,7 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
         
         
         switch( spatialRefOut.coordSysTypeCD ) {
-            case MARCONI.map.COORDSYS_TYPE_LAMBERT:
+            case RAMANI.map.COORDSYS_TYPE_LAMBERT:
                 Lambert_LatLongToCartesian(
                     spatialRefOut.equitorialAxis,
                     spatialRefOut.eSquared,
@@ -6979,7 +6981,7 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
                     spatialRefOut.originY);
                 break;
 
-            case MARCONI.map.COORDSYS_TYPE_TM:
+            case RAMANI.map.COORDSYS_TYPE_TM:
                 TM_LatLongToCartesian(
                     spatialRefOut.equitorialAxis,
                     spatialRefOut.eSquared,
@@ -6990,7 +6992,7 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
                     spatialRefOut.centralScaleFactor);
                 break;
 
-            case MARCONI.map.COORDSYS_TYPE_ALBERS:
+            case RAMANI.map.COORDSYS_TYPE_ALBERS:
                 Albers_LatLongToCartesian(
                     spatialRefOut.equitorialAxis,
                     spatialRefOut.eSquared,
@@ -7002,15 +7004,15 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
                     spatialRefOut.originY);
                 break;
 
-            case MARCONI.map.COORDSYS_TYPE_GRID:
+            case RAMANI.map.COORDSYS_TYPE_GRID:
                 determineGridValueFromLatLong(spatialRefOut, format);  // will set x=grid value
                 break;
 
-            case MARCONI.map.COORDSYS_TYPE_ATLAS:
+            case RAMANI.map.COORDSYS_TYPE_ATLAS:
                 determineAtlasPageAndGridFromLatLong(spatialRefOut);  // will set x=grid value
                 break;
 
-            case MARCONI.map.COORDSYS_TYPE_MERCATOR:
+            case RAMANI.map.COORDSYS_TYPE_MERCATOR:
                 Mercator_LatLongToCartesian(
                     spatialRefOut.equitorialAxis,
                     spatialRefOut.eSquared,
@@ -7018,7 +7020,7 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
                     spatialRefOut.originY);
                 break;
                 
-            case MARCONI.map.COORDSYS_TYPE_STEREO:
+            case RAMANI.map.COORDSYS_TYPE_STEREO:
                 Stereo_LatLongToCartesian(
                     spatialRefOut.equitorialAxis,
                     spatialRefOut.eSquared,
@@ -7030,11 +7032,11 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
                 break;
 
         }
-        //MARCONI.stdlib.log("final x,y values are " + this.x + ", " +  this.y);
+        //RAMANI.stdlib.log("final x,y values are " + this.x + ", " +  this.y);
         
     }
     catch(e) {
-        throw(e.startsWith("BUSY") ? e : "MARCONI.map.GeoPoint.convert(): " + e);
+        throw(e.startsWith("BUSY") ? e : "RAMANI.map.GeoPoint.convert(): " + e);
     }
     
 };
@@ -7044,7 +7046,7 @@ MARCONI.map.GeoPoint.prototype.convert = function(spatialRefIn, spatialRefOut, d
 ' Given angle in decimal degrees, return string of its degree-minutes-seconds representation
 ' Optional parameter is number of decimal places for seconds, otherwise it will default
 */
-MARCONI.map.decimalDegreesToDMS = function (decimalValue, decimalPlaces) {
+RAMANI.map.decimalDegreesToDMS = function (decimalValue, decimalPlaces) {
     if( decimalPlaces === undefined || decimalPlaces === null ) {
         decimalPlaces=3;
     }
@@ -7087,7 +7089,7 @@ MARCONI.map.decimalDegreesToDMS = function (decimalValue, decimalPlaces) {
     return str;
 };
 
-MARCONI.map.decimalDegreesToDM = function (decimalValue, decimalPlaces) {
+RAMANI.map.decimalDegreesToDM = function (decimalValue, decimalPlaces) {
     if( decimalPlaces === undefined || decimalPlaces === null ) {
         decimalPlaces=5;
     }
@@ -7122,20 +7124,20 @@ MARCONI.map.decimalDegreesToDM = function (decimalValue, decimalPlaces) {
 
 // Given ellipsoid constants, and a set of lat/long points in degrees, compute great-circle distances
 // and assign to the passed GeoPoint object
-MARCONI.map.greatCircleArcLengths = function (equitorialAxis, eSquared, latitude1, longitude1, latitude2, longitude2, ptDelta) {
+RAMANI.map.greatCircleArcLengths = function (equitorialAxis, eSquared, latitude1, longitude1, latitude2, longitude2, ptDelta) {
     try {
 
-        if( !ptDelta || !(ptDelta instanceof MARCONI.map.GeoPoint) ) {
+        if( !ptDelta || !(ptDelta instanceof RAMANI.map.GeoPoint) ) {
             throw("Parameter ptDelta must be an object of type GeoPoint");
         }
     
-        var averageLatitude = 0.5 * (latitude1 + latitude2) * MARCONI.map.DEGREES_TO_RADIANS;
+        var averageLatitude = 0.5 * (latitude1 + latitude2) * RAMANI.map.DEGREES_TO_RADIANS;
 
-        ptDelta.y = MARCONI.map.DEGREES_TO_RADIANS * Math.abs(equitorialAxis *
+        ptDelta.y = RAMANI.map.DEGREES_TO_RADIANS * Math.abs(equitorialAxis *
             (1.0 - eSquared) / Math.pow (1.0 - eSquared * Math.sin(averageLatitude) * Math.sin(averageLatitude), 1.5) *
             Math.abs(latitude2 - latitude1));
 
-        ptDelta.x = Math.abs(equitorialAxis * Math.cos(averageLatitude) / Math.sqrt(1.0 - eSquared * Math.sin(averageLatitude) * Math.sin(averageLatitude)) * Math.abs(longitude2 - longitude1) * MARCONI.map.DEGREES_TO_RADIANS);
+        ptDelta.x = Math.abs(equitorialAxis * Math.cos(averageLatitude) / Math.sqrt(1.0 - eSquared * Math.sin(averageLatitude) * Math.sin(averageLatitude)) * Math.abs(longitude2 - longitude1) * RAMANI.map.DEGREES_TO_RADIANS);
 
         // provide correct sense of signs
 
@@ -7162,14 +7164,14 @@ MARCONI.map.greatCircleArcLengths = function (equitorialAxis, eSquared, latitude
         }
     }
     catch(ex) {
-        alert("Error in MARCONI.map.greatCircleArcLengths(): " + ex);
+        alert("Error in RAMANI.map.greatCircleArcLengths(): " + ex);
     }
 
 };
 
 // Crude units conversion function
 // supports just the basics
-MARCONI.map.linearUnitsConversion = function (valIn, unitsIn, unitsOut)
+RAMANI.map.linearUnitsConversion = function (valIn, unitsIn, unitsOut)
 {
     try {
         var valOut=valIn;
@@ -7178,22 +7180,22 @@ MARCONI.map.linearUnitsConversion = function (valIn, unitsIn, unitsOut)
 
         // convert to meters first
         switch(unitsIn) {
-            case MARCONI.map.UNITS_SURVEYFEET:
-                valOut = valIn * MARCONI.map.SURVEY_FEET_TO_METERS;
+            case RAMANI.map.UNITS_SURVEYFEET:
+                valOut = valIn * RAMANI.map.SURVEY_FEET_TO_METERS;
                 break;
 
-            case MARCONI.map.UNITS_INTERNATIONALFEET:
-                valOut = valIn * MARCONI.map.INTERNATIONAL_FEET_TO_METERS;
+            case RAMANI.map.UNITS_INTERNATIONALFEET:
+                valOut = valIn * RAMANI.map.INTERNATIONAL_FEET_TO_METERS;
                 break;
 
-            case MARCONI.map.UNITS_MILES:
-                valOut = valIn * MARCONI.map.SURVEY_FEET_TO_METERS * 5280;
+            case RAMANI.map.UNITS_MILES:
+                valOut = valIn * RAMANI.map.SURVEY_FEET_TO_METERS * 5280;
                 break;
 
-            case MARCONI.map.UNITS_METERS:
+            case RAMANI.map.UNITS_METERS:
                 break;
 
-            case MARCONI.map.UNITS_KILOMETERS:
+            case RAMANI.map.UNITS_KILOMETERS:
                 valOut = 1000 * valIn;
                 break;
 
@@ -7208,22 +7210,22 @@ MARCONI.map.linearUnitsConversion = function (valIn, unitsIn, unitsOut)
         // then convert meters to desired units
 
         switch( unitsOut ) {
-            case MARCONI.map.UNITS_SURVEYFEET:
-                valOut = valOut / MARCONI.map.SURVEY_FEET_TO_METERS;
+            case RAMANI.map.UNITS_SURVEYFEET:
+                valOut = valOut / RAMANI.map.SURVEY_FEET_TO_METERS;
                 break;
 
-            case MARCONI.map.UNITS_INTERNATIONALFEET:
-                valOut = valOut / MARCONI.map.INTERNATIONAL_FEET_TO_METERS;
+            case RAMANI.map.UNITS_INTERNATIONALFEET:
+                valOut = valOut / RAMANI.map.INTERNATIONAL_FEET_TO_METERS;
                 break;
 
-            case MARCONI.map.UNITS_MILES:
-                valOut = (valOut / MARCONI.map.SURVEY_FEET_TO_METERS) / 5280.0;
+            case RAMANI.map.UNITS_MILES:
+                valOut = (valOut / RAMANI.map.SURVEY_FEET_TO_METERS) / 5280.0;
                 break;
 
-            case MARCONI.map.UNITS_METERS:
+            case RAMANI.map.UNITS_METERS:
                 break;
 
-            case MARCONI.map.UNITS_KILOMETERS:
+            case RAMANI.map.UNITS_KILOMETERS:
                 valOut = valOut/1000.0;
                 break;
 
@@ -7240,12 +7242,12 @@ MARCONI.map.linearUnitsConversion = function (valIn, unitsIn, unitsOut)
         return valOut;
     }
     catch(ex) {
-        throw("MARCONI.map.linearUnitsConversion() error: " + ex);
+        throw("RAMANI.map.linearUnitsConversion() error: " + ex);
     }
 };
-MARCONI.map.isDegrees = function(str) {
+RAMANI.map.isDegrees = function(str) {
     try {
-        var deg = MARCONI.map.DMStoDecimalDegrees(str);
+        var deg = RAMANI.map.DMStoDecimalDegrees(str);
         if( typeof(deg) == "number" && Math.abs(deg) <= 360.0001 ) {
             return true;
         }
@@ -7258,7 +7260,7 @@ MARCONI.map.isDegrees = function(str) {
 
 // Given a string, convert any degree-minutes-seconds formats
 // and return decimal degrees.  
-MARCONI.map.DMStoDecimalDegrees = function(str) {
+RAMANI.map.DMStoDecimalDegrees = function(str) {
     var decimalDegrees="";
 
     try {
@@ -7268,7 +7270,7 @@ MARCONI.map.DMStoDecimalDegrees = function(str) {
 
         str = str.trim();
         
-        // MARCONI.stdlib.log("parsing " + str);
+        // RAMANI.stdlib.log("parsing " + str);
         
         // parse DMS, components are:
         // 1. degrees with optional sign
@@ -7285,7 +7287,7 @@ MARCONI.map.DMStoDecimalDegrees = function(str) {
 
         if( m && m.length == 5) {
             //for( var i = 1 ; i < m.length ; i++) {
-            //    MARCONI.stdlib.log("Part " + i +": " + m[i]);
+            //    RAMANI.stdlib.log("Part " + i +": " + m[i]);
             //}
 
             
@@ -7305,7 +7307,7 @@ MARCONI.map.DMStoDecimalDegrees = function(str) {
                     case "W":
                     case "S":
                         isNegative = true;
-                        //MARCONI.stdlib.log("Sign reversed to handle W or S letter");
+                        //RAMANI.stdlib.log("Sign reversed to handle W or S letter");
                         break;
 
                 }
@@ -7345,7 +7347,7 @@ MARCONI.map.DMStoDecimalDegrees = function(str) {
                 decimalDegrees *= -1.0;
             }
 
-            //MARCONI.stdlib.log("Parsed as " + decimalDegrees + ", based on " + minutes + "\' and " + seconds + "\"");
+            //RAMANI.stdlib.log("Parsed as " + decimalDegrees + ", based on " + minutes + "\' and " + seconds + "\"");
         
             
         }
@@ -7361,7 +7363,7 @@ MARCONI.map.DMStoDecimalDegrees = function(str) {
     return decimalDegrees;
 };
 
-MARCONI.map.trueDistanceAlongCentralMeridian = function (equitorialAxis, eSquared, latitude)
+RAMANI.map.trueDistanceAlongCentralMeridian = function (equitorialAxis, eSquared, latitude)
 {
     // latitude must be passed in radians, returns in the units of equitorialAxis
 
@@ -7373,31 +7375,31 @@ MARCONI.map.trueDistanceAlongCentralMeridian = function (equitorialAxis, eSquare
 
 };
 
-MARCONI.map.metersBetween = function (pt1, pt2, earthRadius, method) {
+RAMANI.map.metersBetween = function (pt1, pt2, earthRadius, method) {
     if( !pt1 || !pt2 || typeof(pt1.x)=="undefined" || typeof(pt2.x) == "undefined" || typeof(pt1.y)=="undefined" || typeof(pt2.y) == "undefined") {
         throw "Missing inputs to metersBetween() -- it needs two GeoPoints holding lat-longs";
     }
     if( !earthRadius ) {
-        earthRadius = MARCONI.map.RADIUS_WGS84_METERS;
+        earthRadius = RAMANI.map.RADIUS_WGS84_METERS;
     }
-    return earthRadius * MARCONI.map.radiansBetween(pt1, pt2, method);
+    return earthRadius * RAMANI.map.radiansBetween(pt1, pt2, method);
 };
-MARCONI.map.toRadians = function(degrees) {
-    return degrees * MARCONI.map.DEGREES_TO_RADIANS;
+RAMANI.map.toRadians = function(degrees) {
+    return degrees * RAMANI.map.DEGREES_TO_RADIANS;
 }
 
 
-MARCONI.map.radiansBetween = function(pt1, pt2, method) {
+RAMANI.map.radiansBetween = function(pt1, pt2, method) {
     
     function haverSine(degrees) {
-        var val = Math.sin( 0.5 * MARCONI.map.toRadians(degrees));
+        var val = Math.sin( 0.5 * RAMANI.map.toRadians(degrees));
         return val*val;
     }
     function haverSineRads(pt1, pt2) {
         return 2.0 * Math.asin(Math.sqrt(
 
                 haverSine(pt1.y-pt2.y) +
-                Math.cos(MARCONI.map.toRadians(pt1.y)) * Math.cos(MARCONI.map.toRadians(pt2.y)) * 
+                Math.cos(RAMANI.map.toRadians(pt1.y)) * Math.cos(RAMANI.map.toRadians(pt2.y)) *
                     haverSine(pt1.x-pt2.x)
 
                 ));
@@ -7407,18 +7409,18 @@ MARCONI.map.radiansBetween = function(pt1, pt2, method) {
         // particularly in polar regions
 
         var numerator = Math.sqrt(
-                Math.pow( Math.cos(MARCONI.map.toRadians(pt2.y)) *
-                          Math.sin(MARCONI.map.toRadians(pt1.x-pt2.x))
+                Math.pow( Math.cos(RAMANI.map.toRadians(pt2.y)) *
+                          Math.sin(RAMANI.map.toRadians(pt1.x-pt2.x))
                           ,2.0) +
                 Math.pow(
-                    Math.cos(MARCONI.map.toRadians(pt1.y)) * Math.sin(MARCONI.map.toRadians(pt2.y)) -
-                    Math.sin(MARCONI.map.toRadians(pt1.y)) * Math.cos(MARCONI.map.toRadians(pt2.y)) * Math.cos(MARCONI.map.toRadians(pt2.x-pt1.x))
+                    Math.cos(RAMANI.map.toRadians(pt1.y)) * Math.sin(RAMANI.map.toRadians(pt2.y)) -
+                    Math.sin(RAMANI.map.toRadians(pt1.y)) * Math.cos(RAMANI.map.toRadians(pt2.y)) * Math.cos(RAMANI.map.toRadians(pt2.x-pt1.x))
                     ,2.0)
                     );
 
-        var denominator = Math.sin(MARCONI.map.toRadians(pt1.y))*Math.sin(MARCONI.map.toRadians(pt2.y)) +
-                Math.cos(MARCONI.map.toRadians(pt1.y)) * Math.cos(MARCONI.map.toRadians(pt2.y)) *
-                Math.cos(MARCONI.map.toRadians(pt2.x-pt1.x));
+        var denominator = Math.sin(RAMANI.map.toRadians(pt1.y))*Math.sin(RAMANI.map.toRadians(pt2.y)) +
+                Math.cos(RAMANI.map.toRadians(pt1.y)) * Math.cos(RAMANI.map.toRadians(pt2.y)) *
+                Math.cos(RAMANI.map.toRadians(pt2.x-pt1.x));
         
         return Math.atan2(numerator, denominator);
     }
@@ -7433,8 +7435,8 @@ MARCONI.map.radiansBetween = function(pt1, pt2, method) {
         switch(method) {
             case "LAW_OF_COSINES":
                 rads= Math.acos(
-                    Math.sin(pt1.y*MARCONI.map.DEGREES_TO_RADIANS) * Math.sin(pt2.y*MARCONI.map.DEGREES_TO_RADIANS) +
-                    Math.cos(pt1.y*MARCONI.map.DEGREES_TO_RADIANS) * Math.cos(pt2.y*MARCONI.map.DEGREES_TO_RADIANS) * Math.cos((pt2.x-pt1.x)*MARCONI.map.DEGREES_TO_RADIANS));
+                    Math.sin(pt1.y*RAMANI.map.DEGREES_TO_RADIANS) * Math.sin(pt2.y*RAMANI.map.DEGREES_TO_RADIANS) +
+                    Math.cos(pt1.y*RAMANI.map.DEGREES_TO_RADIANS) * Math.cos(pt2.y*RAMANI.map.DEGREES_TO_RADIANS) * Math.cos((pt2.x-pt1.x)*RAMANI.map.DEGREES_TO_RADIANS));
                 break;
             
             case "HAVERSINE":
@@ -7454,12 +7456,12 @@ MARCONI.map.radiansBetween = function(pt1, pt2, method) {
     }
 };
 
-MARCONI.map.polygonPerimeter = function (ptList, earthRadius) {
+RAMANI.map.polygonPerimeter = function (ptList, earthRadius) {
     if( !ptList) {
         throw "Missing required array of GeoPoints to polygonPerimeter";
     }
     if( !earthRadius ) {
-        earthRadius = MARCONI.map.RADIUS_WGS84_METERS;
+        earthRadius = RAMANI.map.RADIUS_WGS84_METERS;
     }
 
     var radiansPerimeter=0.0;
@@ -7470,16 +7472,16 @@ MARCONI.map.polygonPerimeter = function (ptList, earthRadius) {
 
     return earthRadius * radiansPerimeter;
 };
-MARCONI.map.haverSine = function(theta) {
+RAMANI.map.haverSine = function(theta) {
     return 0.5 * (1.0 - Math.cos(theta));
 };
 
-MARCONI.map.polygonArea = function (ptList, earthRadius) {
+RAMANI.map.polygonArea = function (ptList, earthRadius) {
     if( !ptList) {
         throw "Missing required array of GeoPoints to polygonArea";
     }
     if( !earthRadius ) {
-        earthRadius = MARCONI.map.RADIUS_WGS84_METERS;
+        earthRadius = RAMANI.map.RADIUS_WGS84_METERS;
     }
 
     // compute area of geodesic polygon using method by Chamberlain and Duquette
@@ -7500,16 +7502,16 @@ MARCONI.map.polygonArea = function (ptList, earthRadius) {
         var longPrior  = ptList[prior].x;
         var longNext   = ptList[next].x;
 
-        area += ((longNext - longPrior) * Math.sin( MARCONI.map.DEGREES_TO_RADIANS * latitude ));
+        area += ((longNext - longPrior) * Math.sin( RAMANI.map.DEGREES_TO_RADIANS * latitude ));
     }
-    area = Math.abs(MARCONI.map.DEGREES_TO_RADIANS * area * earthRadius * earthRadius * 0.5);
+    area = Math.abs(RAMANI.map.DEGREES_TO_RADIANS * area * earthRadius * earthRadius * 0.5);
 
-    //MARCONI.stdlib.log("area=" + area + " with radius " + earthRadius);
+    //RAMANI.stdlib.log("area=" + area + " with radius " + earthRadius);
 
     return area;
 };
 
-MARCONI.map.polygonArea2 = function (ptList, earthRadius) {
+RAMANI.map.polygonArea2 = function (ptList, earthRadius) {
     // very complex method for polygon area
     // seems to give same answer as the shorter, simpler one by Chamberlain
 
@@ -7517,7 +7519,7 @@ MARCONI.map.polygonArea2 = function (ptList, earthRadius) {
         throw "Missing required array of GeoPoints to polygonArea";
     }
     if( !earthRadius ) {
-        earthRadius = MARCONI.map.RADIUS_WGS84_METERS;
+        earthRadius = RAMANI.map.RADIUS_WGS84_METERS;
     }
 
     var area=0.0;
@@ -7529,10 +7531,10 @@ MARCONI.map.polygonArea2 = function (ptList, earthRadius) {
 
     for( var i = 0 ; i < vertexCount ; i++) {
         if( i==0 ) {
-            lam1  = ptList[i].x * MARCONI.map.DEGREES_TO_RADIANS;
-            beta1 = ptList[i].y * MARCONI.map.DEGREES_TO_RADIANS;
-            lam2  = ptList[i+1].x * MARCONI.map.DEGREES_TO_RADIANS;
-            beta2 = ptList[i+1].y * MARCONI.map.DEGREES_TO_RADIANS;
+            lam1  = ptList[i].x * RAMANI.map.DEGREES_TO_RADIANS;
+            beta1 = ptList[i].y * RAMANI.map.DEGREES_TO_RADIANS;
+            lam2  = ptList[i+1].x * RAMANI.map.DEGREES_TO_RADIANS;
+            beta2 = ptList[i+1].y * RAMANI.map.DEGREES_TO_RADIANS;
             cosB1 = Math.cos(beta1);
             cosB2 = Math.cos(beta2);
         }
@@ -7540,8 +7542,8 @@ MARCONI.map.polygonArea2 = function (ptList, earthRadius) {
             var k = (i+1) % vertexCount;
             lam1  = lam2;
             beta1 = beta2;
-            lam2  = ptList[k].x * MARCONI.map.DEGREES_TO_RADIANS;
-            beta2 = ptList[k].y * MARCONI.map.DEGREES_TO_RADIANS;
+            lam2  = ptList[k].x * RAMANI.map.DEGREES_TO_RADIANS;
+            beta2 = ptList[k].y * RAMANI.map.DEGREES_TO_RADIANS;
             cosB1 = cosB2;
             cosB2 = Math.cos(beta2);
         }
@@ -7567,18 +7569,18 @@ MARCONI.map.polygonArea2 = function (ptList, earthRadius) {
     }
     area = Math.abs(area) * earthRadius * earthRadius;
 
-    //MARCONI.stdlib.log("area=" + area + " with radius " + earthRadius);
+    //RAMANI.stdlib.log("area=" + area + " with radius " + earthRadius);
 
     return area;
 };
 
 
 // Generic units conversion works on linear and aerial units alike
-MARCONI.map.unitsConversion = function (valIn, unitsIn, unitsOut)
+RAMANI.map.unitsConversion = function (valIn, unitsIn, unitsOut)
 {
     try {
-        var unitInRef  = (typeof(unitsIn)  == "string" ? MARCONI.map.mapUnitGivenCode(unitsIn)  : unitsIn);
-        var unitOutRef = (typeof(unitsOut) == "string" ? MARCONI.map.mapUnitGivenCode(unitsOut) : unitsOut);
+        var unitInRef  = (typeof(unitsIn)  == "string" ? RAMANI.map.mapUnitGivenCode(unitsIn)  : unitsIn);
+        var unitOutRef = (typeof(unitsOut) == "string" ? RAMANI.map.mapUnitGivenCode(unitsOut) : unitsOut);
 
         if( !unitInRef ) {
             throw "Unknown input units " + unitsIn + " passed";
@@ -7603,29 +7605,219 @@ MARCONI.map.unitsConversion = function (valIn, unitsIn, unitsOut)
 
         var valOut = valIn * unitInRef.metersPerUnit / unitOutRef.metersPerUnit;
 
-        //MARCONI.stdlib.log("Converted " + valIn + " " + unitsIn + " to " + valOut +  " " + unitsOut);
+        //RAMANI.stdlib.log("Converted " + valIn + " " + unitsIn + " to " + valOut +  " " + unitsOut);
 
         return valOut;
     }
     catch(ex) {
-        throw("MARCONI.map.unitsConversion() error: " + ex);
+        throw("RAMANI.map.unitsConversion() error: " + ex);
     }
 };
-MARCONI.map.toMeters = function(dist, linearUnitCD) {
+RAMANI.map.toMeters = function(dist, linearUnitCD) {
     try {
-        return MARCONI.map.unitsConversion(dist, linearUnitCD, MARCONI.map.UNITS_METERS);
+        return RAMANI.map.unitsConversion(dist, linearUnitCD, RAMANI.map.UNITS_METERS);
     }
     catch(ex) {
         throw("Error converting " + dist + " " + linearUnitCD + " to meters: " + ex);
     }
 };
 
-MARCONI.map.fromMeters = function(dist, linearUnitCD) {
+RAMANI.map.fromMeters = function(dist, linearUnitCD) {
     try {
-        return MARCONI.map.unitsConversion(dist, MARCONI.map.UNITS_METERS, linearUnitCD);
+        return RAMANI.map.unitsConversion(dist, RAMANI.map.UNITS_METERS, linearUnitCD);
     }
     catch(ex) {
         throw("Error converting " + dist + " meters to " + linearUnitCD + ": " + ex);
     }
 };
+
+/// Marker stuff
+function lltoDMin(llobj) {
+    var lat = llobj.lat;
+    var lng = llobj.lon;
+    var NS = 'N';
+    var EW = 'E';
+
+    var lat_deg = imul(lat, 1); //Why multiply by 1? Math.imul not supported in a lot of browsers
+    //var lat_deg = lat; //This isn't a valid replacement: the lat will stay in decimal minutes
+    if (lat_deg < 0) {
+        NS = 'S';
+    }
+    var lat_min = Math.abs(lat - lat_deg) * 60.0;
+    var lat_str = lat_deg.toString() + '-' + lat_min.toFixed(2) + NS;
+
+    var lng_deg = imul(lng, 1);
+    //var lng_deg = lng;
+    if (lng_deg < 0) {
+        EW = 'W';
+    }
+    var lng_min = Math.abs(lng - lng_deg) * 60.0;
+    var lng_str = lng_deg.toString() + '-' + lng_min.toFixed(2) + EW;
+
+    return {lat: lat_str, lng: lng_str};
+}
+
+//Polyfill imul function for IE
+function imul(a, b) {
+    var ah = (a >>> 16) & 0xffff;
+    var al = a & 0xffff;
+    var bh = (b >>> 16) & 0xffff;
+    var bl = b & 0xffff;
+    return ((al * bl) + (((ah * bl + al * bh) << 16) >>> 0) | 0);
+}
+
+//***** Below is mostl leftover from Larry Moore's original work, which may be necessary to obtain more coordinate types.
+// html string that holds coordinates other than NSRC standards (decimal degrees, dms, etc)
+function buildCoordString2(point) {
+    var northamerica = 1
+    var ngCoords = LLtoUSNG(point.y, point.x, 5);
+    var mgrsCoords = LLtoMGRS(point.y, point.x, 5);
+    var utmcoords = []
+    var zone
+    LLtoUTM(point.y, point.x, utmcoords, 0)
+    zone = utmcoords[2]
+
+    // decimal degrees. Originally in buildCoordString1, moved here because D-M.mm is NSARC standard
+    var preclng = point.lng().toFixed(precision + 2);
+    var precLat = point.lat().toFixed(precision + 2);
+    coordStr += "<br\/><i>D.d:</i> " + precLat + "," + preclng;
+
+    //alert(LLtoGARS(point.y,point.x))
+
+    if (point.y > 13 && point.y < 90 && ((point.x < -46 && point.x > -180) || (point.x > 169 && point.x < 180))) {
+        northamerica = 1
+    }
+    else {
+        northamerica = 0
+    }
+
+    //utm coordinates
+    var utmx = utmcoords[0];
+    var utmy = utmcoords[1];
+    if (utmy < 0) {
+        utmy += 10000000;
+    }
+    latLngStr = "<i>UTM (zone,x,y)</i>: " + zone + UTMLetterDesignator(point.y) + ", " + utmx.toFixed(0) + ", " + utmy.toFixed(0);
+
+    // deg-min-sec
+    latLngStr += "<br><i>D-M-S</i>: " + lat2dms(point.y) + ", " + lon2dms(point.x)
+
+    // GARS
+    latLngStr += "<br><i>GARS:</i> " + LLtoGARS(point.y, point.x)
+
+    return (latLngStr)
+}
+
+function buildCoordString3(point) {
+    var latLngStr = "";
+
+    //   latLngStr += "The outdated North American<br> Datum of 1927&nbsp;&nbsp;&nbsp;&nbsp;&nbsp";
+//    latLngStr += "<a href = 'http://localhost/usng/help_usng.html' target=_blank >Help</a><br><br>";
+    var LL27 = new Object();
+    nad83to27(point.y, point.x, LL27);
+    latLngStr += "<i>D-M-S</i>: " + lat2dms(LL27.lat) + ", " + lon2dms(LL27.lng) + "<br>"
+    latLngStr += "<i>D-M.m:</i> " + lat2dm(LL27.lat) + ", " + lon2dm(LL27.lng) + "<br>"
+    latLngStr += "<i>D.d:</i> " + LL27.lat.toFixed(5) + ", " + LL27.lng.toFixed(5) + "<br>";
+    latLngStr += "<i>USNG:</i> " + LLtoUSNG_nad27(LL27.lat, LL27.lng, 5);
+
+    return (latLngStr);
+}
+
+
+
+// convert a latitude to deg and decimal minutes
+function lat2dm(input) {
+    if (input > 0) {
+        return (deg2dm(input) + "N")
+    }
+    else {
+        return (deg2dm(input) + "S")
+    }
+}
+
+// convert a longitude to deg and decimal minutes
+function lon2dm(input) {
+    if (input > 0) {
+        return (deg2dm(input) + "E")
+    }
+    else {
+        return (deg2dm(input) + "W")
+    }
+}
+
+// converts decimal degrees to degrees and decimal minutes
+// input is a float, return value a string
+function deg2dm(input) {
+    var cdeg
+    var cmin
+    var deg = Math.floor(Math.abs(input))
+    var min = (Math.abs(input) - deg) * 60
+
+// more readable, but leading zeros not recommended by standards
+//   if (deg < 1) { cdeg = "0"+deg }
+//   else {cdeg = ""+deg }
+//   if (min < 1) { cmin = "0"+min.toFixed(3) }
+//   else {cmin = ""+min.toFixed(3) }
+
+
+    return (deg + "-" + min.toFixed(3))
+}
+
+
+// convert a latitude to deg-min-sec
+function lat2dms(input) {
+    if (input > 0) {
+        return (deg2dms(input) + "N")
+    }
+    else {
+        return (deg2dms(input) + "S")
+    }
+}
+
+// convert a longitude to deg-min-sec
+function lon2dms(input) {
+    if (input > 0) {
+        return (deg2dms(input) + "E")
+    }
+    else {
+        return (deg2dms(input) + "W")
+    }
+}
+
+// converts decimal degrees to deg-min-sec
+// input is a float, return value a string
+function deg2dms(input) {
+    var cdeg
+    var cmin
+    var csec
+
+    var temp = Math.abs(input)
+    var deg = Math.floor(temp)
+    var min = Math.floor((temp - deg) * 60)
+    var sec = (((temp - deg) * 60) - min) * 60
+
+
+    if (deg < 10) {
+        cdeg = "0" + deg
+    }
+    else {
+        cdeg = "" + deg
+    }
+
+    if (min < 10) {
+        cmin = "0" + min
+    }
+    else {
+        cmin = "" + min
+    }
+
+    if (sec < 10) {
+        csec = "0" + sec.toFixed(2)
+    }
+    else {
+        csec = "" + sec.toFixed(2)
+    }
+
+    return (cdeg + "-" + cmin + "-" + csec)
+}
 

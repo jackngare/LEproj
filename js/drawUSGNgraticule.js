@@ -2,9 +2,9 @@
 // ***************************************************************************
 // *  usng.js  (calculate and display U.S. National Grid
 // *          zones and gridlines on a Google map)
-//    modified by Xavier Irias, origional version by Larry Moore as described below
-//    The major changes involved doing USNG calcs with Marconi's map code rather than hardcoded for USNG
-//    and making the module comply with Google maps version 3 overlay requirements.
+//    Authors: modified by Jack Ngare as previously done by Xavier Irias, & Larry Moore
+//    Description:
+//    The major changes involved doing USNG calcs with Ramani map code
 // ****************************************************************************/
 //
 // Copyright (c) 2009 Larry Moore, jane.larry@gmail.com
@@ -38,9 +38,9 @@
 
 
 USNG = (function() {
-    var latLongWGS84    = new MARCONI.map.SpatialReference(MARCONI.map.COORDSYS_WORLD, MARCONI.map.DATUM_HORIZ_WGS84, MARCONI.map.UNITS_DEGREES);
-    var usngRef         = MARCONI.map.spatialRefGivenCode(MARCONI.map.SPATIALREF_USNG);
-    var pt              = new MARCONI.map.GeoPoint();
+    var latLongWGS84    = new RAMANI.map.SpatialReference(RAMANI.map.COORDSYS_WORLD, RAMANI.map.DATUM_HORIZ_WGS84, RAMANI.map.UNITS_DEGREES);
+    var usngRef         = RAMANI.map.spatialRefGivenCode(RAMANI.map.SPATIALREF_USNG);
+    var pt              = new RAMANI.map.GeoPoint();
 
     return {
     LLtoUSNG : function ( latitude, longitude, precision ) {
@@ -70,11 +70,11 @@ USNG = (function() {
         }
     },
 
-    LLtoUTM : function ( latitude, longitude, utmcoords, zoneNumber) {
+    LLtoUTM : function (latitude, longitude, utmcoords, zoneNumber) {
         try {
-            zoneNumber = (zoneNumber ? zoneNumber : MARCONI.map.getUTMZoneFromLatLong(latitude, longitude));
+            zoneNumber = (zoneNumber ? zoneNumber : RAMANI.map.getUTMZoneFromLatLong(latitude, longitude));
 
-            var utmRef = MARCONI.map.UTMSpatialRef(zoneNumber);
+            var utmRef = RAMANI.map.UTMSpatialRef(zoneNumber);
 
             pt.x = longitude;
             pt.y = latitude;
@@ -91,9 +91,10 @@ USNG = (function() {
         }
     },
 
+
     UTMtoLL_GeoPoint : function ( x, y, zoneNumber) {
         try {
-            var utmRef = MARCONI.map.UTMSpatialRef(zoneNumber);
+            var utmRef = RAMANI.map.UTMSpatialRef(zoneNumber);
 
             pt.x = x;
             pt.y = y;
@@ -109,7 +110,7 @@ USNG = (function() {
 
     UTMtoLL : function ( x, y, zoneNumber) {
         try {
-            var utmRef = MARCONI.map.UTMSpatialRef(zoneNumber);
+            var utmRef = RAMANI.map.UTMSpatialRef(zoneNumber);
 
             pt.x = x;
             pt.y = y;
@@ -149,7 +150,6 @@ function USNGGraticule(map, gridStyle) {
         
 }
 
-
 USNGGraticule.prototype = new google.maps.OverlayView();
 
 USNGGraticule.prototype.onAdd= function() {};
@@ -174,6 +174,14 @@ USNGGraticule.prototype.onRemove = function(leaveHandlersAlone) {
             this.grid100m.remove();
             this.grid100m = null;
         }
+        if( this.grid10m ) {
+            this.grid10m.remove();
+            this.grid10m = null;
+        }
+        if( this.grid1m ) {
+            this.grid1m.remove();
+            this.grid1m = null;
+        }
         
         if( leaveHandlersAlone!==true ) {
             google.maps.event.removeListener(this.resizeListener);
@@ -183,7 +191,7 @@ USNGGraticule.prototype.onRemove = function(leaveHandlersAlone) {
     
 	}
     catch(e) {
-        MARCONI.stdlib.log("Error " + e + " removing USNG graticule");
+        RAMANI.stdlib.log("Error " + e + " removing USNG graticuleDisplay");
     }
 }
 
@@ -191,11 +199,12 @@ USNGGraticule.prototype.draw = function() {
     try {
         this.onRemove(true);
 
-        MARCONI.stdlib.log("drawing USNG grid, zoom is " + this._map.getZoom() );
+        RAMANI.stdlib.log("drawing USNG grid, zoom is " + this._map.getZoom() );
 
         this.view = new USNGViewport(this._map);
 
         var zoomLevel = this._map.getZoom();  // zero is whole world, higher numbers (to about 20 are move detailed)
+
 
         if( zoomLevel < 6 ) {   // zoomed way out
             this.zoneLines = new USNGZonelines(this._map, this.view, this,
@@ -207,23 +216,37 @@ USNGGraticule.prototype.draw = function() {
                 this.gridStyle.semiMajorLineWeight,
                 this.gridStyle.semiMajorLineOpacity);
             
-            if(zoomLevel > 10 ) {    // draw 1k lines also if close enough
+            if(zoomLevel > 9 ) {    // draw 1k lines also if close enough
                 this.grid1k = new Grid1klines(this._map, this.view, this,
                 this.gridStyle.minorLineColor,
                 this.gridStyle.minorLineWeight,
                 this.gridStyle.minorLineOpacity);
                 
-                if( zoomLevel > 13 ) {   // draw 100m lines if very close
+                if( zoomLevel > 12 ) {   // draw 100m lines if very close
                     this.grid100m = new Grid100mlines(this._map, this.view, this,
                     this.gridStyle.fineLineColor,
                     this.gridStyle.fineLineWeight,
                     this.gridStyle.fineLineOpacity);
+
+                    if( zoomLevel > 18){  //draw 10m lines if very close
+                        this.grid10m = new Grid10mlines(this._map, this.view, this,
+                            this.gridStyle.finestLineColor,
+                            this.gridStyle.finestLineWeight,
+                            this.gridStyle.finestLineOpacity);
+
+                        if( zoomLevel > 20){  //draw 1m lines if very close
+                            this.grid1m = new Grid1mlines(this._map, this.view, this,
+                                this.gridStyle.finesterLineColor,
+                                this.gridStyle.finesterLineWeight,
+                                this.gridStyle.finesterLineOpacity);
+                        }
+                    }
                 }
             }
         }
     }
     catch(ex) {
-        MARCONI.stdlib.warn("Error " + ex + " drawing USNG graticule");
+        RAMANI.stdlib.warn("Error " + ex + " drawing USNG graticuleDisplay");
     }
 };
 
@@ -349,7 +372,7 @@ USNGViewport.prototype.lngs = function() {
    return this.lng_coords;
 }
 
-// return an array or georectangles associated with this viewprot
+// return an array or georectangles associated with this viewport
 USNGViewport.prototype.geoextents = function() {
    return this.georectangle;
 }
@@ -577,7 +600,7 @@ USNGZonelines.prototype.zonemarkerdraw = function() {
                 parent.getPanes().overlayLayer.appendChild(d);
             }
             else {
-                MARCONI.stdlib.warn("parent is " + parent + " drawing label");
+                RAMANI.stdlib.warn("parent is " + parent + " drawing label");
             }
 
             return d;
@@ -653,7 +676,7 @@ Grid100klines.prototype.remove = function() {
 
 
 
-///////////////////// class to draw 1,000-meter grid lines/////////////////////////
+///////////////////// class to draw 1k-meter grid lines/////////////////////////
 
 function Grid1klines(map, viewport, parent) {
     this._map = map;
@@ -689,25 +712,78 @@ function Grid100mlines(map, viewport, parent) {
     this._map = map;
     this.view = viewport;
     this.parent = parent;
-    
+
 
     this.Gridcell_100m = [];
     this.zones = this.view.geoextents();
 
     for (var i=0; i<this.zones.length; i++) {
-       this.Gridcell_100m[i] = new Gridcell(this._map, this.parent, this.zones[i], 100);
-       this.Gridcell_100m[i].drawOneCell();
+        this.Gridcell_100m[i] = new Gridcell(this._map, this.parent, this.zones[i], 100);
+        this.Gridcell_100m[i].drawOneCell();
     }
 }
 
 Grid100mlines.prototype.remove = function() {
-   // remove 100-m grid lines
-   for (var i = 0 ; i < this.zones.length ; i++) {
-      this.Gridcell_100m[i].remove();
-   }
+    // remove 100-m grid lines
+    for (var i = 0 ; i < this.zones.length ; i++) {
+        this.Gridcell_100m[i].remove();
+    }
 }
 
 /////////////end class Grid100mlines ////////////////////////////////////////
+
+///////////////////// class to draw 10-meter grid lines/////////////////////////
+
+function Grid10mlines(map, viewport, parent) {
+    this._map = map;
+    this.view = viewport;
+    this.parent = parent;
+
+
+    this.Gridcell_10m = [];
+    this.zones = this.view.geoextents();
+
+    for (var i=0; i<this.zones.length; i++) {
+        this.Gridcell_10m[i] = new Gridcell(this._map, this.parent, this.zones[i], 10);
+        this.Gridcell_10m[i].drawOneCell();
+    }
+}
+
+Grid10mlines.prototype.remove = function() {
+    // remove 10-m grid lines
+    for (var i = 0 ; i < this.zones.length ; i++) {
+        this.Gridcell_10m[i].remove();
+    }
+}
+
+/////////////end class Grid10mlines ////////////////////////////////////////
+
+
+///////////////////// class to draw 1-meter grid lines/////////////////////////
+
+function Grid1mlines(map, viewport, parent) {
+    this._map = map;
+    this.view = viewport;
+    this.parent = parent;
+
+
+    this.Gridcell_1m = [];
+    this.zones = this.view.geoextents();
+
+    for (var i=0; i<this.zones.length; i++) {
+        this.Gridcell_1m[i] = new Gridcell(this._map, this.parent, this.zones[i], 1);
+        this.Gridcell_1m[i].drawOneCell();
+    }
+}
+
+Grid1mlines.prototype.remove = function() {
+    // remove 1-m grid lines
+    for (var i = 0 ; i < this.zones.length ; i++) {
+        this.Gridcell_1m[i].remove();
+    }
+}
+
+/////////////end class Grid1mlines ////////////////////////////////////////
 
 
 ///////////////////////// class usng_georectangle//////////////////////////
@@ -809,7 +885,7 @@ Gridcell.prototype.drawOneCell = function() {
     try {
         var utmcoords = [];
 
-        var zone = MARCONI.map.getUTMZoneFromLatLong((this.slat+this.nlat)/2,(this.wlng+this.elng)/2);
+        var zone = RAMANI.map.getUTMZoneFromLatLong((this.slat+this.nlat)/2,(this.wlng+this.elng)/2);
         
         var i,j,k,m,n,p,q;
            
@@ -932,6 +1008,22 @@ Gridcell.prototype.drawOneCell = function() {
                    strokeOpacity: this.parent.gridStyle.fineLineOpacity,
                    map: this._map}));
             }
+            else if (this.interval == 10) {
+                this.gridlines.push(new google.maps.Polyline( {
+                    path: gr100kCoord,
+                    strokeColor: this.parent.gridStyle.finestLineColor,
+                    strokeWeight: this.parent.gridStyle.finestLineWeight,
+                    strokeOpacity: this.parent.gridStyle.finestLineOpacity,
+                    map: this._map}));
+            }
+            else if (this.interval == 1) {
+                this.gridlines.push(new google.maps.Polyline( {
+                    path: gr100kCoord,
+                    strokeColor: this.parent.gridStyle.finesterLineColor,
+                    strokeWeight: this.parent.gridStyle.finesterLineWeight,
+                    strokeOpacity: this.parent.gridStyle.finesterLineOpacity,
+                    map: this._map}));
+            }
             
         }
 
@@ -1000,6 +1092,22 @@ Gridcell.prototype.drawOneCell = function() {
                  strokeOpacity: this.parent.gridStyle.fineLineOpacity,
                  map: this._map}));
           }
+          else if (this.interval == 10) {
+              this.gridlines.push(new google.maps.Polyline( {
+                  path: gr100kCoord,
+                  strokeColor: this.parent.gridStyle.finestLineColor,
+                  strokeWeight: this.parent.gridStyle.finestLineWeight,
+                  strokeOpacity: this.parent.gridStyle.finestLineOpacity,
+                  map: this._map}));
+          }
+          else if (this.interval == 1) {
+              this.gridlines.push(new google.maps.Polyline( {
+                  path: gr100kCoord,
+                  strokeColor: this.parent.gridStyle.finesterLineColor,
+                  strokeWeight: this.parent.gridStyle.finesterLineWeight,
+                  strokeOpacity: this.parent.gridStyle.finesterLineOpacity,
+                  map: this._map}));
+          }
         }
         
         eastings[k] = this.elng;
@@ -1013,6 +1121,12 @@ Gridcell.prototype.drawOneCell = function() {
         else if (this.interval == 100) {
            this.place100mLabels(eastings,northings);
         }
+  /*      else if (this.interval == 10) {
+            this.place10mLabels(eastings,northings);
+        }
+        else if (this.interval == 1) {
+            this.place1mLabels(eastings,northings);
+        }*/
      }
      catch(oneCellErr) {
        throw("Error drawing a cell: " + oneCellErr);
@@ -1048,10 +1162,23 @@ Gridcell.prototype.remove = function() {
             }
             this.label_100m = [];
         }
+/*        if( this.label_10m ) {
+            for (i=0; this.label_10m[i]; i++) {
+                this.label_10m[i].parentNode.removeChild(this.label_10m[i]);
+            }
+            this.label_10m = [];
+        }
+        if( this.label_1m ) {
+            for (i=0; this.label_1m[i]; i++) {
+                this.label_1m[i].parentNode.removeChild(this.label_1m[i]);
+            }
+            this.label_1m = [];
+        }*/
+
        
    }
    catch(ex) {
-       alert("Error removing old USNG graticule: " + ex);
+       alert("Error removing old USNG graticuleDisplay: " + ex);
    }
 }
 
@@ -1114,7 +1241,7 @@ Gridcell.prototype.place100kLabels = function(east,north) {
                 
             for (var j=0; north[j+1]; j++) {
                 // labeled marker
-                zone = MARCONI.map.getUTMZoneFromLatLong((north[j] + north[j + 1]) / 2, (east[i] + east[i + 1]) / 2);
+                zone = RAMANI.map.getUTMZoneFromLatLong((north[j] + north[j + 1]) / 2, (east[i] + east[i + 1]) / 2);
                 latitude = (north[j] + north[j + 1]) / 2;
                 longitude = (east[i] + east[i+1])/2;
                 
@@ -1166,19 +1293,19 @@ Gridcell.prototype.place100kLabels = function(east,north) {
  * @param north polyline latitude nearest to equator
  */
 Gridcell.prototype.markerBelowZero100k = function(east1, east2,north){
-    console.log("north: " + north + " place1kLabels north[north.length - 1]: " + north );
+    //console.log("north: " + north + " place1kLabels north[north.length - 1]: " + north );
     var zone;
     var labelText;
     var latitude;
     var longitude;
 
     if(north < 0) {
-        zone = MARCONI.map.getUTMZoneFromLatLong((0 + north) / 2, (east1 + east2) / 2);
+        zone = RAMANI.map.getUTMZoneFromLatLong((0 + north) / 2, (east1 + east2) / 2);
         latitude = (0 + north) / 2;
         longitude = (east1 + east2) / 2;
 
         labelText = USNG.LLtoUSNG(latitude, longitude);
-        console.log("place1kLabels labelText2: " + labelText + " zone: " + zone + " latitude: " + latitude);
+        //console.log("place1kLabels labelText2: " + labelText + " zone: " + zone + " latitude: " + latitude);
         if (this._map.getZoom() < 10 || this._map.getZoom() > 13) {
             if (zone > 9) {
                 labelText = labelText.substring(4, 6)
@@ -1234,10 +1361,10 @@ Gridcell.prototype.place1kLabels = function(east,north) {
                longitude = east[i];
                
                if(!latitude) {
-                    MARCONI.stdlib.warn("x-axis latitude is " + latitude + " when j=" + j);
+                    RAMANI.stdlib.warn("x-axis latitude is " + latitude + " when j=" + j);
                 }
                 if(!longitude) {
-                    MARCONI.stdlib.warn("longitude is " + longitude);
+                    RAMANI.stdlib.warn("longitude is " + longitude);
                 }
                 
                var gridRef = USNG.LLtoUSNG(latitude, longitude);
@@ -1266,10 +1393,10 @@ Gridcell.prototype.place1kLabels = function(east,north) {
                longitude = (east[i]+east[i+1])/2;
                
                if(!latitude) {
-                    MARCONI.stdlib.warn("y-axis latitude is " + latitude);
+                    RAMANI.stdlib.warn("y-axis latitude is " + latitude);
                 }
                 if(!longitude) {
-                    MARCONI.stdlib.warn("y-axis longitude is " + longitude);
+                    RAMANI.stdlib.warn("y-axis longitude is " + longitude);
                 }
 
                gridRef  = USNG.LLtoUSNG(latitude,longitude);
@@ -1343,7 +1470,7 @@ Gridcell.prototype.place100mLabels = function(east,north) {
                     //++passing in gridRefLat variable for label++
                     this.label_100m.push(this.makeLabel(this.parent, new google.maps.LatLng(gridRefLat,(east[i])),
                     //((north[j]+north[j+1])/2,(east[i])),
-                        MARCONI.stdlib.fixedFormatNumber(x, 1, 0, true) + insigDigits, "left", "top",
+                        RAMANI.stdlib.fixedFormatNumber(x, 1, 0, true) + insigDigits, "left", "top",
                         this.parent.gridStyle.fineLabelClass));
                 }
             }
@@ -1377,20 +1504,206 @@ Gridcell.prototype.place100mLabels = function(east,north) {
                     this.parent,
                     //++use gridRefLon value for creating label++                    
                     new google.maps.LatLng((north[j]),gridRefLon),
-                    MARCONI.stdlib.fixedFormatNumber(y,1,0,true) + "<sup>00</sup>", "center", "top",
+                    RAMANI.stdlib.fixedFormatNumber(y,1,0,true) + "<sup>00</sup>", "center", "top",
                     this.parent.gridStyle.fineLabelClass));
             }
         }
    }
    catch(ex) {
-       MARCONI.stdlib.log("Error placing 100-meter markers: " + ex);
+       RAMANI.stdlib.log("Error placing 100-meter markers: " + ex);
        throw("Error placing 100-meter markers: " + ex);
    }
 }  // end place100mLabels()
 
+/*Gridcell.prototype.place10mLabels = function(east,north) {
+    try {
+
+        // only label lines when zoomed way in
+        if( this._map.getZoom() < 14) {
+            return;
+        }
+        //++both arrays must have two or more elements++
+        if( east.length < 2 || north.length < 2 ) {
+            return;
+        }
+
+        var skipFactor = (this._map.getZoom() > 15 ? 1 : 2);
+
+        //++get lengths of respective lat and long arrays++
+        var northlen = north.length;
+        var eastlen = east.length;
+
+        // place "x-axis" labels
+        for (var i = 1; east[i+1] ; i+= 1) {
+            var count = 1;
+            for (var j=1; j< 2; j++) {
+                //++will always be at least two elements (code above on line 1254 checks for that)++
+                //++array is zero-based, so the first array element is skipped.++
+                //++for special case where array only has two elements,++
+                //++lat value for north[j+1] is undefined and 'NaN' gets passed to LLtoUSNG here, resulting in error++
+                //++added a test for special case of two element array and hard-code distance halfway between two northings++
+                if (northlen==2){
+                    var gridRefLat = ((north[0]+north[1])/2);
+                }else{
+                    var gridRefLat = (north[j]+north[j+1])/2;
+                }
+                var gridRef = USNG.LLtoUSNG(gridRefLat, east[i]);
+                var parts = gridRef.split(" ");
+
+                var x = parseFloat(parts[2].substr(0,3));
+                var z = parseFloat(parts[2].substr(3,2));
+                if( z > 50 ) {
+                    x++;
+                    z=0;
+                }
+
+                if( !(x % skipFactor) ) {
+
+                    var insigDigits = (skipFactor == 1 || !(x%10) ? "<sup>00</sup>" : "");
+                    //++passing in gridRefLat variable for label++
+                    this.label_100m.push(this.makeLabel(this.parent, new google.maps.LatLng(gridRefLat,(east[i])),
+                        //((north[j]+north[j+1])/2,(east[i])),
+                        RAMANI.stdlib.fixedFormatNumber(x, 1, 0, true) + insigDigits, "left", "top",
+                        this.parent.gridStyle.fineLabelClass));
+                }
+            }
+        }
+
+        // place "y-axis" labels, don't worry about skip factor since there's plenty of room comparatively
+        for (i=1; i<2; i++) {
+            for (j=1; north[j+1]; j++) {
+                //++can get a long value of 'NaN' here too, if zoomed in close enough, and viewport is sized right++
+                //++again, with special case where easting array only has two elements,++
+                //++lon value for east[i+1] is undefined,'NaN' gets passed to LLtoUSNG, and results in error++
+                //++add test for special case of two element array and hard-code distance halfway between two eastings++
+                if (eastlen==2){
+                    var gridRefLon = ((east[0]+east[1])/2);
+                }else{
+                    var gridRefLon = (east[i]+east[i+1])/2;
+                }
+                gridRef  = USNG.LLtoUSNG(north[j],gridRefLon,4);
+                parts = gridRef.split(" ");
+
+                var y = parseFloat(parts[3].substr(0,3));
+                z     = parseFloat(parts[3].substr(3,2));
+
+                // if due to roundoff we got something like 99 for z, make it a perfect zero
+                if( z > 50) {
+                    y++;
+                    z=0;
+                }
+
+                this.label_10m.push(this.makeLabel(
+                    this.parent,
+                    //++use gridRefLon value for creating label++
+                    new google.maps.LatLng((north[j]),gridRefLon),
+                    RAMANI.stdlib.fixedFormatNumber(y,1,0,true) + "<sup>00</sup>", "center", "top",
+                    this.parent.gridStyle.fineLabelClass));
+            }
+        }
+    }
+    catch(ex) {
+        RAMANI.stdlib.log("Error placing 10-meter markers: " + ex);
+        throw("Error placing 10-meter markers: " + ex);
+    }
+}  // end place10mLabels()
+
+Gridcell.prototype.place1mLabels = function(east,north) {
+    try {
+
+        // only label lines when zoomed way in
+        if( this._map.getZoom() < 14) {
+            return;
+        }
+        //++both arrays must have two or more elements++
+        if( east.length < 2 || north.length < 2 ) {
+            return;
+        }
+
+        var skipFactor = (this._map.getZoom() > 15 ? 1 : 2);
+
+        //++get lengths of respective lat and long arrays++
+        var northlen = north.length;
+        var eastlen = east.length;
+
+        // place "x-axis" labels
+        for (var i = 1; east[i+1] ; i+= 1) {
+            var count = 1;
+            for (var j=1; j< 2; j++) {
+                //++will always be at least two elements (code above on line 1254 checks for that)++
+                //++array is zero-based, so the first array element is skipped.++
+                //++for special case where array only has two elements,++
+                //++lat value for north[j+1] is undefined and 'NaN' gets passed to LLtoUSNG here, resulting in error++
+                //++added a test for special case of two element array and hard-code distance halfway between two northings++
+                if (northlen==2){
+                    var gridRefLat = ((north[0]+north[1])/2);
+                }else{
+                    var gridRefLat = (north[j]+north[j+1])/2;
+                }
+                var gridRef = USNG.LLtoUSNG(gridRefLat, east[i]);
+                var parts = gridRef.split(" ");
+
+                var x = parseFloat(parts[2].substr(0,3));
+                var z = parseFloat(parts[2].substr(3,2));
+                if( z > 50 ) {
+                    x++;
+                    z=0;
+                }
+
+                if( !(x % skipFactor) ) {
+
+                    var insigDigits = (skipFactor == 1 || !(x%10) ? "<sup>00</sup>" : "");
+                    //++passing in gridRefLat variable for label++
+                    this.label_100m.push(this.makeLabel(this.parent, new google.maps.LatLng(gridRefLat,(east[i])),
+                        //((north[j]+north[j+1])/2,(east[i])),
+                        RAMANI.stdlib.fixedFormatNumber(x, 1, 0, true) + insigDigits, "left", "top",
+                        this.parent.gridStyle.fineLabelClass));
+                }
+            }
+        }
+
+        // place "y-axis" labels, don't worry about skip factor since there's plenty of room comparatively
+        for (i=1; i<2; i++) {
+            for (j=1; north[j+1]; j++) {
+                //++can get a long value of 'NaN' here too, if zoomed in close enough, and viewport is sized right++
+                //++again, with special case where easting array only has two elements,++
+                //++lon value for east[i+1] is undefined,'NaN' gets passed to LLtoUSNG, and results in error++
+                //++add test for special case of two element array and hard-code distance halfway between two eastings++
+                if (eastlen==2){
+                    var gridRefLon = ((east[0]+east[1])/2);
+                }else{
+                    var gridRefLon = (east[i]+east[i+1])/2;
+                }
+                gridRef  = USNG.LLtoUSNG(north[j],gridRefLon,4);
+                parts = gridRef.split(" ");
+
+                var y = parseFloat(parts[3].substr(0,3));
+                z     = parseFloat(parts[3].substr(3,2));
+
+                // if due to roundoff we got something like 99 for z, make it a perfect zero
+                if( z > 50) {
+                    y++;
+                    z=0;
+                }
+
+                this.label_10m.push(this.makeLabel(
+                    this.parent,
+                    //++use gridRefLon value for creating label++
+                    new google.maps.LatLng((north[j]),gridRefLon),
+                    RAMANI.stdlib.fixedFormatNumber(y,1,0,true) + "<sup>00</sup>", "center", "top",
+                    this.parent.gridStyle.fineLabelClass));
+            }
+        }
+    }
+    catch(ex) {
+        RAMANI.stdlib.log("Error placing 1-meter markers: " + ex);
+        throw("Error placing 1-meter markers: " + ex);
+    }
+}  // end place1mLabels()*/
+
 /**++Revised to ensure display of grid lines (see https://code.google.com/p/usng-gmap-v3/issues/detail?id=4). In non-trivial case, now adds both endpoints of a grid line crossing the viewport and having endpoints falling outside of viewport to the array used for rendering polylines ++**/
 Gridcell.prototype.checkClip = function(cp, p) {
-    ///  implementation of Cohen-Sutherland clipping algorithm to clip grid lines at boundarie
+    ///  implementation of Cohen-Sutherland clipping algorithm to clip grid lines at boundaries
     //        of utm zones and the viewport edges
  
     var that=this;  // so private funcs can see this via that

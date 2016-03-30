@@ -3,6 +3,9 @@
     purpose:	general javascript functions
     namespace:  MARCONI.stdlib
     author:     Xavier Irias
+    modified:   Jack Ngare
+
+****************************************************************************
 
 Copyright (c) 2010, East Bay Municipal Utility District
 All rights reserved.
@@ -35,13 +38,13 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-// create the namespace if needed
-if( typeof(MARCONI) === "undefined") {
-    MARCONI = {};
+// create the namespace if needed: RAMANI mean Map in Swahili
+if( typeof(RAMANI) === "undefined") {
+    RAMANI = {};
 }
 
 // define the util function that is used to create namespaces
-MARCONI.namespace = function() {
+RAMANI.namespace = function() {
     var a=arguments, o=null, i, j, d;
     for (i=0; i<a.length; i=i+1) {
         d=a[i].split(".");
@@ -54,14 +57,14 @@ MARCONI.namespace = function() {
     return o;
 };
 
-MARCONI.namespace('MARCONI.stdlib');
+RAMANI.namespace('RAMANI');
 
 /* extender functions, extending some built-in objects 
-*  These functions are of course not part of the MARCONI namespace
+*  These functions are of course not part of the RAMANI namespace
 */
 
 if(!Array.indexOf) {
-    // fix up Array so MSIE gets indexOf as well (Firefox has it already)
+    // fix up Array so MSIE gets indexOf as well (Firefox is ok)
     Array.prototype.indexOf = function (obj, fromIndex) {
         if( typeof fromIndex == "undefined" ) {
             fromIndex=0;
@@ -130,7 +133,7 @@ if( !String.indexOfAny )  {
     };
 }
 
-MARCONI.stdlib = function() {
+RAMANI.stdlib = function() {
     var lookupControl = function(ctlRefOrName) {
 
         if( typeof(ctlRefOrName) === "string") {
@@ -272,7 +275,7 @@ MARCONI.stdlib = function() {
         },
         checkboxSetTriState : function(elem, triState ) {
             function handleClick() {
-                //MARCONI.stdlib.log("state was " + this.state);
+                //RAMANI.stdlib.log("state was " + this.state);
                 if( this.state === true) {
                     this.indeterminate=true;
                     this.checked=false;
@@ -287,7 +290,7 @@ MARCONI.stdlib = function() {
                     this.checked=true;
                 }
                 this.state = this.indeterminate ? null : this.checked;
-                //MARCONI.stdlib.log("state is now " + this.state);
+                //RAMANI.stdlib.log("state is now " + this.state);
             }
             // given true, false or null/blank, set checkbox
             try {
@@ -360,7 +363,7 @@ MARCONI.stdlib = function() {
                 }
             }
             catch(e) {
-                throw("MARCONI.stdlib.fireEvent() reports error firing event " + eventName + " on element " + elem + ": " + e);
+                throw("RAMANI.stdlib.fireEvent() reports error firing event " + eventName + " on element " + elem + ": " + e);
             }
         },
         fireMouseEvent : function (objRef, eventName) {
@@ -422,13 +425,13 @@ MARCONI.stdlib = function() {
                 
                 var str = (isNegative ? "-" : "") + intPortion + fract; 
                 
-                // MARCONI.stdlib.log(num + " formatted as " + str + ", based on " + minDigitsLeftOfDecimal + "." + digitsRightOfDecimal );
+                // RAMANI.stdlib.log(num + " formatted as " + str + ", based on " + minDigitsLeftOfDecimal + "." + digitsRightOfDecimal );
                 
                 return str;
             }
             catch(ex) {
                 // non-fatal, just log it
-                MARCONI.stdlib.log("Error formatting number " + num + ": " + ex);
+                RAMANI.stdlib.log("Error formatting number " + num + ": " + ex);
                 return num;
             }
         },
@@ -490,13 +493,13 @@ MARCONI.stdlib = function() {
                 
                 var str = (isNegative ? "-" : "") + intPortion + fract; 
                 
-                //MARCONI.stdlib.log(num + " formatted as " + str + ", based on " + minDigitsLeftOfDecimal + "." + maxDigitsRightOfDecimal );
+                //RAMANI.stdlib.log(num + " formatted as " + str + ", based on " + minDigitsLeftOfDecimal + "." + maxDigitsRightOfDecimal );
                 
                 return str;
             }
             catch(ex) {
                 // non-fatal, just log it
-                MARCONI.stdlib.log("Error formatting number " + num + ": " + ex);
+                RAMANI.stdlib.log("Error formatting number " + num + ": " + ex);
                 return num;
             }
         },
@@ -516,7 +519,7 @@ MARCONI.stdlib = function() {
 
                   if ( !className || (" " + all[e].className + " ").indexOf(" " + className + " ") >= 0 ) {
                       
-                      //MARCONI.stdlib.log(all[e].className + " matches " + className);
+                      //RAMANI.stdlib.log(all[e].className + " matches " + className);
 
                       myElements.push(all[e]);
 
@@ -619,7 +622,7 @@ MARCONI.stdlib = function() {
                     }
                 }
 
-                return MARCONI.stdlib.listboxAddItem(cb, itemString, itemValue, itemTitle);
+                return RAMANI.stdlib.listboxAddItem(cb, itemString, itemValue, itemTitle);
 
           }
           catch(ex) {
@@ -725,8 +728,8 @@ MARCONI.stdlib = function() {
                 }
                 
                 if( itemsMoved > 0 ) {
-                    MARCONI.stdlib.listboxSort(lbFrom, sortArgs);
-                    MARCONI.stdlib.listboxSort(lbTo, sortArgs );
+                    RAMANI.stdlib.listboxSort(lbFrom, sortArgs);
+                    RAMANI.stdlib.listboxSort(lbTo, sortArgs );
                 }
                 return itemsMoved;
             }
@@ -985,7 +988,7 @@ MARCONI.stdlib = function() {
                     if( compareVal == value  ) {
                         cb.selectedIndex = i;
                         
-                        //MARCONI.stdlib.log("Set listbox to " + value);
+                        //RAMANI.stdlib.log("Set listbox to " + value);
                         return true;
                     }
                 }
@@ -1102,7 +1105,7 @@ MARCONI.stdlib = function() {
 
             }
             catch(err) {
-                MARCONI.stdlib.log("Error dumping object " + obj);
+                RAMANI.stdlib.log("Error dumping object " + obj);
                 return "error dumping: " + err;
             }
         },
@@ -1146,7 +1149,7 @@ MARCONI.stdlib = function() {
 
                 var depth = chunks.length-1;
 
-                //MARCONI.stdlib.log( "page " + path + " is " + depth + "deep.");
+                //RAMANI.stdlib.log( "page " + path + " is " + depth + "deep.");
                 
                 return depth;
               }
@@ -1175,7 +1178,7 @@ MARCONI.stdlib = function() {
         paramValue : function( paramName, defaultVal, paramString ) {
             try {
 
-                paramString = (paramString ? paramString : MARCONI.stdlib.paramString());
+                paramString = (paramString ? paramString : RAMANI.stdlib.paramString());
                 var val=null;
                 var params = paramString.split("&");
                 for( var i = 0 ; i < params.length ; i++) {
@@ -1346,7 +1349,7 @@ MARCONI.stdlib = function() {
                 // return rootPath, suitable for prepending to folders off app root to form url's
                 var dirPrefix=null;
 
-                var menuLevel= MARCONI.stdlib.pageLevel() - 1;    // menuLevel of zero is home, root level
+                var menuLevel= RAMANI.stdlib.pageLevel() - 1;    // menuLevel of zero is home, root level
 
                 if( menuLevel > 0 ) {
                     dirPrefix="";
@@ -1366,7 +1369,7 @@ MARCONI.stdlib = function() {
         },
         setReadonlyByClass : function (className, readOnly, parentElement) {
             // get all elements of indicated class that belong to the indicated parent element
-            var elems = MARCONI.stdlib.getElemsWithClass(className, parentElement);
+            var elems = RAMANI.stdlib.getElemsWithClass(className, parentElement);
 
             // then set each element readonly or not as appropriate
             for( var i=0 ; i < elems.length ; i++) {
@@ -1389,7 +1392,7 @@ MARCONI.stdlib = function() {
                 }
             }
             catch(ex) {
-                MARCONI.stdlib.log("setScreenResolution() error: " + ex);
+                RAMANI.stdlib.log("setScreenResolution() error: " + ex);
             }
         },
         
@@ -1411,7 +1414,7 @@ MARCONI.stdlib = function() {
 
                 var val = txt.value;
 
-                MARCONI.stdlib.listboxSynchToValue(cb, val);
+                RAMANI.stdlib.listboxSynchToValue(cb, val);
             }
             catch(ex) {
                 throw "synchListBoxFromInputControl() error: unable to synch listbox from text control: " + ex;
