@@ -27,6 +27,9 @@ var utmMap = new usngConv.UTM();
 //Graticules are another word for 'overlays', just implemented as a whole instead of individually
 var graticuleDisplay = null;
 
+var rectangle;
+var southEast,northWest;
+
 //Initialize Map: Set Map Center, Zoom Level & Map Type
 function initialize() {
     //Geocoding is the process of converting addresses (like "1600 Amphitheatre Parkway, Mountain View, CA") into geographic coordinates
@@ -174,6 +177,50 @@ function initialize() {
         } else {
             //place a marker at the point clicked
             createMarker(event.latLng);
+
+
+        var mouseLL=event.latLng;
+        var mouseUSNG = usngConv.fromLonLat({lon:mouseLL.lng(),lat:mouseLL.lat()},4);
+
+
+        var locati=mouseUSNG.substring(0,6);
+        var leftBottomUSNG=mouseUSNG.substring(6,10);
+        var rightTopUSNG=mouseUSNG.substring(11,15);
+        console.log('Location noma :' + locati);
+
+        //usngZlev=8;
+        //map.setZoom(usngZlev);
+
+        //37N DC 7996 0840
+        //37N DC 7999 0849
+
+        var leftBottomLL = usngConv.toLonLat(locati+leftBottomUSNG+'0'+rightTopUSNG+'0',null);
+        southEast=locati+leftBottomUSNG+'0'+rightTopUSNG+'0';
+        northWest=locati+leftBottomUSNG+'99'+rightTopUSNG+'99';
+
+        
+        var rightTopLL = usngConv.toLonLat(locati+leftBottomUSNG+'99'+rightTopUSNG+'99',null);
+
+
+        console.log('Location Left Botoom :' + JSON.stringify(leftBottomLL));
+        //console.log('Location Top Botoom :' + JSON.stringify(leftTopLL));
+        //console.log('Location Rigth Botoom :' + JSON.stringify(rightBottomLL));
+        console.log('Location Right Top :' + JSON.stringify(rightTopLL));
+        
+
+        rectangle = new google.maps.Rectangle({ 
+        
+          
+        fillColor: 'red',     
+        map: map,   
+        bounds: new google.maps.LatLngBounds(
+        new google.maps.LatLng(leftBottomLL.lat,leftBottomLL.lon),
+        //new google.maps.LatLng(leftTopLL.lat,leftTopLL.lon),
+        //new google.maps.LatLng(rightBottomLL.lat,rightBottomLL.lon),
+        new google.maps.LatLng(rightTopLL.lat,rightTopLL.lon))
+        });     
+
+
         }
     });
 
@@ -184,10 +231,125 @@ function initialize() {
     });
 
     map.addListener('zoom_changed',function() {
-        if (map.getZoom() < 7){
-        console.log("im less than 7");
-            }
-        else{console.log("I'm higher");}
+        console.log("Current zoom level is: "+map.getZoom());
+
+            console.log("South East " + southEast);////37M ET 3190 7660
+
+            console.log("North West " + northWest);//37M ET 31999 76699
+
+
+            if(map.getZoom()==12){
+                console.log("Hapa");
+                
+                var baseAddress=southEast.substring(0,6);
+                var baseLon=southEast.substring(6,9);
+                var baseLat=southEast.substring(11,14);
+
+
+                var leftBottomLL = usngConv.toLonLat(baseAddress+baseLon+'00'+baseLat+'00',null);
+                var rightTopLL = usngConv.toLonLat(baseAddress+baseLon+'99'+baseLat+'99',null);
+
+
+                rectangle.setOptions({ 
+          
+                  
+                fillColor: 'red',  
+               
+                map: map,   
+                bounds: new google.maps.LatLngBounds(
+                new google.maps.LatLng(leftBottomLL.lat,leftBottomLL.lon),
+                new google.maps.LatLng(rightTopLL.lat,rightTopLL.lon))
+                });     
+
+
+            }else{
+                if(map.getZoom()==11){
+                        
+                        //37M CS 6580 7940
+                        //37M DS 0490 4070
+                        //36N VG 0740 3600
+                        var baseAddress=southEast.substring(0,6);
+                        var baseLon=southEast.substring(6,9);
+                        var baseLat=southEast.substring(11,14);
+
+                        var newBaseLon = parseInt(baseLon);
+                        var newBaseLat =parseInt(baseLat);
+                        newBaseLat+=1;
+                        var newTopRightLon = parseInt(baseLon);
+                        newTopRightLon+=1;
+                        var newTopRightLat = parseInt(baseLat);
+                        newTopRightLat+=1;
+
+                        console.log('Base Lon : ' + baseLon + ' Base Lat: ' + baseLat + ' New Base Lon : ' + newBaseLon + ' : ' + newBaseLat);
+
+                        var leftBottomLL = usngConv.toLonLat(baseAddress+newBaseLon+'00'+baseLat+'00',null);
+                        var rightTopLL = usngConv.toLonLat(baseAddress+newTopRightLon+'99'+newTopRightLat+'99',null);
+
+                        console.log('Location 11 LeftBottom :' + JSON.stringify(leftBottomLL));
+                        console.log('Location 11 TopLeft :' + JSON.stringify(rightTopLL));
+                        rectangle.setOptions({ 
+                  
+                           
+                        fillColor: 'red',  
+                         
+                        map: map,   
+                        bounds: new google.maps.LatLngBounds(
+                        new google.maps.LatLng(leftBottomLL.lat,leftBottomLL.lon),
+                        new google.maps.LatLng(rightTopLL.lat,rightTopLL.lon))
+                        });     
+
+                    }
+
+                     if(map.getZoom()==10){
+                        
+                        //37M CS 6580 7940
+                        //37M DS 0490 4070
+                        //37N CD 2670 3990
+                        var baseAddress=southEast.substring(0,6);
+                       
+                        var leftBottomLL = usngConv.toLonLat(baseAddress+'0000'+'0000',null);
+                        var rightTopLL = usngConv.toLonLat(baseAddress+'9999'+'9999',null);
+
+                        console.log('Location 11 LeftBottom :' + JSON.stringify(leftBottomLL));
+                        console.log('Location 11 TopLeft :' + JSON.stringify(rightTopLL));
+                        rectangle.setOptions({ 
+                  
+                           
+                        fillColor: 'red',  
+                          
+                        map: map,   
+                        bounds: new google.maps.LatLngBounds(
+                        new google.maps.LatLng(leftBottomLL.lat,leftBottomLL.lon),
+                        new google.maps.LatLng(rightTopLL.lat,rightTopLL.lon))
+                        });     
+
+                    }
+
+                    if(map.getZoom()<6){
+                        
+                        //37M CS 6580 7940
+                        //37M DS 0490 4070
+                        //37N CD 2670 3990
+                        var baseAddress=southEast.substring(0,6);
+                       
+                        var leftBottomLL = usngConv.toLonLat(baseAddress,null);
+                        var rightTopLL = usngConv.toLonLat(baseAddress,null);
+
+                        console.log('Location 11 LeftBottom :' + JSON.stringify(leftBottomLL));
+                        console.log('Location 11 TopLeft :' + JSON.stringify(rightTopLL));
+                        rectangle.setOptions({ 
+                  
+                          
+                        fillColor: 'red',   
+                        map: map,   
+                        bounds: new google.maps.LatLngBounds(
+                        new google.maps.LatLng(leftBottomLL.lat,leftBottomLL.lon),
+                        new google.maps.LatLng(rightTopLL.lat,rightTopLL.lon))
+                        });     
+
+                    }
+                }
+
     });
 
 }
@@ -315,3 +477,6 @@ var gridstyle = {
 
 //Debug variable. Set to true while developing, false when testing
 var debug = true;
+
+
+
