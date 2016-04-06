@@ -178,18 +178,22 @@ function initialize() {
             //place a marker at the point clicked
             createMarker(event.latLng);
 
+        
+            map.setZoom(8);
+
+            map.panTo(event.latLng);
 
         var mouseLL=event.latLng;
         var mouseUSNG = usngConv.fromLonLat({lon:mouseLL.lng(),lat:mouseLL.lat()},4);
 
+        console.log('Location Mambo BAD :' + mouseUSNG);
 
         var locati=mouseUSNG.substring(0,6);
         var leftBottomUSNG=mouseUSNG.substring(6,10);
         var rightTopUSNG=mouseUSNG.substring(11,15);
         console.log('Location noma :' + locati);
 
-        //usngZlev=8;
-        //map.setZoom(usngZlev);
+        
 
         //37N DC 7996 0840
         //37N DC 7999 0849
@@ -238,7 +242,7 @@ function initialize() {
             console.log("North West " + northWest);//37M ET 31999 76699
 
 
-            if(map.getZoom()==12){
+            if(map.getZoom()>12){
                 console.log("Hapa");
                 
                 var baseAddress=southEast.substring(0,6);
@@ -261,6 +265,8 @@ function initialize() {
                 new google.maps.LatLng(rightTopLL.lat,rightTopLL.lon))
                 });     
 
+                var panLocation = new google.maps.LatLng(rightTopLL.lat,rightTopLL.lon);
+                map.panTo(panLocation);
 
             }else{
                 if(map.getZoom()==11){
@@ -298,6 +304,9 @@ function initialize() {
                         new google.maps.LatLng(rightTopLL.lat,rightTopLL.lon))
                         });     
 
+                        var panLocation = new google.maps.LatLng(rightTopLL.lat,rightTopLL.lon);
+                        map.panTo(panLocation);
+
                     }
 
                      if(map.getZoom()==10){
@@ -323,33 +332,152 @@ function initialize() {
                         new google.maps.LatLng(rightTopLL.lat,rightTopLL.lon))
                         });     
 
+                        var panLocation = new google.maps.LatLng(rightTopLL.lat,rightTopLL.lon);
+                        map.panTo(panLocation);
                     }
 
-                    if(map.getZoom()<6){
+                    if(map.getZoom()==6){
                         
                         //37M CS 6580 7940
                         //37M DS 0490 4070
                         //37N CD 2670 3990
                         var baseAddress=southEast.substring(0,6);
                        
-                        var leftBottomLL = usngConv.toLonLat(baseAddress,null);
-                        var rightTopLL = usngConv.toLonLat(baseAddress,null);
+                        var leftBottomLL = usngConv.toLonLat(baseAddress+'0000'+'0000',null);
+                        var rightTopLL = usngConv.toLonLat(baseAddress+'9999'+'9999',null);
 
                         console.log('Location 11 LeftBottom :' + JSON.stringify(leftBottomLL));
                         console.log('Location 11 TopLeft :' + JSON.stringify(rightTopLL));
                         rectangle.setOptions({ 
                   
+                           
+                        fillColor: 'red',  
                           
-                        fillColor: 'red',   
                         map: map,   
                         bounds: new google.maps.LatLngBounds(
                         new google.maps.LatLng(leftBottomLL.lat,leftBottomLL.lon),
                         new google.maps.LatLng(rightTopLL.lat,rightTopLL.lon))
                         });     
 
+                        var panLocation = new google.maps.LatLng(rightTopLL.lat,rightTopLL.lon);
+                        map.panTo(panLocation);
+                    }
+
+
+                    if(map.getZoom()<=5){
+                        /*
+                        Calculating the eastern and western boundaries of a UTM is very straightforward.  
+                        Developed by the U.S. Army, the Universal Transverse Mercator (UTM) is an international 
+                        plane (rectangular) coordinate system. In the coordinate system, the world is divided into 
+                        60 zones of 6 degrees longitude. Each zone extends 3 degrees east and west from its 
+                        central meridian and are numbered consecutively west to east from the 180-degree meridian. 
+                        Transverse Mercator projections may then be applied to each zone.
+
+
+                        Here’s How:
+                            • UTM zones are all 6 degrees wide and increase from west to east starting at the -180 degree mark.
+                            • Calculate the eastern boundary of any UTM zone by multiplying the zone number by 6 and substract 180.
+                            • Subtract 6 degrees to obtain the western boundary.
+                            • Therefore to find the eastern boundary of UTM zone 11: Eastern boundary of zone 11 = (11 * 6) – 180 = -114 degrees.
+                            • Western boundary of zone 11 = -114 – 6 = -120 degrees.
+
+                        Latitude is also divided into zones, but less regularly. Zones are lettered from A at the 
+                        South Pole to Z at the North. The circle south of 80 degrees is divided into two zones, A and B. 
+                        Thereafter zones are 8 degrees wide. Zone M is just south of the equator and N is north. Zone T, 
+                        between 40 and 48 degrees north, includes Green Bay. Zone X, from 72 to 84 degrees north, 
+                        is 12 degrees wide and zones Y and Z cover the north polar region north of 84 degrees. 
+                        I and O are not used because they can be too easily confused with numbers.
+
+
+                        */
+
+
+                        //37N DB 4390 6510
+
+                        var zoneNo=southEast.substring(0,2);
+                        var latZone=southEast.substring(2,3);
+                        
+                        var easternBoundary = parseInt(zoneNo);
+                        easternBoundary=(easternBoundary*6)-180;
+                        var westernBoundary=easternBoundary-6;
+
+                        var southernBoundary;
+
+                        switch(latZone)
+                        {
+                            case "F":
+                                southernBoundary=-56;
+                                break;
+                            case "G":
+                                southernBoundary=-48;
+                                break;
+                            case "H":
+                                southernBoundary=-40;
+                                break;
+                            case "J":
+                                southernBoundary=-32;
+                                break;
+                            case "K":
+                                southernBoundary=-24;
+                                break;
+                            case "L":
+                                southernBoundary=-16;
+                                break;
+                            case "M":
+                                southernBoundary=-8;
+                                break;
+                            case "N":
+                                southernBoundary=0;
+                                break;
+                            case "P":
+                                southernBoundary=8;
+                                break;
+                            case "Q":
+                                southernBoundary=16;
+                                break;
+                            case "R":
+                                southernBoundary=24;
+                                break;
+                            case "S":
+                                southernBoundary=32;
+                                break;
+                            case "T":
+                                southernBoundary=40;
+                                break;
+                            case "U":
+                                southernBoundary=48;
+                                break;
+                            case "V":
+                                southernBoundary=56;
+                                break;
+                            case "W":
+                                southernBoundary=64;
+                                break;
+                        }
+
+        
+                        var northernBoundary=parseInt(southernBoundary);
+                        northernBoundary += 8;
+
+
+
+                        console.log('Location 11 North :' + northernBoundary + ' Southern' + southernBoundary);
+                        console.log('Location 11 Eastern :' + easternBoundary + ' Western' + westernBoundary);
+                        rectangle.setOptions({ 
+                  
+                          
+                        fillColor: 'red',   
+                        map: map,   
+                        bounds: new google.maps.LatLngBounds(
+                        new google.maps.LatLng(southernBoundary,westernBoundary),
+                        new google.maps.LatLng(northernBoundary,easternBoundary))
+                        });  
+
+                        var panLocation = new google.maps.LatLng(southernBoundary,easternBoundary)
+                        map.setCenter(panLocation);   
+
                     }
                 }
-
     });
 
 }
