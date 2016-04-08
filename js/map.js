@@ -102,10 +102,12 @@
                 console.log('Location Right Top :' + JSON.stringify(rightTopLL));
                 
 
-                rectangle = new google.maps.Rectangle({ 
-                
-                  
-                fillColor: 'red',     
+                rectangle = new google.maps.Rectangle({
+                    strokeColor: '#00cc66',
+                    strokeOpacity: 0.8,
+                    strokeWeight: 2,
+                    fillColor: '#00cc66',
+                    fillOpacity: 0.35,
                 map: map,   
                 bounds: new google.maps.LatLngBounds(
                 new google.maps.LatLng(leftBottomLL.lat,leftBottomLL.lon),
@@ -141,8 +143,7 @@
                         var rightTopLL = usngConv.toLonLat(baseAddress+baseLon+'99'+baseLat+'99',null);
 
 
-                        rectangle.setOptions({ 
-                            fillColor: 'red',  
+                        rectangle.setOptions({
                             map: map,  
                             bounds: new google.maps.LatLngBounds(
                                 new google.maps.LatLng(leftBottomLL.lat,leftBottomLL.lon),
@@ -180,8 +181,7 @@
                                 console.log('Location 11 LeftBottom :' + JSON.stringify(leftBottomLL));
                                 console.log('Location 11 TopLeft :' + JSON.stringify(rightTopLL));
                                 
-                                 rectangle.setOptions({ 
-                                    fillColor: 'red',  
+                                 rectangle.setOptions({
                                     map: map,  
                                 bounds: new google.maps.LatLngBounds(
                                     new google.maps.LatLng(leftBottomLL.lat,leftBottomLL.lon),
@@ -210,11 +210,7 @@
 
                                 console.log('Location 11 LeftBottom :' + JSON.stringify(leftBottomLL));
                                 console.log('Location 11 TopLeft :' + JSON.stringify(rightTopLL));
-                                rectangle.setOptions({ 
-                          
-                                   
-                                fillColor: 'red',  
-                                  
+                                rectangle.setOptions({
                                 map: map,   
                                 bounds: new google.maps.LatLngBounds(
                                 new google.maps.LatLng(leftBottomLL.lat,leftBottomLL.lon),
@@ -242,11 +238,7 @@
 
                                 console.log('Location 11 LeftBottom :' + JSON.stringify(leftBottomLL));
                                 console.log('Location 11 TopLeft :' + JSON.stringify(rightTopLL));
-                                rectangle.setOptions({ 
-                          
-                                   
-                                fillColor: 'red',  
-                                  
+                                rectangle.setOptions({
                                 map: map,   
                                 bounds: new google.maps.LatLngBounds(
                                 new google.maps.LatLng(leftBottomLL.lat,leftBottomLL.lon),
@@ -263,7 +255,7 @@
                                 //37M DS 0490 4070
                                 //37N CD 2670 3990
 
-                                console.log('Hapa ni zoom level 10');
+     //                           console.log('Hapa ni zoom level 10');
                                 
                                 var baseAddress=southEast.substring(0,6);
                                 var baseLon=southEast.substring(6,10);
@@ -274,11 +266,7 @@
 
                                 console.log('Location 11 LeftBottom :' + JSON.stringify(leftBottomLL));
                                 console.log('Location 11 TopLeft :' + JSON.stringify(rightTopLL));
-                                rectangle.setOptions({ 
-                          
-                                   
-                                fillColor: 'red',  
-                                  
+                                rectangle.setOptions({
                                 map: map,   
                                 bounds: new google.maps.LatLngBounds(
                                 new google.maps.LatLng(leftBottomLL.lat,leftBottomLL.lon),
@@ -296,7 +284,7 @@
                                 //37N CD 2670 3990
                                 //South East 37N DB 537240 748440
 
-                                console.log('Hapa ni zoom level 19');
+ //                               console.log('Hapa ni zoom level 19');
                                 
                                 var baseAddress=southEast.substring(0,6);
                                 var baseLon=southEast.substring(6,11);
@@ -307,11 +295,7 @@
 
                                 console.log('Location 11 LeftBottom :' + JSON.stringify(leftBottomLL));
                                 console.log('Location 11 TopLeft :' + JSON.stringify(rightTopLL));
-                                rectangle.setOptions({ 
-                          
-                                   
-                                fillColor: 'red',  
-                                  
+                                rectangle.setOptions({
                                 map: map,   
                                 bounds: new google.maps.LatLngBounds(
                                 new google.maps.LatLng(leftBottomLL.lat,leftBottomLL.lon),
@@ -339,11 +323,7 @@
 
                                 console.log('Location 11 LeftBottom :' + JSON.stringify(leftBottomLL));
                                 console.log('Location 11 TopLeft :' + JSON.stringify(rightTopLL));
-                                rectangle.setOptions({ 
-                          
-                                   
-                                fillColor: 'red',  
-                                  
+                                rectangle.setOptions({
                                 map: map,   
                                 bounds: new google.maps.LatLngBounds(
                                 new google.maps.LatLng(leftBottomLL.lat,leftBottomLL.lon),
@@ -362,11 +342,7 @@
 
                             console.log('Location 11 LeftBottom :' + JSON.stringify(leftBottomLL));
                             console.log('Location 11 TopLeft :' + JSON.stringify(rightTopLL));
-                            rectangle.setOptions({ 
-                      
-                               
-                            fillColor: 'red',  
-                              
+                            rectangle.setOptions({
                             map: map,   
                             bounds: new google.maps.LatLngBounds(
                             new google.maps.LatLng(leftBottomLL.lat,leftBottomLL.lon),
@@ -387,11 +363,7 @@
 
                                 console.log('Location 11 LeftBottom :' + JSON.stringify(leftBottomLL));
                                 console.log('Location 11 TopLeft :' + JSON.stringify(rightTopLL));
-                                rectangle.setOptions({ 
-                          
-                                   
-                                fillColor: 'red',  
-                                  
+                                rectangle.setOptions({
                                 map: map,   
                                 bounds: new google.maps.LatLngBounds(
                                 new google.maps.LatLng(leftBottomLL.lat,leftBottomLL.lon),
@@ -501,10 +473,7 @@
 
                                 console.log('Location 11 North :' + northernBoundary + ' Southern' + southernBoundary);
                                 console.log('Location 11 Eastern :' + easternBoundary + ' Western' + westernBoundary);
-                                rectangle.setOptions({ 
-                          
-                                  
-                                fillColor: 'red',   
+                                rectangle.setOptions({
                                 map: map,   
                                 bounds: new google.maps.LatLngBounds(
                                 new google.maps.LatLng(southernBoundary,westernBoundary),
