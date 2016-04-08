@@ -74,9 +74,7 @@
                     createMarker(event.latLng);
 
                 
-                    map.setZoom(8);
-
-                    map.panTo(event.latLng);
+                   
 
                 var mouseLL=event.latLng;
                 var mouseUSNG = usngConv.fromLonLat({lon:mouseLL.lng(),lat:mouseLL.lat()},5);
@@ -114,7 +112,8 @@
                 new google.maps.LatLng(rightTopLL.lat,rightTopLL.lon))
                 });     
 
-
+                map.setZoom(9);
+                map.panTo(event.latLng);
                 }
             });
 
