@@ -8,6 +8,7 @@
 
         // Declare & Initialize variables
         var map;
+        var marker;
         var locationGeocoder;
         var searchType = "address";
         var defaultBounds = new google.maps.LatLngBounds(
@@ -64,19 +65,38 @@
                 document.getElementById('btnSearch').click();
             });
 
+            function placeMarker(location) {
+              if ( marker ) {
+                marker.setPosition(location);
+              } else {
+                marker = new google.maps.Marker({
+                  position: location,
+                  map: map,
+                  draggable:true
+                });
 
-            //Marker Integrations
-            google.maps.event.addListener(map, 'click', function (event) {
-                if (disableClickListener) {
-                    return;
+                marker.addListener('dragend',function(event) {
+                    shadeUTMZone(event.latLng);
+                });
+              }
+            }
+
+            function geocodePosition(pos) {
+              locationGeocoder.geocode({
+                latLng: pos
+              }, function(responses) {
+                if (responses && responses.length > 0) {
+                  console.log('Cannot determine address at this location.');
+                  shadeUTMZone(responses[0].formatted_address);
                 } else {
-                    //place a marker at the point clicked
-                    createMarker(event.latLng);
+                  console.log('Cannot determine address at this location.');
+                }
+              });
+            }
 
-                
-                   
+            function shadeUTMZone(location){
 
-                var mouseLL=event.latLng;
+                var mouseLL=location;
                 var mouseUSNG = usngConv.fromLonLat({lon:mouseLL.lng(),lat:mouseLL.lat()},5);
 
                 var locati=mouseUSNG.substring(0,6);
@@ -100,20 +120,40 @@
                 console.log('Location Right Top :' + JSON.stringify(rightTopLL));
                 
 
-                rectangle = new google.maps.Rectangle({
-                    strokeColor: '#00cc66',
-                    strokeOpacity: 0.8,
-                    strokeWeight: 2,
-                    fillColor: '#00cc66',
-                    fillOpacity: 0.35,
-                map: map,   
-                bounds: new google.maps.LatLngBounds(
-                new google.maps.LatLng(leftBottomLL.lat,leftBottomLL.lon),
-                new google.maps.LatLng(rightTopLL.lat,rightTopLL.lon))
-                });     
-
+                if ( rectangle ){
+                     rectangle.setOptions({
+                        map: map,  
+                        bounds: new google.maps.LatLngBounds(
+                            new google.maps.LatLng(leftBottomLL.lat,leftBottomLL.lon),
+                            new google.maps.LatLng(rightTopLL.lat,rightTopLL.lon))
+                    });     
+                }else{
+                       rectangle = new google.maps.Rectangle({
+                        strokeColor: '#00cc66',
+                        strokeOpacity: 0.8,
+                        strokeWeight: 2,
+                        fillColor: '#00cc66',
+                        fillOpacity: 0.35,
+                    map: map,   
+                    bounds: new google.maps.LatLngBounds(
+                    new google.maps.LatLng(leftBottomLL.lat,leftBottomLL.lon),
+                    new google.maps.LatLng(rightTopLL.lat,rightTopLL.lon))
+                    });      
+                }
+                
                 map.setZoom(9);
-                map.panTo(event.latLng);
+                map.panTo(location);
+
+            }
+
+            //Marker Integrations
+            google.maps.event.addListener(map, 'click', function (event) {
+                if (disableClickListener) {
+                    return;
+                } else {
+                    //place a marker at the point clicked
+                    placeMarker(event.latLng);
+                    shadeUTMZone(event.latLng);
                 }
             });
 
