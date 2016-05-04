@@ -1,24 +1,159 @@
-﻿<div class="jumbotron">
-    <h1>ASP.NET</h1>
-    <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS, and JavaScript.</p>
-    <p><a href="http://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
+﻿@{
+    ViewBag.Title = "Dashboard";
+}
+
+<div class="wrapper wrapper-content animated fadeInUp">
+    <div class="row">
+        <div class="col-lg-3">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>Species</h5>
+                </div>
+                <div class="ibox-content">
+                    <h1 class="no-margins">6</h1>
+                    <small>Total No. Species</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>Animals</h5>
+                </div>
+                <div class="ibox-content">
+                    <h1 class="no-margins">275</h1>
+                    <small>No. of Animals sighted</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <span class="label label-primary pull-right">Weekly</span>
+                    <h5>Observations</h5>
+                </div>
+                <div class="ibox-content">
+                    <h1 class="no-margins">106,120</h1>
+                    <div class="stat-percent font-bold text-navy">44% <i class="fa fa-level-up"></i></div>
+                    <small>Total No. Observations</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <span class="label label-danger pull-right">Annual</span>
+                    <h5>Observations</h5>
+                </div>
+                <div class="ibox-content">
+                    <h1 class="no-margins">80,600</h1>
+                    <div class="stat-percent font-bold text-danger">38% <i class="fa fa-level-down"></i></div>
+                    <small>Total Annual No. Observations</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>Observations per species</h5>
+                    <div class="pull-right">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-xs btn-white active">Weekly</button>
+                            <button type="button" class="btn btn-xs btn-white">Monthly</button>
+                            <button type="button" class="btn btn-xs btn-white">Annual</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="ibox-content-chart">
+                    <div class="row">
+                        <div class="col-lg-9">
+                            <div class="flot-chart">
+                                <canvas id="barChart" height="140"></canvas>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <ul class="stat-list">
+                                <li>
+                                    <h2 class="no-margins">2,346</h2>
+                                    <small>Total numober of observations in period</small>
+                                    <div class="stat-percent">48% <i class="fa fa-level-up text-navy"></i></div>
+                                    <div class="progress progress-mini">
+                                        <div style="width: 48%;" class="progress-bar"></div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <h2 class="no-margins ">4,422</h2>
+                                    <small>Observations in last month</small>
+                                    <div class="stat-percent">60% <i class="fa fa-level-down text-navy"></i></div>
+                                    <div class="progress progress-mini">
+                                        <div style="width: 60%;" class="progress-bar"></div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <h2 class="no-margins ">9,180</h2>
+                                    <small>Total no. of observations</small>
+                                    <div class="stat-percent">22% <i class="fa fa-bolt text-navy"></i></div>
+                                    <div class="progress progress-mini">
+                                        <div style="width: 22%;" class="progress-bar"></div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<div class="row">
-    <div class="col-md-4">
-        <h2>Getting started</h2>
-        <p>ASP.NET Web API is a framework that makes it easy to build HTTP services that reach
-        a broad range of clients, including browsers and mobile devices. ASP.NET Web API
-        is an ideal platform for building RESTful applications on the .NET Framework.</p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301870">Learn more &raquo;</a></p>
-    </div>
-    <div class="col-md-4">
-        <h2>Get more libraries</h2>
-        <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301871">Learn more &raquo;</a></p>
-    </div>
-    <div class="col-md-4">
-        <h2>Web Hosting</h2>
-        <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301872">Learn more &raquo;</a></p>
-    </div>
-</div>
+
+
+@section Scripts {
+    @Scripts.Render("~/plugins/chartjs")
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+
+            var barData = {
+                labels: ["January", "February", "March", "April", "May", "June", "July"],
+                datasets: [
+                    {
+                        label: "My First dataset",
+                        fillColor: "rgba(220,220,220,0.5)",
+                        strokeColor: "rgba(220,220,220,0.8)",
+                        highlightFill: "rgba(220,220,220,0.75)",
+                        highlightStroke: "rgba(220,220,220,1)",
+                        data: [65, 59, 80, 81, 56, 55, 40]
+                    },
+                    {
+                        label: "My Second dataset",
+                        fillColor: "rgba(26,179,148,0.5)",
+                        strokeColor: "rgba(26,179,148,0.8)",
+                        highlightFill: "rgba(26,179,148,0.75)",
+                        highlightStroke: "rgba(26,179,148,1)",
+                        data: [28, 48, 40, 19, 86, 27, 90]
+                    }
+                ]
+            };
+
+            var barOptions = {
+                scaleBeginAtZero: true,
+                scaleShowGridLines: true,
+                scaleGridLineColor: "rgba(0,0,0,.05)",
+                scaleGridLineWidth: 1,
+                barShowStroke: true,
+                barStrokeWidth: 2,
+                barValueSpacing: 5,
+                barDatasetSpacing: 1,
+                responsive: true,
+            }
+
+
+            var ctx = document.getElementById("barChart").getContext("2d");
+            var myNewChart = new Chart(ctx).Bar(barData, barOptions);
+        });
+
+    </script>
+}
