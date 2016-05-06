@@ -7538,6 +7538,16 @@ body.skin-3 {
 }
 
 
+.users {
+    transition: .5s linear all;
+    height: 250px;
+    overflow: hidden;
+}
+.users.ng-hide {
+    height:0;
+}
+
+
 .farmerGroupsSlideUp {
     transition: .5s linear all;
     height: 320px;
@@ -7581,7 +7591,7 @@ html {
 
 #map_canvas { 
 	width: 100%; 
-    height:100%;
+    height:70%;
 	margin: 0; 
 	padding: 0
 }

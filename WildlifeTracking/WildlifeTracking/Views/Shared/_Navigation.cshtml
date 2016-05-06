@@ -23,15 +23,11 @@
                 <a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> <span class="nav-label">Dashboard</span> <span class="fa arrow"></span></a>
             </li>
             <li class="@Html.IsSelected(controller: "Users")">
-                <a href="@Url.Action("Index", "Student")"><i class="fa fa-user"></i> <span class="nav-label">Users</span> <span class="fa arrow"></span></a>
+                <a href="@Url.Action("Index", "User")"><i class="fa fa-user"></i> <span class="nav-label">Users</span> <span class="fa arrow"></span></a>
             </li>
             
             <li class="@Html.IsSelected(controller: "Species Configuration")">
-                <a href="#"><i class="fa fa-cogs"></i> <span class="nav-label">Species</span><span class="fa arrow"></span></a>
-                <ul class="nav nav-second-level">
-                    <li class="@Html.IsSelected(action: "Dashboard_1")"><a href="@Url.Action("Index", "User")">Species</a></li>
-                    <li class="@Html.IsSelected(action: "Dashboard_1")"><a href="@Url.Action("Index", "User")">Animals</a></li>
-                </ul>
+                <a href="@Url.Action("Index", "Specie")"><i class="fa fa-cogs"></i> <span class="nav-label">Species</span> <span class="fa arrow"></span></a>
             </li>
 
             <li class="@Html.IsSelected(controller: "Farming Inputs")">
