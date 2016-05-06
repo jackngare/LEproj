@@ -1,0 +1,53 @@
+﻿@{
+    Layout = null;
+    ViewBag.Title = "Login";
+}
+
+<!DOCTYPE html>
+<html data-ng-app="wildlifeTrackingModule">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="icon" href="~/Content/images/Elephant_128px_557404_easyicon.net.ico">
+    <title>Wildlife Tracker | @ViewBag.Title</title>
+
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet">
+    <link href="~/Fonts/font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="~/Content/animate.css" rel="stylesheet">
+    <link href="~/Content/style.css" rel="stylesheet">
+
+</head>
+
+@using (Html.BeginForm("Login", "Login", FormMethod.Post))
+{
+<body class="gray-bg">
+    <div class="middle-box text-center loginscreen  animated fadeInDown">
+        <div class="row" data-ng-controller="loginController">
+            <h3>Welcome to Wildlife Tracker</h3>
+            <form class="m-t" role="form" action="#">
+                <div class="form-group">
+                    <input type="text" id="txtusername" class="form-control" placeholder="Username" required="" focus-me="{{loginMode}}">
+                </div>
+                <div class="form-group">
+                    <input type="password" class="form-control" placeholder="Password" required="">
+                </div>
+                <button type="submit" value="Login" class="btn btn-primary block full-width m-b">Login</button>
+            </form>
+        </div>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/plugins/slimScroll")
+    @Scripts.Render("~/bundles/inspinia")
+    @Scripts.Render("~/bundles/angularjs")
+    @Scripts.Render("~/plugins/dataTables")
+    @Scripts.Render("~/bundles/app")
+    
+</body>
+}
+</html>
+
+

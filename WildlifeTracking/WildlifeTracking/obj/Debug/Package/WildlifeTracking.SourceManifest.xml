@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<sitemanifest>
+  <IisApp path="Y:\Documents\Projects\ZK\Masomo\Jack\WebApp\LEproj\WildlifeTracking\WildlifeTracking\obj\Debug\Package\PackageTmp" />
+  <setAcl path="Y:\Documents\Projects\ZK\Masomo\Jack\WebApp\LEproj\WildlifeTracking\WildlifeTracking\obj\Debug\Package\PackageTmp" setAclResourceType="Directory" />
+  <setAcl path="Y:\Documents\Projects\ZK\Masomo\Jack\WebApp\LEproj\WildlifeTracking\WildlifeTracking\obj\Debug\Package\PackageTmp" setAclUser="anonymousAuthenticationUser" setAclResourceType="Directory" />
+</sitemanifest>
