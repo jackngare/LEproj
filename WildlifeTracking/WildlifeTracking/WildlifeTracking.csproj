@@ -495,9 +495,11 @@
     <None Include="Properties\PublishProfiles\wildlifetracker - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\wildlifetracking - FTP %282%29.pubxml" />
     <None Include="Properties\PublishProfiles\wildlifetracking - FTP %283%29.pubxml" />
+    <None Include="Properties\PublishProfiles\wildlifetracking - FTP %284%29.pubxml" />
     <None Include="Properties\PublishProfiles\wildlifeTracking - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\wildlifetracking - Web Deploy %282%29.pubxml" />
     <None Include="Properties\PublishProfiles\wildlifetracking - Web Deploy %283%29.pubxml" />
+    <None Include="Properties\PublishProfiles\wildlifetracking - Web Deploy %284%29.pubxml" />
     <None Include="Properties\PublishProfiles\wildlifeTracking - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
