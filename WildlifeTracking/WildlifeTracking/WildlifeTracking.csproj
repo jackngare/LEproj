@@ -269,6 +269,7 @@
     <Content Include="Content\images\academic-cap.ico" />
     <Content Include="Content\images\avatar.jpg" />
     <Content Include="Content\images\Elephant_128px_557404_easyicon.net.ico" />
+    <Content Include="Content\images\genericuser.png" />
     <Content Include="Content\images\layers-2x.png" />
     <Content Include="Content\images\layers.png" />
     <Content Include="Content\images\marker-icon-2x.png" />
