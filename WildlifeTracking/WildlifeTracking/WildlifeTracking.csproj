@@ -253,6 +253,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helpers\HMTLHelperExtensions.cs" />
+    <Compile Include="Infrastructure\WildlifeTrackingDb.cs" />
     <Compile Include="Models\Species.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\Wildlifesighting.cs" />
@@ -374,6 +375,7 @@
     <Content Include="Content\plugins\toastr\toastr.min.css" />
     <Content Include="Content\style.css" />
     <Content Include="Content\ui-bootstrap-csp.css" />
+    <Content Include="DbScript\dbscript.sql" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\font-awesome\css\font-awesome.css" />
     <Content Include="fonts\font-awesome\css\font-awesome.min.css" />
@@ -958,8 +960,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="DbScript\" />
-    <Folder Include="Infrastructure\" />
     <Folder Include="Scripts\css\" />
     <Folder Include="Scripts\html\" />
     <Folder Include="Scripts\i18n\" />

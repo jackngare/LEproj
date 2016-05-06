@@ -3,7 +3,7 @@
 ** Wildlife Tracking Database Scrpt
 ** Updated on 03 May 2016 By:
 **
-** Stephen Ebichondo Imenje
+** Jack Ngare
 ** 
 ** This Is The script required for Wildlife Tracking to work
 ** It contains The Schemas for the Tables required for the Wildlife Tracking solution to function
