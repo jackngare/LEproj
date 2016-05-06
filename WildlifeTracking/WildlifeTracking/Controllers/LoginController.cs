@@ -17,7 +17,7 @@ namespace WildlifeTracking.Controllers
         [HttpPost]
         public ActionResult Login(string username, string password)
         {
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Observation");
         }
     }
 }

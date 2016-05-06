@@ -4,7 +4,7 @@ app.controller('landingController', function ($scope, $q, userService,speciesSer
     $scope.OperType = 1;//1 Means New Entry
     $scope.searchMode = true;
 
-    //get all the farmers 
+    //get all the species 
     getAllSpecies();
     function getAllSpecies() {
         speciesService.getAllSpecies()
@@ -654,3 +654,137 @@ app.controller('dashboardController', function ($scope, $q, userService, $timeou
 
 });
 
+
+//wildlifesightingController
+app.controller('wildlifesightingController', function ($scope, $q, wildlifesightingService,speciesService, $timeout, $compile, DTOptionsBuilder, DTColumnBuilder, DTInstances) {
+    $scope.OperType = 1;//1 Means New Entry
+    $scope.addMode = false;
+    $scope.edit = edit;
+    $scope.delete = deleteRow;
+    $scope.message = "";
+
+    $scope.dtOptions = DTOptionsBuilder.fromFnPromise(function () {
+        return wildlifesightingService.getWildlifesightings();
+    }).withPaginationType('full_numbers').withOption('createdRow', createdRow);
+
+    $scope.dtColumns = [
+        DTColumnBuilder.newColumn('WildlifeSightingID').withTitle('WildlifeSightingID ID').notVisible(),
+        DTColumnBuilder.newColumn('SpeciesID').withTitle('Species'),
+        DTColumnBuilder.newColumn('Location').withTitle('Location'),
+        DTColumnBuilder.newColumn('SightingDate').withTitle('Date'),
+        DTColumnBuilder.newColumn(null).withTitle('Actions').notSortable().renderWith(actionsHtml).withClass("text-center")
+    ];
+
+    DTInstances.getLast().then(function (dtInstance) {
+        $scope.dtInstance = dtInstance;
+    });
+
+    function edit(id) {
+        // Edit some data and call server to make changes...
+        $scope.addMode = !$scope.addMode;
+        $scope.get(id);
+    }
+
+    function deleteRow(id) {
+        //alert("inDelete");
+        $scope.message = 'You are trying to remove the row with ID: ' + id; --
+        // Delete some data and call server to make changes...
+        // Then reload the data so that DT is refreshed
+        $scope.dtInstance.reloadData();
+    }
+
+    function createdRow(row, data, dataIndex) {
+        // Recompiling so we can bind Angular directive to the DT
+        $compile(angular.element(row).contents())($scope);
+    }
+
+    function actionsHtml(data, type, full, meta) {
+        return '<div class="gradeX">' +
+        '<button class="btn btn-primary btn-sm" data-ng-click="edit(' + data.WildlifeSightingID + ')">' +
+            '   <i class="fa fa-edit"></i>' +
+            '</button>&nbsp;' +
+            '<button class="btn btn-white btn-sm" data-ng-click="delete(' + data.WildlifeSightingID + ')">' +
+            '   <i class="fa fa-trash-o"></i>' +
+            '</button>' +
+            '</div>';
+    }
+
+    $scope.toggleEdit = function () {
+        this.friend.editMode = !this.friend.editMode;
+    };
+    $scope.toggleAdd = function () {
+        $scope.addMode = !$scope.addMode;
+        ClearModels();
+    };
+
+
+    //To Clear all input controls.
+    function ClearModels() {
+        $scope.SpeciesID = "";
+        $scope.SpeciesName = "";
+        $scope.SpeciesDescription = "";
+    }
+
+    //To Create new record and Edit an existing Record.
+    $scope.save = function () {
+        var Species = {
+            SpeciesName: $scope.SpeciesName,
+            SpeciesDescription: $scope.SpeciesDescription
+        };
+        if ($scope.OperType === 1) {
+            var promisePost = speciesService.post(Species);
+            promisePost.then(function (pl) {
+                $scope.dtInstance.reloadData();
+                ClearModels();
+            }, function (err) {
+                console.log("Err" + err);
+            });
+        } else {
+            //Edit the record             
+            Species.SpeciesID = $scope.SpeciesID;
+            var promisePut = speciesService.put($scope.SpeciesID, Species);
+            promisePut.then(function (pl) {
+                $scope.Message = "Species Updated Successfuly";
+                $scope.dtInstance.reloadData();
+                ClearModels();
+            }, function (err) {
+                console.log("Err" + err);
+            });
+        }
+
+        $scope.addMode = !$scope.addMode;
+    };
+
+
+    //To Get User Detail on the Base of User ID
+    $scope.get = function (id) {
+        var promiseGetSingle = speciesService.get(id);
+
+        promiseGetSingle.then(function (pl) {
+            var res = pl.data;
+            $scope.SpeciesID = res.SpeciesID;
+            $scope.SpeciesName = res.SpeciesName;
+            $scope.SpeciesDescription = res.SpeciesDescription;
+            $scope.OperType = 0;
+        },
+        function (errorPl) {
+            console.log('Some Error in Getting Details', errorPl);
+        });
+    }
+
+
+    //get all the species 
+    getAllSpecies();
+    function getAllSpecies() {
+        speciesService.getAllSpecies()
+            .success(function (species) {
+                $scope.Species = species;
+            })
+            .error(function (error) {
+                $scope.status = 'Unable to load species data: ' + error.message;
+
+            });
+    };
+
+
+});

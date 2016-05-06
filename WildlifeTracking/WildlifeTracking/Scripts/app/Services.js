@@ -154,7 +154,7 @@ app.service('userService', function ($http, $q) {
     }
 });
 
-//userService
+//speciesService
 app.service('speciesService', function ($http, $q) {
     this.post = function (Species) {
 
@@ -220,6 +220,78 @@ app.service('speciesService', function ($http, $q) {
         var request = $http({
             method: "delete",
             url: "/api/Species/" + SpeciesID
+        });
+        return request;
+    }
+});
+
+
+//wildlifesightingService
+app.service('wildlifesightingService', function ($http, $q) {
+    this.post = function (Wildlifesighting) {
+
+        //Implement a promise ($q)
+        var deferred = $q.defer();
+
+        $http.post("/api/Wildlifesightings", Wildlifesighting)
+         .then(function (result) {
+             //Successful            
+             //Tell anyone that binds to the topics that it has been initialised
+             deferred.resolve(result.data);     //Data can be returned as parameters
+         },
+       function () {
+           //Error - We dont want the data service to interact with the UI directly
+           deferred.reject();
+       });
+
+        return deferred.promise;
+    };
+
+
+    //Get Single Records
+    this.get = function (WildlifesightingID) {
+        return $http.get("/api/Wildlifesightings/" + WildlifesightingID);
+    }
+
+    //Get All Wildlifesighting
+    this.getAllWildlifesightings = function () {
+        return $http.get("/api/Wildlifesightings");
+    }
+
+    //Get the Wildlifesighting from the server and add it to the local collection
+    this.getWildlifesightings = function () {
+
+        //Implement a promise ($q)
+        var deferred = $q.defer();
+
+        $http.get("/api/Wildlifesightings")
+          .then(function (result) {
+              //Successful            
+              //Tell anyone that binds to the topics that it has been initialised
+              deferred.resolve(result.data);     //Data can be returned as parameters
+          },
+        function () {
+            //Error - We dont want the data service to interact with the UI directly
+            deferred.reject();
+        });
+
+        return deferred.promise;
+    };
+    //Update the Record
+    this.put = function (WildlifesightingID, Wildlifesighting) {
+        var request = $http({
+            method: "put",
+            url: "/api/Wildlifesightings/" + WildlifesightingID,
+            data: Wildlifesighting
+        });
+        return request;
+    }
+
+    //Delete the Record
+    this.delete = function (WildlifesightingID) {
+        var request = $http({
+            method: "delete",
+            url: "/api/Wildlifesightings/" + WildlifesightingID
         });
         return request;
     }
