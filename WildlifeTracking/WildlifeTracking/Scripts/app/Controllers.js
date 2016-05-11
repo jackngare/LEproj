@@ -1,8 +1,26 @@
 ﻿
 //userController
-app.controller('landingController', function ($scope, $q, userService,speciesService, $timeout, $compile, DTOptionsBuilder, DTColumnBuilder, DTInstances) {
+app.controller('landingController', function ($scope, $q, userService,speciesService, $timeout, $compile, DTOptionsBuilder, DTColumnBuilder, DTInstances,NgMap) {
     $scope.OperType = 1;//1 Means New Entry
     $scope.searchMode = true;
+    // Instatiation of the USNG mapping function
+    var usngConv = new USNG2();
+    var utmMap = new usngConv.UTM();
+    
+    //Graticules are another word for 'overlays', just implemented as a whole instead of individually
+    var graticuleDisplay = null;
+
+    var rectangle;
+    var southEast, northWest;
+
+    var vm = this;
+    NgMap.getMap().then(function(map) {
+        vm.map = map;
+        //Instatiated the graticuleDisplay
+        graticuleDisplay = new USNGGraticule(vm.map, gridstyle);
+    });
+
+    
 
     //get all the species 
     getAllSpecies();
@@ -21,7 +39,7 @@ app.controller('landingController', function ($scope, $q, userService,speciesSer
 
 
 //loginController
-app.controller('loginController', function ($scope, $q, userService, $timeout, $compile, DTOptionsBuilder, DTColumnBuilder, DTInstances) {
+app.controller('loginController', function ($scope, $q, userService, $timeout, $compile, DTOptionsBuilder, DTColumnBuilder, DTInstances, NgMap) {
     $scope.OperType = 1;//1 Means New Entry
     $scope.loginMode = true;
     $scope.edit = edit;
@@ -307,7 +325,7 @@ app.controller('loginController', function ($scope, $q, userService, $timeout, $
 });
 
 //userController
-app.controller('userController', function ($scope, $q, userService, $timeout, $compile, DTOptionsBuilder, DTColumnBuilder, DTInstances) {
+app.controller('userController', function ($scope, $q, userService, $timeout, $compile, DTOptionsBuilder, DTColumnBuilder, DTInstances, NgMap) {
     $scope.OperType = 1;//1 Means New Entry
     $scope.addMode = false;
     $scope.edit = edit;
@@ -459,7 +477,7 @@ app.controller('userController', function ($scope, $q, userService, $timeout, $c
 
 
 //speciesController
-app.controller('speciesController', function ($scope, $q, speciesService, $timeout, $compile, DTOptionsBuilder, DTColumnBuilder, DTInstances) {
+app.controller('speciesController', function ($scope, $q, speciesService, $timeout, $compile, DTOptionsBuilder, DTColumnBuilder, DTInstances, NgMap) {
     $scope.OperType = 1;//1 Means New Entry
     $scope.addMode = false;
     $scope.edit = edit;
@@ -577,12 +595,31 @@ app.controller('speciesController', function ($scope, $q, speciesService, $timeo
 });
 
 //dashboardController
-app.controller('dashboardController', function ($scope, $q, userService, $timeout, $compile, DTOptionsBuilder, DTColumnBuilder, DTInstances) {
+app.controller('dashboardController', function ($scope, $q, userService, $timeout, $compile, DTOptionsBuilder, DTColumnBuilder, DTInstances, NgMap) {
     $scope.OperType = 1;//1 Means New Entry
     $scope.addMode = false;
     $scope.edit = edit;
     $scope.delete = deleteRow;
     $scope.message = "";
+
+    // Instatiation of the USNG mapping function
+    var usngConv = new USNG2();
+    var utmMap = new usngConv.UTM();
+
+    //Graticules are another word for 'overlays', just implemented as a whole instead of individually
+    var graticuleDisplay = null;
+
+    var rectangle;
+    var southEast, northWest;
+
+    var vm = this;
+    NgMap.getMap().then(function (map) {
+        vm.map = map;
+        //Instatiated the graticuleDisplay
+        graticuleDisplay = new USNGGraticule(vm.map, gridstyle);
+    });
+
+
 
     $scope.dtOptions = DTOptionsBuilder.fromFnPromise(function () {
         return userService.getUsers();
@@ -656,12 +693,29 @@ app.controller('dashboardController', function ($scope, $q, userService, $timeou
 
 
 //wildlifesightingController
-app.controller('wildlifesightingController', function ($scope, $q, wildlifesightingService,speciesService, $timeout, $compile, DTOptionsBuilder, DTColumnBuilder, DTInstances) {
+app.controller('wildlifesightingController', function ($scope, $q, wildlifesightingService,speciesService, $timeout, $compile, DTOptionsBuilder, DTColumnBuilder, DTInstances,NgMap) {
     $scope.OperType = 1;//1 Means New Entry
     $scope.addMode = false;
     $scope.edit = edit;
     $scope.delete = deleteRow;
     $scope.message = "";
+
+    // Instatiation of the USNG mapping function
+    var usngConv = new USNG2();
+    var utmMap = new usngConv.UTM();
+
+    //Graticules are another word for 'overlays', just implemented as a whole instead of individually
+    var graticuleDisplay = null;
+
+    var rectangle;
+    var southEast, northWest;
+
+    var vm = this;
+    NgMap.getMap().then(function (map) {
+        vm.map = map;
+        //Instatiated the graticuleDisplay
+        graticuleDisplay = new USNGGraticule(vm.map, gridstyle);
+    });
 
     $scope.dtOptions = DTOptionsBuilder.fromFnPromise(function () {
         return wildlifesightingService.getWildlifesightings();

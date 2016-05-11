@@ -17,18 +17,19 @@
     <link href="~/Content/animate.css" rel="stylesheet">
     <link href="~/Content/style.css" rel="stylesheet">
 
+
     <!--Bootstrap to Google Maps API. Jack's Key -->
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD8fS3hJwOoP9lir5q-hGUanxUV0mKK0P0&libraries=places&sensor=false"></script>
     <!--<script type="text/javascript" src="//maps.googleapis.com/maps/api/js?></script>-->
 </head>
-<body onload="initialize()">
+<body data-ng-controller="landingController as vm">
     <div class="row border-bottom">
         <nav class="navbar navbar-static-top white-bg" role="navigation" style="margin-bottom: 0">
             @Html.Partial("_LoginPartial")
         </nav>
     </div>
 
-    <div class="row" data-ng-controller="landingController">
+    <div class="row" >
         <div class="ibox-content">
             <div class="row">
                 <div class="col-sm-4">
@@ -53,9 +54,10 @@
         </div>
     </div>
 
-    <div id="mapArea" style="width:100%; height:82%;">
-    </div>
+    <ng-map zoom="4" center="-2.150359, 35.243393" class="google-map" map-type-id="ROADMAP">
+    </ng-map>
 
+  
 
     <!-- Footer -->
     @Html.Partial("_Footer")
@@ -69,6 +71,5 @@
     @Scripts.Render("~/plugins/dataTables")
     @Scripts.Render("~/bundles/app")
     @Scripts.Render("~/bundles/map")
-
 </body>
 </html>

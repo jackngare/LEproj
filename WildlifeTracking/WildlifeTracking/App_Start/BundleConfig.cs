@@ -310,15 +310,14 @@ namespace WildlifeTracking
 
             //map
             bundles.Add(new ScriptBundle("~/bundles/map").Include(
-                "~/Scripts/map/ramaniStdLib.js",
+                 "~/Scripts/map/ng-map.min.js",
+                 "~/Scripts/map/ramaniStdLib.js",
                 "~/Scripts/map/ramaniMapper.js",
                 "~/Scripts/map/drawUSGNgraticule.js",
                 "~/Scripts/map/usng2.js",
                 "~/Scripts/map/markers.js",
                 "~/Scripts/map/map.js",
-                "~/Scripts/map/polygons.js",
-                "~/Scripts/map/angular-google-maps.min.js"
-
+                "~/Scripts/map/polygons.js"
             ));
         }
     }

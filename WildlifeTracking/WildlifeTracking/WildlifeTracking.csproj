@@ -275,6 +275,7 @@
     <Content Include="Content\images\spritesheet-2x.png" />
     <Content Include="Content\images\spritesheet.png" />
     <Content Include="Content\images\user1_48.png" />
+    <Content Include="Content\images\user48.png" />
     <Content Include="Content\images\woman.jpg" />
     <Content Include="Content\images\wrestler.png" />
     <Content Include="Content\leaflet.css" />
@@ -519,9 +520,11 @@
     <Content Include="Scripts\leaflet.draw.js" />
     <Content Include="Scripts\leaflet.js" />
     <Content Include="Scripts\map\angular-google-maps.min.js" />
+    <Content Include="Scripts\map\angular.min.js" />
     <Content Include="Scripts\map\drawUSGNgraticule.js" />
     <Content Include="Scripts\map\map.js" />
     <Content Include="Scripts\map\markers.js" />
+    <Content Include="Scripts\map\ng-map.min.js" />
     <Content Include="Scripts\map\polygons.js" />
     <Content Include="Scripts\map\ramaniMapper.js" />
     <Content Include="Scripts\map\ramaniStdLib.js" />
@@ -951,6 +954,7 @@
     <Content Include="Views\User\Index.cshtml" />
     <Content Include="Views\Specie\Index.cshtml" />
     <Content Include="Views\Observation\Index.cshtml" />
+    <Content Include="Scripts\map\ng-maps.min.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

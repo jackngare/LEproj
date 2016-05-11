@@ -7,7 +7,7 @@
     <WebStackScaffolding_IsReferencingScriptLibrariesSelected>True</WebStackScaffolding_IsReferencingScriptLibrariesSelected>
     <WebStackScaffolding_LayoutPageFile />
     <WebStackScaffolding_IsAsyncSelected>False</WebStackScaffolding_IsAsyncSelected>
-    <NameOfLastUsedPublishProfile>wildlifetracking - Web Deploy %284%29</NameOfLastUsedPublishProfile>
+    <NameOfLastUsedPublishProfile>wildlifetracker - Web Deploy</NameOfLastUsedPublishProfile>
     <WebStackScaffolding_ViewDialogWidth>600</WebStackScaffolding_ViewDialogWidth>
     <WebStackScaffolding_DbContextTypeFullName>WildlifeTracking.Infrastructure.WildlifeTrackingDb</WebStackScaffolding_DbContextTypeFullName>
   </PropertyGroup>

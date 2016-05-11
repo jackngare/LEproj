@@ -26,7 +26,11 @@
             </div>
             <div class="ibox-content">
                 <div class="row">
-                    <form name="addUser" data-ng-show="addMode" class="users">
+                    <div class="ibox-content-maps">
+                        <ng-map zoom="4" center="-2.150359, 35.243393" style="width:100%; height:100%" map-type-id="ROADMAP">
+                        </ng-map>
+                    </div>
+                    <form name="addUser" data-ng-show="addMode" class="observations">
                         <div class="col-sm-6 col-sm-offset-0">
                             <div class="form-group"><label>Location*</label></div>
                             <div class="input-group">
@@ -62,6 +66,7 @@
                                 <br />
                             </div>
                         </div>
+                        
                     </form>
                     <table id="usersTable" data-datatable="" data-dt-options="dtOptions" data-dt-columns="dtColumns" class="table table-striped table-bordered table-hover dataTables-example animated fadeInDown"></table>
                 </div>

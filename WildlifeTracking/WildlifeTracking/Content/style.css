@@ -3619,7 +3619,18 @@ code {
   border-image: none;
   border-style: solid solid none;
   border-width: 1px 0px;
-  height:600px;
+  height:800px;
+}
+
+.ibox-content-maps {
+  background-color: #ffffff;
+  color: inherit;
+  padding: 15px 20px 20px 20px;
+  border-color: #e7eaec;
+  border-image: none;
+  border-style: solid solid none;
+  border-width: 1px 0px;
+  height:500px;
 }
 
 .ibox-footer {
@@ -7548,6 +7559,17 @@ body.skin-3 {
 }
 
 
+.observations {
+    transition: .5s linear all;
+    height: 250px;
+    overflow: hidden;
+}
+.observations.ng-hide {
+    height:0;
+}
+
+
+
 .farmerGroupsSlideUp {
     transition: .5s linear all;
     height: 320px;
@@ -7726,3 +7748,5 @@ input[type=submit] {
 	text-shadow: 1px 1px 0px #ffffff,-1px -1px 0px #ffffff,1px -1px 0px #ffffff,-1px 1px 0px #ffffff;
 	font-family: Tahoma;
 }
+
+.google-map {  height: 80%; }

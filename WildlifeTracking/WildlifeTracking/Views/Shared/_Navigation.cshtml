@@ -4,7 +4,7 @@
             <li class="nav-header">
                 <div class="dropdown profile-element">
                     <span>
-                        <img alt="image" class="img-circle" src="~/Content/images/user1_48.png" />
+                        <img alt="image" class="img-circle" src="~/Content/images/user48.png" />
                     </span>
                     <a data-toggle="dropdown" class="dropdown-toggle">
                         <span class="clear">
@@ -13,7 +13,6 @@
                             </span>
                         </span>
                     </a>
-
                 </div>
                 <div class="logo-element">
                     FT
@@ -30,12 +29,15 @@
                 <a href="@Url.Action("Index", "Specie")"><i class="fa fa-cogs"></i> <span class="nav-label">Species</span> <span class="fa arrow"></span></a>
             </li>
 
+            <li class="@Html.IsSelected(controller: "Record Observations")">
+                <a href="@Url.Action("Index", "Observation")"><i class="fa fa-binoculars"></i> <span class="nav-label">Observations</span> <span class="fa arrow"></span></a>
+            </li>
+
             <li class="@Html.IsSelected(controller: "Farming Inputs")">
                 <a href="#"><i class="fa fa-bar-chart-o"></i> <span class="nav-label">Reports</span><span class="fa arrow"></span></a>
                 <ul class="nav nav-second-level">
                     <li class="@Html.IsSelected(action: "Dashboard_1")"><a href="@Url.Action("Dashboard_1", "Dashboards")">Species</a></li>
                     <li class="@Html.IsSelected(action: "Dashboard_2")"><a href="@Url.Action("Dashboard_2", "Dashboards")">Observations</a></li>
-                 
                 </ul>
             </li>
         </ul>

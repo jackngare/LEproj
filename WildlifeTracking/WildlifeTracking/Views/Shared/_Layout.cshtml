@@ -8,6 +8,10 @@
     <link rel="icon" href="~/Content/images/Elephant_128px_557404_easyicon.net.ico">
     <title>Wildlife Tracking | @ViewBag.Title</title>
 
+    <!--Bootstrap to Google Maps API. Jack's Key -->
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD8fS3hJwOoP9lir5q-hGUanxUV0mKK0P0&libraries=places&sensor=false"></script>
+    <!--<script type="text/javascript" src="//maps.googleapis.com/maps/api/js?></script>-->
+
     <!-- Add local styles, mostly for plugins css file -->
     @if (IsSectionDefined("Styles"))
     {@RenderSection("Styles", required: false)}

@@ -2,7 +2,7 @@
     ViewBag.Title = "Dashboard";
 }
 
-<div class="wrapper wrapper-content animated fadeInUp">
+<div class="wrapper wrapper-content animated fadeInUp"  data-ng-controller="dashboardController">
     <div class="row" >
         <div class="col-lg-3">
             <div class="ibox float-e-margins">
@@ -53,17 +53,9 @@
             </div>
         </div>
     </div>
-
+    
 </div>
-
-
-<div id="mapArea" style="width:100%; height:72%;"></div>
-
-
-<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD8fS3hJwOoP9lir5q-hGUanxUV0mKK0P0&libraries=places&sensor=false"></script>
-
-<script type="text/javascript">
-    window.onload = function () {
-        initialize();
-    }
-</script>
+<div class="ibox-content-chart">
+    <ng-map zoom="4" center="-2.150359, 35.243393" style="width:100%; height:100%" map-type-id="ROADMAP">
+    </ng-map>
+</div>
