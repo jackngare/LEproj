@@ -38,6 +38,7 @@
             var mapOptions = {
                 center: new google.maps.LatLng(-2.150359, 35.243393),
                 zoom: 4,
+                scaleControl: true,
                 mapTypeId: google.maps.MapTypeId.ROADMAP
             };
 
