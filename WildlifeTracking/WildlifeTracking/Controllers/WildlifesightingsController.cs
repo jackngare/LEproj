@@ -20,7 +20,8 @@ namespace WildlifeTracking.Controllers
         // GET: api/Wildlifesightings
         public IQueryable<Wildlifesighting> GetWildlifesightings()
         {
-            return db.Wildlifesightings;
+            return db.Wildlifesightings.Include(s => s.Species)
+                                       .Include(u => u.User);
         }
 
         // GET: api/Wildlifesightings/5

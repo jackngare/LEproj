@@ -19,7 +19,7 @@
     </div>
 </div>
 <div class="wrapper wrapper-content animated fadeInDownBig">
-    <div class="row" data-ng-controller="wildlifesightingController">
+    <div class="row" data-ng-controller="wildlifesightingController as vm">
         <div class="ibox float-e-margins">
             <div class="ibox-title">
                 <button ng-click="toggleAdd()" href="javascript:;" class="btn btn-primary" type="submit">Add New</button>
@@ -27,14 +27,15 @@
             <div class="ibox-content">
                 <div class="row">
                     <div class="ibox-content-maps">
-                        <ng-map zoom="4" center="-2.150359, 35.243393" style="width:100%; height:100%" map-type-id="ROADMAP">
+                        <ng-map zoom="4" center="-2.150359, 35.243393" style="width:100%; height:100%" on-click="vm.placeMarker()" on-zoom_changed="vm.drawUTMZone()" map-type-id="ROADMAP">
+                           
                         </ng-map>
                     </div>
                     <form name="addUser" data-ng-show="addMode" class="observations">
                         <div class="col-sm-6 col-sm-offset-0">
                             <div class="form-group"><label>Location*</label></div>
                             <div class="input-group">
-                                <span class="input-group-addon"><i class="fa fa-map-marker"></i></span><input type="text" data-ng-model="UserFullNames" class="form-control" focus-me="{{addMode}}">
+                                <span class="input-group-addon"><i class="fa fa-map-marker"></i></span><input type="text" data-ng-model="Location" class="form-control" focus-me="{{addMode}}">
                             </div>
                         </div>
                         <div class="col-sm-6">
@@ -47,14 +48,14 @@
                             <br />
                             <div class="form-group" id="data_1"><label>Date*</label></div>
                             <div class="input-group date">
-                                <span class="input-group-addon"><i class="fa fa-calendar"></i></span><input type="date" data-ng-model="TargetDate" format-date class="form-control">
+                                <span class="input-group-addon"><i class="fa fa-calendar"></i></span><input type="date" data-ng-model="SightingDate" format-date class="form-control">
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <br />
                             <div class="form-group" id="data_2"><label>Notes*</label> </div>
                             <div class="input-group">
-                                <span class="input-group-addon"><i class="fa fa-envelope"></i></span><input type="text" data-ng-model="UserEmailAddress" class="form-control" />
+                                <span class="input-group-addon"><i class="fa fa-envelope"></i></span><input type="text" data-ng-model="Notes" class="form-control" />
                             </div>
                         </div>
                         <div class="form-group">

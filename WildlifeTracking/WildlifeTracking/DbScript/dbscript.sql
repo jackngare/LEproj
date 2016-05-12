@@ -59,6 +59,7 @@ CREATE TABLE dbo.WildlifeSightings(
 	SpeciesID int NOT NULL,--FK
 	Location varchar(100) NOT NULL,
 	SightingDate datetime NULL,
+	Notes varchar(500) NULL,
 
 	CONSTRAINT fkSightingsToSpecies FOREIGN KEY
 	(SpeciesID) REFERENCES Species(SpeciesID),

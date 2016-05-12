@@ -14,5 +14,6 @@ namespace WildlifeTracking.Models
         public DateTime SightingDate { get; set; }
         public User User { get; set; }
         public Species Species { get; set; }
+        public string Notes { get; set; }
     }
 }

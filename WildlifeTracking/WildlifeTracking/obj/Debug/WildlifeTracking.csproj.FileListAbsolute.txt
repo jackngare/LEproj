@@ -61,7 +61,6 @@ Y:\Documents\Projects\ZK\Masomo\Jack\WebApp\LEproj\WildlifeTracking\WildlifeTrac
 Y:\Documents\Projects\ZK\Masomo\Jack\WebApp\LEproj\WildlifeTracking\WildlifeTracking\bin\Microsoft.Owin.Security.xml
 Y:\Documents\Projects\ZK\Masomo\Jack\WebApp\LEproj\WildlifeTracking\WildlifeTracking\bin\Microsoft.Owin.Security.Cookies.xml
 Y:\Documents\Projects\ZK\Masomo\Jack\WebApp\LEproj\WildlifeTracking\WildlifeTracking\bin\Microsoft.Owin.Security.OAuth.xml
-Y:\Documents\Projects\ZK\Masomo\Jack\WebApp\LEproj\WildlifeTracking\WildlifeTracking\obj\Debug\WildlifeTracking.csprojResolveAssemblyReference.cache
 C:\Users\jack.ngare\Source\Repos\LEproj\WildlifeTracking\WildlifeTracking\bin\ApplicationInsights.config
 C:\Users\jack.ngare\Source\Repos\LEproj\WildlifeTracking\WildlifeTracking\bin\WildlifeTracking.dll.config
 C:\Users\jack.ngare\Source\Repos\LEproj\WildlifeTracking\WildlifeTracking\bin\WildlifeTracking.dll
@@ -126,3 +125,4 @@ C:\Users\jack.ngare\Source\Repos\LEproj\WildlifeTracking\WildlifeTracking\bin\Sy
 C:\Users\jack.ngare\Source\Repos\LEproj\WildlifeTracking\WildlifeTracking\obj\Debug\WildlifeTracking.csprojResolveAssemblyReference.cache
 C:\Users\jack.ngare\Source\Repos\LEproj\WildlifeTracking\WildlifeTracking\obj\Debug\WildlifeTracking.dll
 C:\Users\jack.ngare\Source\Repos\LEproj\WildlifeTracking\WildlifeTracking\obj\Debug\WildlifeTracking.pdb
+Y:\Documents\Projects\ZK\Masomo\Jack\WebApp\LEproj\WildlifeTracking\WildlifeTracking\obj\Debug\WildlifeTracking.csprojResolveAssemblyReference.cache
