@@ -24,6 +24,18 @@ namespace WildlifeTracking.Controllers
                                        .Include(u => u.User);
         }
 
+
+        // GET: api/Wildlifesightings
+        [HttpGet]
+        [ActionName("GetWildlifesightingsBySpeciesId")]
+        public IQueryable<Wildlifesighting> GetWildlifesightingsBySpeciesId(int SpeciesId)
+        {
+            return db.Wildlifesightings.Where(s => s.SpeciesID == SpeciesId)
+                                       .Include(s => s.Species)
+                                       .Include(u => u.User);
+        }
+
+
         // GET: api/Wildlifesightings/5
         [ResponseType(typeof(Wildlifesighting))]
         public IHttpActionResult GetWildlifesighting(int id)

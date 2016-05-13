@@ -237,6 +237,7 @@
     <Compile Include="Controllers\LandingController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\ObservationController.cs" />
+    <Compile Include="Controllers\RegistrationController.cs" />
     <Compile Include="Controllers\SpecieController.cs" />
     <Compile Include="Controllers\SpeciesController.cs" />
     <Compile Include="Controllers\UserController.cs" />
@@ -955,6 +956,7 @@
     <Content Include="Views\Specie\Index.cshtml" />
     <Content Include="Views\Observation\Index.cshtml" />
     <Content Include="Scripts\map\ng-maps.min.js" />
+    <Content Include="Views\Registration\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

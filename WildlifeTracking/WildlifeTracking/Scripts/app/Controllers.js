@@ -393,6 +393,7 @@ app.controller('loginController', function ($scope, $q, userService, $timeout, $
 app.controller('userController', function ($scope, $q, userService, $timeout, $compile, DTOptionsBuilder, DTColumnBuilder, DTInstances, NgMap) {
     $scope.OperType = 1;//1 Means New Entry
     $scope.addMode = false;
+    $scope.setFocus=true;
     $scope.edit = edit;
     $scope.delete = deleteRow;
     $scope.message = "";
@@ -451,19 +452,39 @@ app.controller('userController', function ($scope, $q, userService, $timeout, $c
         ClearModels();
     };
 
-    $scope.Login = function () {
-        var response;
-        userService.getByUsername($scope.UserName)
-        .then(function (user) {
-            if (user !== null && user.password === $scope.UserPassword) {
-                response = { success: true };
-                $location.path("/Home");
-            } else {
-                response = { success: false, message: 'Username or password is incorrect' };
-                $location.path("/");
-            }
-        });
-    }
+
+    //To Create new record and Edit an existing Record.
+    $scope.register = function () {
+        var User = {
+            UserFullNames: $scope.UserFullNames,
+            UserEmailAddress: $scope.UserEmailAddress,
+            UserPassword: $scope.UserPassword,
+            UserName: $scope.UserName
+
+        };
+        if ($scope.OperType === 1) {
+            var promisePost = userService.post(User);
+            promisePost.then(function (pl) {
+                ClearModels();
+                window.location.href = "/Login/Index/";//redirect the user to the login page
+            }, function (err) {
+                console.log("Err" + err);
+            });
+        } else {
+            //Edit the record             
+            User.UserID = $scope.UserID;
+            var promisePut = userService.put($scope.UserID, User);
+            promisePut.then(function (pl) {
+                $scope.Message = "User Updated Successfuly";
+                ClearModels();
+            }, function (err) {
+                console.log("Err" + err);
+            });
+        }
+
+        $scope.addMode = !$scope.addMode;
+    };
+
 
 
     //To Clear all input controls.
