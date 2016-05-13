@@ -253,6 +253,12 @@ app.service('wildlifesightingService', function ($http, $q) {
         return $http.get("/api/Wildlifesightings/" + WildlifesightingID);
     }
 
+    //Get All the Records for a specific species
+    this.getWildlifesighitingsbySpeciesId = function (SpeciesId) {
+        return $http.get("/api/Wildlifesightings/GetWildlifesightingsBySpeciesId/" + SpeciesId);
+    }
+
+
     //Get All Wildlifesighting
     this.getAllWildlifesightings = function () {
         return $http.get("/api/Wildlifesightings");

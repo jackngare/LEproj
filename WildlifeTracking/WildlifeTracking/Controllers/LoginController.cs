@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using WildlifeTracking.Infrastructure;
 
 namespace WildlifeTracking.Controllers
 {
@@ -15,9 +16,20 @@ namespace WildlifeTracking.Controllers
         }
 
         [HttpPost]
-        public ActionResult Login(string username, string password)
+        [ValidateAntiForgeryToken]
+        public ActionResult Login(string username, string userpassword)
         {
-            return RedirectToAction("Index", "Observation");
+            using(WildlifeTrackingDb db=new WildlifeTrackingDb())
+            {
+                var user = db.Users.Where(u => u.UserName==(username) && u.UserPassword==userpassword).FirstOrDefault();
+                if(user != null)
+                {
+                    Session["LogedUserID"] = user.UserID.ToString();
+                    Session["LogedUserFullname"] = user.UserFullNames.ToString();
+                    return RedirectToAction("Index", "Observation");
+                }
+            }
+            return View("Index");
         }
     }
 }

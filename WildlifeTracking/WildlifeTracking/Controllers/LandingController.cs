@@ -11,6 +11,8 @@ namespace WildlifeTracking.Controllers
         // GET: Landing
         public ActionResult Index()
         {
+            Session["LogedUserID"] =null;
+            Session["LogedUserFullname"] = null;
             return View();
         }
     }

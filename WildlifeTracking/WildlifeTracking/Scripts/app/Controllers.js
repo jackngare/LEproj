@@ -1,6 +1,6 @@
 ﻿
 //userController
-app.controller('landingController', function ($scope, $q, userService, speciesService, $timeout, $compile, DTOptionsBuilder, DTColumnBuilder, DTInstances, NgMap) {
+app.controller('landingController', function ($scope, $q, userService, wildlifesightingService, speciesService, $timeout, $compile, DTOptionsBuilder, DTColumnBuilder, DTInstances, NgMap) {
     $scope.OperType = 1;//1 Means New Entry
     $scope.searchMode = true;
     // Instatiation of the USNG mapping function
@@ -10,17 +10,16 @@ app.controller('landingController', function ($scope, $q, userService, speciesSe
     //Graticules are another word for 'overlays', just implemented as a whole instead of individually
     var graticuleDisplay = null;
 
-    var rectangle;
-    var southEast, northWest;
+    var rectangle, southEast, northWest;
+    var markers = [];
 
     var vm = this;
     NgMap.getMap().then(function (map) {
         vm.map = map;
         //Instatiated the graticuleDisplay
         graticuleDisplay = new USNGGraticule(vm.map, gridstyle);
+        getAllWildlifeSightings();
     });
-
-
 
     //get all the species 
     getAllSpecies();
@@ -31,9 +30,75 @@ app.controller('landingController', function ($scope, $q, userService, speciesSe
             })
             .error(function (error) {
                 $scope.status = 'Unable to load species data: ' + error.message;
-
             });
     };
+
+    function getAllWildlifeSightings() {
+        wildlifesightingService.getAllWildlifesightings()
+            .success(function (wildlifesightings) {
+                vm.Wildlifesightings = wildlifesightings;
+                var length = vm.Wildlifesightings.length;
+                for (var i = 0; i < length; i++) {
+                    // Do something with yourArray[i].
+                    var loc = vm.Wildlifesightings[i].Location.split(",");
+                    var lat = parseFloat(loc[0]);
+                    var lng = parseFloat(loc[1]);
+                    var newlatlng = new google.maps.LatLng(lat, lng);
+
+                    var marker = new google.maps.Marker({
+                        position: newlatlng,
+                        map: vm.map,
+                        draggable: true,
+                        animation: google.maps.Animation.DROP
+                    });
+                    markers.push(marker);
+                    console.log('Wildlife sightings JSON: ' + JSON.stringify(newlatlng));
+                }
+            })
+            .error(function (error) {
+                $scope.status = 'Unable to load wildlife sighitngs data: ' + error.message;
+            });
+    };
+
+    $scope.getWildlifeSightingsBySpeciesId = function () {
+        wildlifesightingService.getWildlifesighitingsbySpeciesId($scope.SpeciesID)
+            .success(function (wildlifesightings) {
+                clearMarkers();//clear all previous markers
+                vm.Wildlifesightings = wildlifesightings;
+                var length = vm.Wildlifesightings.length;
+                for (var i = 0; i < length; i++) {
+                    // Do something with yourArray[i].
+                    var loc = vm.Wildlifesightings[i].Location.split(",");
+                    var lat = parseFloat(loc[0]);
+                    var lng = parseFloat(loc[1]);
+                    var newlatlng = new google.maps.LatLng(lat, lng);
+
+                    var marker = new google.maps.Marker({
+                        position: newlatlng,
+                        map: vm.map,
+                        draggable: true,
+                        animation: google.maps.Animation.DROP
+                    });
+                    markers.push(marker);
+                    console.log('Wildlife sightings JSON: ' + JSON.stringify(newlatlng));
+                }
+            })
+            .error(function (error) {
+                $scope.status = 'Unable to load wildlife sighitngs data: ' + error.message;
+            });
+    };
+
+    // Removes the markers from the map, but keeps them in the array.
+    function clearMarkers() {
+        setMapOnAll(null);
+    }
+
+    // Sets the map on all markers in the array.
+    function setMapOnAll(map) {
+        for (var i = 0; i < markers.length; i++) {
+            markers[i].setMap(map);
+        }
+    }
 
 });
 
@@ -595,12 +660,10 @@ app.controller('speciesController', function ($scope, $q, speciesService, $timeo
 });
 
 //dashboardController
-app.controller('dashboardController', function ($scope, $q, userService, $timeout, $compile, DTOptionsBuilder, DTColumnBuilder, DTInstances, NgMap) {
+app.controller('dashboardController', function ($scope, $q, userService, wildlifesightingService, $timeout, $compile, DTOptionsBuilder, DTColumnBuilder, DTInstances, NgMap) {
     $scope.OperType = 1;//1 Means New Entry
     $scope.addMode = false;
-    $scope.edit = edit;
-    $scope.delete = deleteRow;
-    $scope.message = "";
+
 
     // Instatiation of the USNG mapping function
     var usngConv = new USNG2();
@@ -617,83 +680,40 @@ app.controller('dashboardController', function ($scope, $q, userService, $timeou
         vm.map = map;
         //Instatiated the graticuleDisplay
         graticuleDisplay = new USNGGraticule(vm.map, gridstyle);
+        //get all the species 
+        getAllWildlifeSightings();
     });
 
+    function getAllWildlifeSightings() {
+        wildlifesightingService.getAllWildlifesightings()
+            .success(function (wildlifesightings) {
+                vm.Wildlifesightings = wildlifesightings;
+                var length = vm.Wildlifesightings.length;
+                for (var i = 0; i < length; i++) {
+                    // Do something with yourArray[i].
+                    var loc = vm.Wildlifesightings[i].Location.split(",");
+                    var lat = parseFloat(loc[0]);
+                    var lng = parseFloat(loc[1]);
+                    var newlatlng = new google.maps.LatLng(lat, lng);
 
-
-    $scope.dtOptions = DTOptionsBuilder.fromFnPromise(function () {
-        return userService.getUsers();
-    }).withPaginationType('full_numbers').withOption('createdRow', createdRow);
-
-    $scope.dtColumns = [
-        DTColumnBuilder.newColumn('UserID').withTitle('User ID').notVisible(),
-        DTColumnBuilder.newColumn('UserFullNames').withTitle('Observer'),
-        DTColumnBuilder.newColumn(null).withTitle('Actions').notSortable().renderWith(actionsHtml).withClass("text-center")
-    ];
-
-    DTInstances.getLast().then(function (dtInstance) {
-        $scope.dtInstance = dtInstance;
-    });
-
-    function edit(id) {
-        // Edit some data and call server to make changes...
-        $scope.addMode = !$scope.addMode;
-        $scope.get(id);
-    }
-
-    function deleteRow(id) {
-        //alert("inDelete");
-        $scope.message = 'You are trying to remove the row with ID: ' + id; --
-        // Delete some data and call server to make changes...
-        // Then reload the data so that DT is refreshed
-        $scope.dtInstance.reloadData();
-    }
-
-    function createdRow(row, data, dataIndex) {
-        // Recompiling so we can bind Angular directive to the DT
-        $compile(angular.element(row).contents())($scope);
-    }
-
-    function actionsHtml(data, type, full, meta) {
-        return '<div class="gradeX">' +
-        '<button class="btn btn-primary btn-sm" data-ng-click="edit(' + data.UserID + ')">' +
-            '   <i class="fa fa-edit"></i>' +
-            '</button>' +
-            '</div>';
-    }
-
-    $scope.toggleEdit = function () {
-        this.friend.editMode = !this.friend.editMode;
+                    var marker = new google.maps.Marker({
+                        position: newlatlng,
+                        map: vm.map,
+                        draggable: true,
+                        animation: google.maps.Animation.DROP
+                    });
+                    console.log('Wildlife sightings JSON: ' + JSON.stringify(newlatlng));
+                }
+            })
+            .error(function (error) {
+                $scope.status = 'Unable to load wildlife sighitngs data: ' + error.message;
+            });
     };
-    $scope.toggleAdd = function () {
-        $scope.addMode = !$scope.addMode;
-        ClearModels();
-    };
-
-    //To Get User Detail on the Base of User ID
-    $scope.get = function (id) {
-        var promiseGetSingle = userService.get(id);
-
-        promiseGetSingle.then(function (pl) {
-            var res = pl.data;
-            $scope.UserID = res.UserID;
-            $scope.UserEmailAddress = res.UserEmailAddress;
-            $scope.UserName = res.UserName;
-            $scope.UserFullNames = res.UserFullNames;
-            $scope.UserPassword = res.UserPassword;
-            $scope.OperType = 0;
-        },
-        function (errorPl) {
-            console.log('Some Error in Getting Details', errorPl);
-        });
-    }
-
-
 });
 
 
 //wildlifesightingController
-app.controller('wildlifesightingController', function ($scope, $q, wildlifesightingService, speciesService, $timeout, $compile,$filter, DTOptionsBuilder, DTColumnBuilder, DTInstances, NgMap) {
+app.controller('wildlifesightingController', function ($scope, $q, wildlifesightingService, speciesService, $timeout, $compile, $filter, DTOptionsBuilder, DTColumnBuilder, DTInstances, NgMap) {
     $scope.OperType = 1;//1 Means New Entry
     $scope.addMode = false;
     $scope.edit = edit;
@@ -708,7 +728,7 @@ app.controller('wildlifesightingController', function ($scope, $q, wildlifesight
     //Graticules are another word for 'overlays', just implemented as a whole instead of individually
     var graticuleDisplay = null;
 
-    var rectangle, marker, southEast, northWest,lat,lng;
+    var rectangle, marker, southEast, northWest, lat, lng;
 
     var vm = this;
 
@@ -749,8 +769,8 @@ app.controller('wildlifesightingController', function ($scope, $q, wildlifesight
             console.log('Scope Location :' + $scope.Location);
         });
 
-        
-        console.log('Scope Location LngLat:' + lat + ',' +lng);
+
+        console.log('Scope Location LngLat:' + lat + ',' + lng);
     }
 
 
@@ -1230,7 +1250,7 @@ app.controller('wildlifesightingController', function ($scope, $q, wildlifesight
     $scope.save = function () {
         var WildlifeSighting = {
             SpeciesID: $scope.SpeciesID,
-            Location:$scope.Location,
+            Location: $scope.Location,
             Notes: $scope.Notes,
             SightingDate: $scope.SightingDate,
             UserID: 2
@@ -1288,6 +1308,8 @@ app.controller('wildlifesightingController', function ($scope, $q, wildlifesight
                 draggable: true,
                 animation: google.maps.Animation.DROP
             });
+
+            shadeUTMZone(newlatlng);
         },
         function (errorPl) {
             console.log('Some Error in Getting Details', errorPl);

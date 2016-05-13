@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <parameters>
-  <parameter name="IIS Web Application Name" description="" value="wildlifetracking" tags="IisApp">
+  <parameter name="IIS Web Application Name" description="" value="wildlifetracker" tags="IisApp">
     <parameterEntry kind="ProviderPath" scope="IisApp" match="^Y:\\Documents\\Projects\\ZK\\Masomo\\Jack\\WebApp\\LEproj\\WildlifeTracking\\WildlifeTracking\\obj\\Debug\\Package\\PackageTmp$" />
     <parameterEntry kind="ProviderPath" scope="setAcl" match="^Y:\\Documents\\Projects\\ZK\\Masomo\\Jack\\WebApp\\LEproj\\WildlifeTracking\\WildlifeTracking\\obj\\Debug\\Package\\PackageTmp$" />
   </parameter>

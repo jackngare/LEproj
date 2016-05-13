@@ -20,34 +20,37 @@
 
 </head>
 
+@model WildlifeTracking.Models.User
+
 @using (Html.BeginForm("Login", "Login", FormMethod.Post))
 {
-<body class="gray-bg">
-    <div class="middle-box text-center loginscreen  animated fadeInDown">
-        <div class="row" data-ng-controller="loginController">
-            <h3>Welcome to Wildlife Tracker</h3>
-            <form class="m-t" role="form" action="#">
-                <div class="form-group">
-                    <input type="text" id="txtusername" class="form-control" placeholder="Username" required="" focus-me="{{loginMode}}">
-                </div>
-                <div class="form-group">
-                    <input type="password" class="form-control" placeholder="Password" required="">
-                </div>
-                <button type="submit" value="Login" class="btn btn-primary block full-width m-b">Login</button>
-            </form>
+@Html.AntiForgeryToken()          // this is for prevent CSRF attack
+    <body class="gray-bg">
+        <div class="middle-box text-center loginscreen  animated fadeInDown">
+            <div class="row" data-ng-controller="loginController">
+                <h3>Welcome to Wildlife Tracker</h3>
+                <form class="m-t" role="form" action="#">
+                    <div class="form-group">
+                        <input type="text" id="txtusername" class="form-control" placeholder="Username" name="UserName" required="" focus-me="{{loginMode}}">
+                    </div>
+                    <div class="form-group">
+                        <input type="password" class="form-control" placeholder="Password" name="UserPassword" required="">
+                    </div>
+                    <button type="submit" value="Login" class="btn btn-primary block full-width m-b">Login</button>
+                </form>
+            </div>
         </div>
-    </div>
 
-    @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/bootstrap")
-    @Scripts.Render("~/plugins/slimScroll")
-    @Scripts.Render("~/bundles/inspinia")
-    @Scripts.Render("~/bundles/angularjs")
-    @Scripts.Render("~/plugins/dataTables")
-    @Scripts.Render("~/bundles/app")
-    @Scripts.Render("~/bundles/map")
-    
-</body>
+        @Scripts.Render("~/bundles/jquery")
+        @Scripts.Render("~/bundles/bootstrap")
+        @Scripts.Render("~/plugins/slimScroll")
+        @Scripts.Render("~/bundles/inspinia")
+        @Scripts.Render("~/bundles/angularjs")
+        @Scripts.Render("~/plugins/dataTables")
+        @Scripts.Render("~/bundles/app")
+        @Scripts.Render("~/bundles/map")
+
+    </body>
 }
 </html>
 

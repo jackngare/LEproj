@@ -35,7 +35,7 @@
                 <div class="col-sm-4">
                     <div class="form-group"><label>Species</label> </div>
                     <div class="input-group">
-                        <span class="input-group-addon"><i class="fa fa-linux"></i></span><select class="form-control" focus-me="{{searchMode}}" ng-model="SpeciesID" ng-options="specie.SpeciesID as specie.SpeciesName for specie in Species"></select>
+                        <span class="input-group-addon"><i class="fa fa-linux"></i></span><select class="form-control" focus-me="{{searchMode}}" ng-model="SpeciesID" ng-options="specie.SpeciesID as specie.SpeciesName for specie in Species" ng-change="getWildlifeSightingsBySpeciesId()"></select>
                     </div>
                 </div>
                 <div class="col-sm-4">
