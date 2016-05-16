@@ -6,6 +6,7 @@ using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Web;
 using System.Web.Http;
 using System.Web.Http.Description;
 using WildlifeTracking.Infrastructure;
@@ -93,6 +94,16 @@ namespace WildlifeTracking.Controllers
                 return BadRequest(ModelState);
             }
 
+            var session = HttpContext.Current.Session;
+            if (session != null)
+            {
+                if (session["LogedUserID"] == null)
+                    wildlifesighting.UserID = 2;
+                else
+                    wildlifesighting.UserID = Int32.Parse(session["LogedUserID"].ToString());
+
+            }
+            
             db.Wildlifesightings.Add(wildlifesighting);
             db.SaveChanges();
 

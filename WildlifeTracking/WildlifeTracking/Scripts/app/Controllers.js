@@ -790,7 +790,6 @@ app.controller('wildlifesightingController', function ($scope, $q, wildlifesight
             console.log('Scope Location :' + $scope.Location);
         });
 
-
         console.log('Scope Location LngLat:' + lat + ',' + lng);
     }
 
@@ -1274,7 +1273,7 @@ app.controller('wildlifesightingController', function ($scope, $q, wildlifesight
             Location: $scope.Location,
             Notes: $scope.Notes,
             SightingDate: $scope.SightingDate,
-            UserID: 2
+            UserID: 2//hard coded here till we figure out how to retrieve session variable 
         };
 
         console.log('Scope Location At Saving :' + $scope.Location + ' Operation' + $scope.OperType + ' Object ' + JSON.stringify(WildlifeSighting));

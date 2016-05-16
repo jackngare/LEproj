@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
+using WildlifeTracking.App_Start;
 
 namespace WildlifeTracking
 {
@@ -14,20 +15,18 @@ namespace WildlifeTracking
             // Web API routes
             config.MapHttpAttributeRoutes();
 
-            config.Routes.MapHttpRoute(
+            var route=config.Routes.MapHttpRoute(
                 name: "DefaultApi",
                 routeTemplate: "api/{controller}/{id}",
                 defaults: new { id = RouteParameter.Optional }
             );
+          
 
-            config.Routes.MapHttpRoute(
+            config.Routes.  MapHttpRoute(
                 name: "CustomApi",
                 routeTemplate: "api/{controller}/{action}/{SpeciesId}",
                 defaults: new { SpeciesId = RouteParameter.Optional }
             );
-
-
-
         }
     }
 }

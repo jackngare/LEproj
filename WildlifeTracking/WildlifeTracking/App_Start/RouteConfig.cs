@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
+using WildlifeTracking.App_Start;
 
 namespace WildlifeTracking
 {
@@ -13,11 +14,12 @@ namespace WildlifeTracking
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
-            routes.MapRoute(
+            var route=routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",
                 defaults: new { controller = "Landing", action = "Index", id = UrlParameter.Optional }
             );
+            
         }
     }
 }
