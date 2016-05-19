@@ -12,10 +12,12 @@ app.controller('landingController', function ($scope, $q, userService, wildlifes
 
     var rectangle, southEast, northWest;
     var markers = [];
+    var rectangles = [];
 
     var vm = this;
     NgMap.getMap().then(function (map) {
         vm.map = map;
+       
         //Instatiated the graticuleDisplay
         graticuleDisplay = new USNGGraticule(vm.map, gridstyle);
         getAllWildlifeSightings();
@@ -52,7 +54,10 @@ app.controller('landingController', function ($scope, $q, userService, wildlifes
                         animation: google.maps.Animation.DROP
                     });
                     markers.push(marker);
-                    console.log('Wildlife sightings JSON: ' + JSON.stringify(newlatlng));
+                    clearRectangles();
+                    for (var i = 0; i < markers.length; i++) {
+                        drawUTMZone(markers[i].position);
+                    }
                 }
             })
             .error(function (error) {
@@ -64,6 +69,7 @@ app.controller('landingController', function ($scope, $q, userService, wildlifes
         wildlifesightingService.getWildlifesighitingsbySpeciesId($scope.SpeciesID)
             .success(function (wildlifesightings) {
                 clearMarkers();//clear all previous markers
+                clearRectangles();
                 vm.Wildlifesightings = wildlifesightings;
                 var length = vm.Wildlifesightings.length;
                 for (var i = 0; i < length; i++) {
@@ -80,7 +86,10 @@ app.controller('landingController', function ($scope, $q, userService, wildlifes
                         animation: google.maps.Animation.DROP
                     });
                     markers.push(marker);
-                    console.log('Wildlife sightings JSON: ' + JSON.stringify(newlatlng));
+                }
+
+                for (var i = 0; i < markers.length; i++) {
+                    drawUTMZone(markers[i].position);
                 }
             })
             .error(function (error) {
@@ -91,6 +100,7 @@ app.controller('landingController', function ($scope, $q, userService, wildlifes
     // Removes the markers from the map, but keeps them in the array.
     function clearMarkers() {
         setMapOnAll(null);
+        markers = [];
     }
 
     // Sets the map on all markers in the array.
@@ -99,6 +109,458 @@ app.controller('landingController', function ($scope, $q, userService, wildlifes
             markers[i].setMap(map);
         }
     }
+
+    // Removes the markers from the map, but keeps them in the array.
+    function clearRectangles() {
+        for (var i = 0; i < rectangles.length; i++) {
+            rectangles[i].setMap(null);
+        }
+        rectangles = [];
+    }
+
+
+    vm.shadeMarkerUTMZones = function () {
+        clearRectangles();
+        for (var i = 0; i < markers.length; i++) {
+            drawUTMZone(markers[i].position);
+        }
+    }
+
+    function shadeUTMZone(location) {
+
+        var mouseLL = location;
+        var mouseUSNG = usngConv.fromLonLat({ lon: mouseLL.lng(), lat: mouseLL.lat() }, 5);
+
+        var locati = mouseUSNG.substring(0, 6);
+        var leftBottomUSNG = mouseUSNG.substring(6, 12);
+        var rightTopUSNG = mouseUSNG.substring(12, 18);
+
+
+        //37N DC 7996 0840
+        //37N DC 7999 0849
+        //37N EB 99990 99990
+
+        var leftBottomLL = usngConv.toLonLat(locati + leftBottomUSNG + '0' + rightTopUSNG + '0', null);
+        southEast = locati + leftBottomUSNG + '0' + rightTopUSNG + '0';
+        northWest = locati + leftBottomUSNG + '99' + rightTopUSNG + '99';
+
+
+        var rightTopLL = usngConv.toLonLat(locati + leftBottomUSNG + '99' + rightTopUSNG + '99', null);
+
+
+        console.log('Location Left Botoom :' + JSON.stringify(leftBottomLL));
+        console.log('Location Right Top :' + JSON.stringify(rightTopLL));
+
+            rectangle = new google.maps.Rectangle({
+                strokeColor: '#00cc66',
+                strokeOpacity: 0.8,
+                strokeWeight: 2,
+                fillColor: '#00cc66',
+                fillOpacity: 0.35,
+                map: vm.map,
+                bounds: new google.maps.LatLngBounds(
+                new google.maps.LatLng(leftBottomLL.lat, leftBottomLL.lon),
+                new google.maps.LatLng(rightTopLL.lat, rightTopLL.lon))
+            });
+            rectangles.push(rectangle);
+        //vm.map.setZoom(9);
+        //vm.map.panTo(location);
+
+    }
+
+    function drawUTMZone(location)  {
+        console.log("Current zoom level is: " + vm.map.getZoom());
+
+        
+
+        var mouseLL = location;
+        var mouseUSNG = usngConv.fromLonLat({ lon: mouseLL.lng(), lat: mouseLL.lat() }, 5);
+
+        var locati = mouseUSNG.substring(0, 6);
+        var leftBottomUSNG = mouseUSNG.substring(6, 12);
+        var rightTopUSNG = mouseUSNG.substring(12, 18);
+
+
+        //37N DC 7996 0840
+        //37N DC 7999 0849
+        //37N EB 99990 99990
+
+        var leftBottomLL = usngConv.toLonLat(locati + leftBottomUSNG + '0' + rightTopUSNG + '0', null);
+        southEast = locati + leftBottomUSNG + '0' + rightTopUSNG + '0';
+        northWest = locati + leftBottomUSNG + '99' + rightTopUSNG + '99';
+
+
+        if (vm.map.getZoom() == 12) {
+
+            var baseAddress = southEast.substring(0, 6);
+            var baseLon = southEast.substring(6, 9);
+            var baseLat = southEast.substring(13, 16);
+
+
+            var leftBottomLL = usngConv.toLonLat(baseAddress + baseLon + '00' + baseLat + '00', null);
+            var rightTopLL = usngConv.toLonLat(baseAddress + baseLon + '99' + baseLat + '99', null);
+
+
+             rectangle = new google.maps.Rectangle({
+                strokeColor: '#00cc66',
+                strokeOpacity: 0.8,
+                strokeWeight: 2,
+                fillColor: '#00cc66',
+                fillOpacity: 0.35,
+                map: vm.map,
+                bounds: new google.maps.LatLngBounds(
+                new google.maps.LatLng(leftBottomLL.lat, leftBottomLL.lon),
+                new google.maps.LatLng(rightTopLL.lat, rightTopLL.lon))
+            });
+
+             rectangles.push(rectangle);
+            //var panLocation = new google.maps.LatLng(rightTopLL.lat, rightTopLL.lon);
+            //vm.map.panTo(panLocation);
+
+        } else {
+            if (vm.map.getZoom() == 11) {
+
+                //37M CS 6580 7940
+                //37M DS 0490 4070
+                //36N VG 0740 3600
+                //37M ET 0260 7660
+
+                var baseAddress = southEast.substring(0, 6);
+                var baseLon = southEast.substring(6, 9);
+                var baseLat = southEast.substring(13, 16);
+
+                var newBaseLon = parseInt(baseLon);
+                var newBaseLat = parseInt(baseLat);
+                newBaseLat += 1;
+                var newTopRightLon = parseInt(baseLon);
+                newTopRightLon += 1;
+                var newTopRightLat = parseInt(baseLat);
+                newTopRightLat += 1;
+
+                console.log('Base Lon : ' + baseLon + ' Base Lat: ' + baseLat + ' New Base Lon : ' + newBaseLon + ' : ' + newBaseLat);
+
+                var leftBottomLL = usngConv.toLonLat(baseAddress + baseLon + '00' + baseLat + '00', null);
+                var rightTopLL = usngConv.toLonLat(baseAddress + baseLon + '99' + baseLat + '99', null);
+
+                rectangle = new google.maps.Rectangle({
+                    strokeColor: '#00cc66',
+                    strokeOpacity: 0.8,
+                    strokeWeight: 2,
+                    fillColor: '#00cc66',
+                    fillOpacity: 0.35,
+                    map: vm.map,
+                    bounds: new google.maps.LatLngBounds(
+                    new google.maps.LatLng(leftBottomLL.lat, leftBottomLL.lon),
+                    new google.maps.LatLng(rightTopLL.lat, rightTopLL.lon))
+                });
+
+                rectangles.push(rectangle);
+                //var panLocation = new google.maps.LatLng(leftBottomLL.lat, leftBottomLL.lon);
+                //vm.map.panTo(panLocation);
+
+            }
+
+            if (vm.map.getZoom() == 10) {
+
+                //37M CS 6580 7940
+                //37M DS 0490 4070
+                //37N CD 2670 3990
+
+                console.log('Hapa ni zoom level 10');
+
+                var baseAddress = southEast.substring(0, 6);
+                var baseLon = southEast.substring(6, 9);
+                var baseLat = southEast.substring(13, 16);
+
+                var leftBottomLL = usngConv.toLonLat(baseAddress + baseLon + '00' + baseLat + '00', null);
+                var rightTopLL = usngConv.toLonLat(baseAddress + baseLon + '99' + baseLat + '99', null);
+
+                rectangle = new google.maps.Rectangle({
+                    strokeColor: '#00cc66',
+                    strokeOpacity: 0.8,
+                    strokeWeight: 2,
+                    fillColor: '#00cc66',
+                    fillOpacity: 0.35,
+                    map: vm.map,
+                    bounds: new google.maps.LatLngBounds(
+                    new google.maps.LatLng(leftBottomLL.lat, leftBottomLL.lon),
+                    new google.maps.LatLng(rightTopLL.lat, rightTopLL.lon))
+                });
+
+                rectangles.push(rectangle);
+                //var panLocation = new google.maps.LatLng(rightTopLL.lat, rightTopLL.lon);
+                //vm.map.panTo(panLocation);
+            }
+
+            if (vm.map.getZoom() == 13 || vm.map.getZoom() <= 16) {
+
+                var baseAddress = southEast.substring(0, 6);
+                //var baseLon = southEast.substring(6, 10);
+                //var baseLat = southEast.substring(13, 17);
+                var baseLon = southEast.substring(6, 9);
+                var baseLat = southEast.substring(13, 16);
+
+                var leftBottomLL = usngConv.toLonLat(baseAddress + baseLon + '00' + baseLat + '00', null);
+                var rightTopLL = usngConv.toLonLat(baseAddress + baseLon + '99' + baseLat + '99', null);
+
+                rectangle = new google.maps.Rectangle({
+                    strokeColor: '#00cc66',
+                    strokeOpacity: 0.8,
+                    strokeWeight: 2,
+                    fillColor: '#00cc66',
+                    fillOpacity: 0.35,
+                    map: vm.map,
+                    bounds: new google.maps.LatLngBounds(
+                    new google.maps.LatLng(leftBottomLL.lat, leftBottomLL.lon),
+                    new google.maps.LatLng(rightTopLL.lat, rightTopLL.lon))
+                });
+                rectangles.push(rectangle);
+                //var panLocation = new google.maps.LatLng(rightTopLL.lat, rightTopLL.lon);
+                //vm.map.panTo(panLocation);
+            }
+
+            if (vm.map.getZoom() == 17 || vm.map.getZoom() == 18) {
+
+
+                var baseAddress = southEast.substring(0, 6);
+                var baseLon = southEast.substring(6, 10);
+                var baseLat = southEast.substring(13, 17);
+
+                var leftBottomLL = usngConv.toLonLat(baseAddress + baseLon + '00' + baseLat + '00', null);
+                var rightTopLL = usngConv.toLonLat(baseAddress + baseLon + '99' + baseLat + '99', null);
+
+                rectangle = new google.maps.Rectangle({
+                    strokeColor: '#00cc66',
+                    strokeOpacity: 0.8,
+                    strokeWeight: 2,
+                    fillColor: '#00cc66',
+                    fillOpacity: 0.35,
+                    map: vm.map,
+                    bounds: new google.maps.LatLngBounds(
+                    new google.maps.LatLng(leftBottomLL.lat, leftBottomLL.lon),
+                    new google.maps.LatLng(rightTopLL.lat, rightTopLL.lon))
+                });
+
+                rectangles.push(rectangle);
+                //var panLocation = new google.maps.LatLng(rightTopLL.lat, rightTopLL.lon);
+                //vm.map.panTo(panLocation);
+            }
+
+            if (vm.map.getZoom() == 19 || vm.map.getZoom() == 20) {
+
+
+                var baseAddress = southEast.substring(0, 6);
+                var baseLon = southEast.substring(6, 11);
+                var baseLat = southEast.substring(13, 18);
+
+                var leftBottomLL = usngConv.toLonLat(baseAddress + baseLon + '00' + baseLat + '00', null);
+                var rightTopLL = usngConv.toLonLat(baseAddress + baseLon + '99' + baseLat + '99', null);
+
+                rectangle = new google.maps.Rectangle({
+                    strokeColor: '#00cc66',
+                    strokeOpacity: 0.8,
+                    strokeWeight: 2,
+                    fillColor: '#00cc66',
+                    fillOpacity: 0.35,
+                    map: vm.map,
+                    bounds: new google.maps.LatLngBounds(
+                    new google.maps.LatLng(leftBottomLL.lat, leftBottomLL.lon),
+                    new google.maps.LatLng(rightTopLL.lat, rightTopLL.lon))
+                });
+
+                rectangles.push(rectangle);
+                //var panLocation = new google.maps.LatLng(rightTopLL.lat, rightTopLL.lon);
+                //vm.map.panTo(panLocation);
+            }
+
+            if (vm.map.getZoom() == 21) {
+
+
+                var baseAddress = southEast.substring(0, 6);
+                var baseLon = southEast.substring(6, 11);
+                var baseLat = southEast.substring(13, 18);
+
+                var leftBottomLL = usngConv.toLonLat(baseAddress + baseLon + '00' + baseLat + '00', null);
+                var rightTopLL = usngConv.toLonLat(baseAddress + baseLon + '99' + baseLat + '99', null);
+
+                rectangle = new google.maps.Rectangle({
+                    strokeColor: '#00cc66',
+                    strokeOpacity: 0.8,
+                    strokeWeight: 2,
+                    fillColor: '#00cc66',
+                    fillOpacity: 0.35,
+                    map: vm.map,
+                    bounds: new google.maps.LatLngBounds(
+                    new google.maps.LatLng(leftBottomLL.lat, leftBottomLL.lon),
+                    new google.maps.LatLng(rightTopLL.lat, rightTopLL.lon))
+                });
+
+                rectangles.push(rectangle);
+                //var panLocation = new google.maps.LatLng(rightTopLL.lat, rightTopLL.lon);
+                //vm.map.panTo(panLocation);
+            }
+            if (vm.map.getZoom() == 9) {
+
+                var baseAddress = southEast.substring(0, 6);
+
+                var leftBottomLL = usngConv.toLonLat(baseAddress + '0000' + '0000', null);
+                var rightTopLL = usngConv.toLonLat(baseAddress + '9999' + '9999', null);
+
+                rectangle = new google.maps.Rectangle({
+                    strokeColor: '#00cc66',
+                    strokeOpacity: 0.8,
+                    strokeWeight: 2,
+                    fillColor: '#00cc66',
+                    fillOpacity: 0.35,
+                    map: vm.map,
+                    bounds: new google.maps.LatLngBounds(
+                    new google.maps.LatLng(leftBottomLL.lat, leftBottomLL.lon),
+                    new google.maps.LatLng(rightTopLL.lat, rightTopLL.lon))
+                });
+
+                rectangles.push(rectangle);
+                //var panLocation = new google.maps.LatLng(rightTopLL.lat, rightTopLL.lon);
+                //vm.map.panTo(panLocation);
+            }
+
+
+            if (vm.map.getZoom() == 6 || vm.map.getZoom() <= 8) {
+
+                var baseAddress = southEast.substring(0, 6);
+
+                var leftBottomLL = usngConv.toLonLat(baseAddress + '0000' + '0000', null);
+                var rightTopLL = usngConv.toLonLat(baseAddress + '9999' + '9999', null);
+
+                rectangle = new google.maps.Rectangle({
+                    strokeColor: '#00cc66',
+                    strokeOpacity: 0.8,
+                    strokeWeight: 2,
+                    fillColor: '#00cc66',
+                    fillOpacity: 0.35,
+                    map: vm.map,
+                    bounds: new google.maps.LatLngBounds(
+                    new google.maps.LatLng(leftBottomLL.lat, leftBottomLL.lon),
+                    new google.maps.LatLng(rightTopLL.lat, rightTopLL.lon))
+                });
+
+                rectangles.push(rectangle);
+                //var panLocation = new google.maps.LatLng(rightTopLL.lat, rightTopLL.lon);
+                //vm.map.panTo(panLocation);
+            }
+
+
+            if (vm.map.getZoom() <= 5) {
+                /*
+                Calculating the eastern and western boundaries of a UTM is very straightforward.  
+                Developed by the U.S. Army, the Universal Transverse Mercator (UTM) is an international 
+                plane (rectangular) coordinate system. In the coordinate system, the world is divided into 
+                60 zones of 6 degrees longitude. Each zone extends 3 degrees east and west from its 
+                central meridian and are numbered consecutively west to east from the 180-degree meridian. 
+                Transverse Mercator projections may then be applied to each zone.
+
+
+                Here’s How:
+                    • UTM zones are all 6 degrees wide and increase from west to east starting at the -180 degree mark.
+                    • Calculate the eastern boundary of any UTM zone by multiplying the zone number by 6 and substract 180.
+                    • Subtract 6 degrees to obtain the western boundary.
+                    • Therefore to find the eastern boundary of UTM zone 11: Eastern boundary of zone 11 = (11 * 6) – 180 = -114 degrees.
+                    • Western boundary of zone 11 = -114 – 6 = -120 degrees.
+
+                Latitude is also divided into zones, but less regularly. Zones are lettered from A at the 
+                South Pole to Z at the North. The circle south of 80 degrees is divided into two zones, A and B. 
+                Thereafter zones are 8 degrees wide. Zone M is just south of the equator and N is north. Zone T, 
+                between 40 and 48 degrees north, includes Green Bay. Zone X, from 72 to 84 degrees north, 
+                is 12 degrees wide and zones Y and Z cover the north polar region north of 84 degrees. 
+                I and O are not used because they can be too easily confused with numbers.
+
+
+                */
+
+
+
+                var zoneNo = southEast.substring(0, 2);
+                var latZone = southEast.substring(2, 3);
+
+                var easternBoundary = parseInt(zoneNo);
+                easternBoundary = (easternBoundary * 6) - 180;
+                var westernBoundary = easternBoundary - 6;
+
+                var southernBoundary;
+
+                switch (latZone) {
+                    case "F":
+                        southernBoundary = -56;
+                        break;
+                    case "G":
+                        southernBoundary = -48;
+                        break;
+                    case "H":
+                        southernBoundary = -40;
+                        break;
+                    case "J":
+                        southernBoundary = -32;
+                        break;
+                    case "K":
+                        southernBoundary = -24;
+                        break;
+                    case "L":
+                        southernBoundary = -16;
+                        break;
+                    case "M":
+                        southernBoundary = -8;
+                        break;
+                    case "N":
+                        southernBoundary = 0;
+                        break;
+                    case "P":
+                        southernBoundary = 8;
+                        break;
+                    case "Q":
+                        southernBoundary = 16;
+                        break;
+                    case "R":
+                        southernBoundary = 24;
+                        break;
+                    case "S":
+                        southernBoundary = 32;
+                        break;
+                    case "T":
+                        southernBoundary = 40;
+                        break;
+                    case "U":
+                        southernBoundary = 48;
+                        break;
+                    case "V":
+                        southernBoundary = 56;
+                        break;
+                    case "W":
+                        southernBoundary = 64;
+                        break;
+                }
+
+
+                var northernBoundary = parseInt(southernBoundary);
+                northernBoundary += 8;
+
+                rectangle = new google.maps.Rectangle({
+                    strokeColor: '#00cc66',
+                    strokeOpacity: 0.8,
+                    strokeWeight: 2,
+                    fillColor: '#00cc66',
+                    fillOpacity: 0.35,
+                    map: vm.map,
+                    bounds: new google.maps.LatLngBounds(
+                    new google.maps.LatLng(southernBoundary, westernBoundary),
+                    new google.maps.LatLng(northernBoundary, easternBoundary))
+                });
+
+                rectangles.push(rectangle);
+               // var panLocation = new google.maps.LatLng(southernBoundary, easternBoundary)
+                //vm.map.setCenter(panLocation);
+
+            }
+        }
+    };
 
 });
 
