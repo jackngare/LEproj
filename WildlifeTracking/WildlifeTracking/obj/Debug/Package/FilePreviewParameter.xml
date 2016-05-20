@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<parameters>
+  <parameter name="IIS Web Application Name" description="" value="wildlifetracker" tags="IisApp">
+    <parameterEntry kind="ProviderPath" scope="IisApp" match="^Y:\\Documents\\Projects\\ZK\\Masomo\\Jack\\WebApp\\LEproj\\WildlifeTracking\\WildlifeTracking\\obj\\Debug\\Package\\PackageTmp$" />
+    <parameterEntry kind="ProviderPath" scope="setAcl" match="^Y:\\Documents\\Projects\\ZK\\Masomo\\Jack\\WebApp\\LEproj\\WildlifeTracking\\WildlifeTracking\\obj\\Debug\\Package\\PackageTmp$" />
+  </parameter>
+  <parameter name="DefaultConnection-Web.config Connection String" description="" value="Data Source=tcp:rv9g75td3g.database.windows.net,1433;Initial Catalog=WildlifeTracking;Integrated Security=False;User ID=sebichondo@rv9g75td3g;Password=@LENIKAraran21734397;Connect Timeout=30;Encrypt=True" tags="">
+    <parameterEntry kind="XmlFile" scope="Y:\\Documents\\Projects\\ZK\\Masomo\\Jack\\WebApp\\LEproj\\WildlifeTracking\\WildlifeTracking\\obj\\Debug\\Package\\PackageTmp\\Web\.config$" match="/configuration/connectionStrings/add[@name='DefaultConnection']/@connectionString" />
+  </parameter>
+  <parameter name="WildlifeTrackingConnectionString-Web.config Connection String" description="" value="Data Source=tcp:rv9g75td3g.database.windows.net,1433;Initial Catalog=WildlifeTracking;Integrated Security=False;User ID=sebichondo@rv9g75td3g;Password=@LENIKAraran21734397;Connect Timeout=30;Encrypt=True" tags="">
+    <parameterEntry kind="XmlFile" scope="Y:\\Documents\\Projects\\ZK\\Masomo\\Jack\\WebApp\\LEproj\\WildlifeTracking\\WildlifeTracking\\obj\\Debug\\Package\\PackageTmp\\Web\.config$" match="/configuration/connectionStrings/add[@name='WildlifeTrackingConnectionString']/@connectionString" />
+  </parameter>
+</parameters>

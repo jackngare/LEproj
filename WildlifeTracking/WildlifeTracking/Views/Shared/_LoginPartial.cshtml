@@ -1,0 +1,22 @@
+﻿
+@if (Session["LogedUserID"] != null)
+    {
+        using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+        {
+        @Html.AntiForgeryToken()
+
+        <ul class="nav navbar-top-links navbar-right">
+            <li>
+                @Html.ActionLink("Hello " + @Session["LogedUserFullname"].ToString() + "!", "Manage", "Account", routeValues: null, htmlAttributes: new { title = "Manage" })
+            </li>
+            <li>@Html.ActionLink("Log Out", "Index", "Landing", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>
+        </ul>
+    }
+}
+else
+{
+    <ul class="nav navbar-top-links navbar-right">
+        <li>@Html.ActionLink("Register", "Index", "Registration", routeValues: null, htmlAttributes: new { id = "registerLink" })</li>
+        <li>@Html.ActionLink("Log in", "Index", "Login", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>
+    </ul>
+}

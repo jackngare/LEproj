@@ -1,0 +1,45 @@
+﻿<nav class="navbar-default navbar-static-side" role="navigation">
+    <div class="sidebar-collapse">
+        <ul class="nav" id="side-menu">
+            <li class="nav-header">
+                <div class="dropdown profile-element">
+                    <span>
+                        <img alt="image" class="img-circle" src="~/Content/images/user48.png" />
+                    </span>
+                    <a data-toggle="dropdown" class="dropdown-toggle">
+                        <span class="clear">
+                            <span class="block m-t-xs">
+                                <strong class="font-bold">@Session["LogedUserFullname"].ToString()</strong>
+                            </span>
+                        </span>
+                    </a>
+                </div>
+                <div class="logo-element">
+                    FT
+                </div>
+            </li>
+            <li class="@Html.IsSelected(controller: "Dashboard")">
+                <a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> <span class="nav-label">Dashboard</span> <span class="fa arrow"></span></a>
+            </li>
+            <li class="@Html.IsSelected(controller: "Users")">
+                <a href="@Url.Action("Index", "User")"><i class="fa fa-user"></i> <span class="nav-label">Users</span> <span class="fa arrow"></span></a>
+            </li>
+            
+            <li class="@Html.IsSelected(controller: "Species Configuration")">
+                <a href="@Url.Action("Index", "Specie")"><i class="fa fa-cogs"></i> <span class="nav-label">Species</span> <span class="fa arrow"></span></a>
+            </li>
+
+            <li class="@Html.IsSelected(controller: "Record Observations")">
+                <a href="@Url.Action("Index", "Observation")"><i class="fa fa-binoculars"></i> <span class="nav-label">Observations</span> <span class="fa arrow"></span></a>
+            </li>
+
+            <li class="@Html.IsSelected(controller: "Farming Inputs")">
+                <a href="#"><i class="fa fa-bar-chart-o"></i> <span class="nav-label">Reports</span><span class="fa arrow"></span></a>
+                <ul class="nav nav-second-level">
+                    <li class="@Html.IsSelected(action: "Dashboard_1")"><a href="@Url.Action("Dashboard_1", "Dashboards")">Species</a></li>
+                    <li class="@Html.IsSelected(action: "Dashboard_2")"><a href="@Url.Action("Dashboard_2", "Dashboards")">Observations</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</nav>
