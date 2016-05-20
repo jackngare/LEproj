@@ -40,18 +40,19 @@
                 </div>
                 <div class="col-sm-4">
                     <div class="form-group">
-                        
                         <div class="radio">
                             <label  style="width:50%">
-                                <input type="radio" checked="checked" value="address" id="address" name="optionsRadios"> Address
+                                <input type="radio" checked="checked" ng-model="" value="address" id="address" name="optionsRadios"><strong>Address</strong> 
                             </label>
                             <label style="width:30%">
-                                <input type="radio"  value="usng" id="usgn" name="optionsRadios" style="float:right"> USNG
+                                <input type="radio"  value="usng" id="usgn" name="optionsRadios" style="float:right"><strong>USNG</strong> 
                             </label>
 
                         </div>
                     <div class="input-group">
-                        <span class="input-group-addon"><i class="fa fa-map-marker"></i></span><input type="text" data-ng-model="SeasonName" class="form-control" ">
+                        <span class="input-group-addon"><i class="fa fa-map-marker"></i></span><input places-auto-complete size=80
+                                                                                                       ng-model="vm.address"
+                                                                                                       on-place-changed="vm.placeChanged()" class="form-control">
                     </div>
                         </div>
                 </div>

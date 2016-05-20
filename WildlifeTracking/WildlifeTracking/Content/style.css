@@ -7561,7 +7561,7 @@ body.skin-3 {
 
 .observations {
     transition: .5s linear all;
-    height: 250px;
+    height: 280px;
     overflow: hidden;
 }
 .observations.ng-hide {

@@ -17,7 +17,7 @@ app.controller('landingController', function ($scope, $q, userService, wildlifes
     var vm = this;
     NgMap.getMap().then(function (map) {
         vm.map = map;
-       
+
         //Instatiated the graticuleDisplay
         graticuleDisplay = new USNGGraticule(vm.map, gridstyle);
         getAllWildlifeSightings();
@@ -151,27 +151,27 @@ app.controller('landingController', function ($scope, $q, userService, wildlifes
         console.log('Location Left Botoom :' + JSON.stringify(leftBottomLL));
         console.log('Location Right Top :' + JSON.stringify(rightTopLL));
 
-            rectangle = new google.maps.Rectangle({
-                strokeColor: '#00cc66',
-                strokeOpacity: 0.8,
-                strokeWeight: 2,
-                fillColor: '#00cc66',
-                fillOpacity: 0.35,
-                map: vm.map,
-                bounds: new google.maps.LatLngBounds(
-                new google.maps.LatLng(leftBottomLL.lat, leftBottomLL.lon),
-                new google.maps.LatLng(rightTopLL.lat, rightTopLL.lon))
-            });
-            rectangles.push(rectangle);
+        rectangle = new google.maps.Rectangle({
+            strokeColor: '#00cc66',
+            strokeOpacity: 0.8,
+            strokeWeight: 2,
+            fillColor: '#00cc66',
+            fillOpacity: 0.35,
+            map: vm.map,
+            bounds: new google.maps.LatLngBounds(
+            new google.maps.LatLng(leftBottomLL.lat, leftBottomLL.lon),
+            new google.maps.LatLng(rightTopLL.lat, rightTopLL.lon))
+        });
+        rectangles.push(rectangle);
         //vm.map.setZoom(9);
         //vm.map.panTo(location);
 
     }
 
-    function drawUTMZone(location)  {
+    function drawUTMZone(location) {
         console.log("Current zoom level is: " + vm.map.getZoom());
 
-        
+
 
         var mouseLL = location;
         var mouseUSNG = usngConv.fromLonLat({ lon: mouseLL.lng(), lat: mouseLL.lat() }, 5);
@@ -201,7 +201,7 @@ app.controller('landingController', function ($scope, $q, userService, wildlifes
             var rightTopLL = usngConv.toLonLat(baseAddress + baseLon + '99' + baseLat + '99', null);
 
 
-             rectangle = new google.maps.Rectangle({
+            rectangle = new google.maps.Rectangle({
                 strokeColor: '#00cc66',
                 strokeOpacity: 0.8,
                 strokeWeight: 2,
@@ -213,7 +213,7 @@ app.controller('landingController', function ($scope, $q, userService, wildlifes
                 new google.maps.LatLng(rightTopLL.lat, rightTopLL.lon))
             });
 
-             rectangles.push(rectangle);
+            rectangles.push(rectangle);
             //var panLocation = new google.maps.LatLng(rightTopLL.lat, rightTopLL.lon);
             //vm.map.panTo(panLocation);
 
@@ -555,13 +555,107 @@ app.controller('landingController', function ($scope, $q, userService, wildlifes
                 });
 
                 rectangles.push(rectangle);
-               // var panLocation = new google.maps.LatLng(southernBoundary, easternBoundary)
+                // var panLocation = new google.maps.LatLng(southernBoundary, easternBoundary)
                 //vm.map.setCenter(panLocation);
 
             }
         }
     };
 
+    //Start the search, depending on what has been entered (LongLat, Address and USGN)
+    function startSearch(addrTxt, USNGTxt) {
+        //console.log("Starting Text Search of type: "+searchType);
+        if (searchType === "address") {
+            codeAddress(addrTxt);
+        } else { //with only two search types, assume USNG if not address
+            USNGTxt = USNGTxt.toLocaleUpperCase();
+            convUSNG(USNGTxt);
+        }
+    }
+
+    //Geocode the address, pan/zoom the map, and create a marker via the markers.js script
+    function codeAddress(addrTxt) {
+        var address = addrTxt;
+        locationGeocoder.geocode({ 'address': address }, function (results, status) {
+            if (status == google.maps.GeocoderStatus.OK) {
+                map.setCenter(results[0].geometry.location);
+                map.fitBounds(results[0].geometry.viewport);
+                createMarker(results[0].geometry.location, results[0].formatted_address);
+            } else {
+                alert("Geocode was not found for the following reason: " + status);
+            }
+        });
+    }
+
+    //Convert a USNG string to a lat long for a marker and zooming
+    function convUSNG(txt) {
+        var usngZlev = null; //set up a zoom level for use later
+        try {
+            var foundLLobj = usngConv.toLonLat(txt, null);
+        }
+        catch (err) {
+            alert(err);
+            return null;
+        }
+        //console.log("Lat long components are: Precision - "+foundLLobj.precision+" Lat:"+foundLLobj.lat+" Long:"+foundLLobj.lon);
+        //trying to get to 0 = 100km, 1 = 10km, 2 = 1km, 3 = 100m, 4 = 10m, 5 = 1m, ...
+        if (foundLLobj.precision === 0) {
+            usngZlev = 6;
+        }
+        else if (foundLLobj.precision === 1) {
+            usngZlev = 10;
+        }
+        else if (foundLLobj.precision === 2) {
+            usngZlev = 12;
+        }
+        else if (foundLLobj.precision === 3) {
+            usngZlev = 14;
+        }
+        else if (foundLLobj.precision === 4) {
+            usngZlev = 16;
+        }
+        else if (foundLLobj.precision === 5) {
+            usngZlev = 18;
+        }
+        else {
+            usngZlev = 21;
+        }
+
+        map.setZoom(usngZlev);
+        console.log("New zoom level is: " + usngZlev);
+        var foundLatLng = new google.maps.LatLng(foundLLobj.lat, foundLLobj.lon);
+        map.setCenter(foundLatLng);
+        createMarker(foundLatLng, null);
+    }
+
+    vm.placeChanged = function () {
+        vm.types = "['address']";
+        vm.place = this.getPlace();
+        var address = vm.address;
+        console.log('The location before', address.substring(0, 4));
+        if (isNumeric(address.substring(0, 4))) {
+            console.log('The location after', address.substring(0, 4));
+            var loc = address.split(",");
+            var lat = parseFloat(loc[0]);
+            var lng = parseFloat(loc[1]);
+            var newlatlng = new google.maps.LatLng(lat, lng);
+            vm.map.setCenter(newlatlng);
+            vm.map.setZoom(8);
+        } else {
+            console.log('location', JSON.stringify(vm.place.geometry.location));
+            vm.map.setCenter(vm.place.geometry.location);
+            vm.map.setZoom(8);
+        }
+        console.log('The location after', vm.address);
+
+    }
+
+    function isNumeric(n) {
+        if (typeof (n) === 'string') {
+            n = n.replace(/,/, ".");
+        }
+        return !isNaN(parseFloat(n)) && isFinite(n);
+    }
 });
 
 
@@ -855,7 +949,7 @@ app.controller('loginController', function ($scope, $q, userService, $timeout, $
 app.controller('userController', function ($scope, $q, userService, $timeout, $compile, DTOptionsBuilder, DTColumnBuilder, DTInstances, NgMap) {
     $scope.OperType = 1;//1 Means New Entry
     $scope.addMode = false;
-    $scope.setFocus=true;
+    $scope.setFocus = true;
     $scope.edit = edit;
     $scope.delete = deleteRow;
     $scope.message = "";

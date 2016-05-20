@@ -19,7 +19,6 @@ namespace WildlifeTracking
                 url: "{controller}/{action}/{id}",
                 defaults: new { controller = "Landing", action = "Index", id = UrlParameter.Optional }
             );
-            
         }
     }
 }
