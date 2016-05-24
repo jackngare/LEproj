@@ -16,5 +16,6 @@ namespace WildlifeTracking.Models
         public Species Species { get; set; }
         public string Notes { get; set; }
         public string USNG { get; set; }
+        public string Photo { get; set; }
     }
 }

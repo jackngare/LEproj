@@ -15,6 +15,7 @@ app.controller('landingController', function ($scope, $q, userService, wildlifes
     var rectangle, southEast, northWest;
     var markers = [];
     var rectangles = [];
+    var infowindow = null;
 
     var vm = this;
     NgMap.getMap().then(function (map) {
@@ -51,19 +52,35 @@ app.controller('landingController', function ($scope, $q, userService, wildlifes
             .success(function (wildlifesightings) {
                 vm.Wildlifesightings = wildlifesightings;
                 var length = vm.Wildlifesightings.length;
+                
+                  /* now inside your initialise function */
+                    infowindow = new google.maps.InfoWindow({
+                        content: "holding..."
+                    });
+                   
                 for (var i = 0; i < length; i++) {
                     // Do something with yourArray[i].
                     var loc = vm.Wildlifesightings[i].Location.split(",");
                     var lat = parseFloat(loc[0]);
                     var lng = parseFloat(loc[1]);
                     var newlatlng = new google.maps.LatLng(lat, lng);
-
+                    
                     var marker = new google.maps.Marker({
                         position: newlatlng,
                         map: vm.map,
-                        draggable: true,
+                        content: '<div>'+ 
+                                    '<img height="80" width="80" src="data:' + vm.Wildlifesightings[i].Photo + '" hspace="10" align="left" /> Address : ' + newlatlng + ' <br>' +
+                        ' USNG : ' + vm.Wildlifesightings[i].USNG + ' <br> Notes : ' + vm.Wildlifesightings[i].Notes + ' <br> Sighted by: ' + vm.Wildlifesightings[i].User.UserFullNames + '',
+                        clickable: true,
                         animation: google.maps.Animation.DROP
                     });
+
+                    google.maps.event.addListener(marker, 'click', function () {
+                        console.log(this.content);
+                        infowindow.setContent(this.content);
+                        infowindow.open(vm.map, this);
+                    });
+
                     markers.push(marker);
                     clearRectangles();
                     for (var i = 0; i < markers.length; i++) {
@@ -1811,6 +1828,7 @@ app.controller('wildlifesightingController', function ($scope, $q, wildlifesight
     $scope.toggleEdit = function () {
         this.friend.editMode = !this.friend.editMode;
     };
+
     $scope.toggleAdd = function () {
         $scope.addMode = !$scope.addMode;
         ClearModels();
@@ -1824,6 +1842,7 @@ app.controller('wildlifesightingController', function ($scope, $q, wildlifesight
         $scope.SightingDate = "";
         $scope.Notes = "";
         $scope.OperType = 1;
+        $scope.Image = "";
         if (marker)
             marker.setMap(null);
         if (rectangle)
@@ -1838,7 +1857,8 @@ app.controller('wildlifesightingController', function ($scope, $q, wildlifesight
             Location: $scope.Location,
             Notes: $scope.Notes,
             SightingDate: $scope.SightingDate,
-            USNG:$scope.USNG,
+            USNG: $scope.USNG,
+            Photo:$scope.Image,
             UserID: 2//hard coded here till we figure out how to retrieve session variable 
         };
 
@@ -1880,9 +1900,8 @@ app.controller('wildlifesightingController', function ($scope, $q, wildlifesight
             $scope.Notes = res.Notes;
             $scope.SightingDate = res.SightingDate;
             $scope.USNG = res.USNG,
+            $scope.Image = res.Photo,
             $scope.OperType = 0;
-
-            console.log('Location of Getting' + $scope.Location);
 
             var loc = $scope.Location.split(",")
             var lat = parseFloat(loc[0])
@@ -1902,8 +1921,6 @@ app.controller('wildlifesightingController', function ($scope, $q, wildlifesight
             console.log('Some Error in Getting Details', errorPl);
         });
     }
-
-
 
     //get all the species 
     getAllSpecies();
