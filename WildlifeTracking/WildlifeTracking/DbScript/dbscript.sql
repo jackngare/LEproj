@@ -70,3 +70,7 @@ CREATE TABLE dbo.WildlifeSightings(
 GO
 
 
+ALTER TABLE dbo.WildlifeSightings
+	ADD USNG varchar(100) NULl
+GO
+

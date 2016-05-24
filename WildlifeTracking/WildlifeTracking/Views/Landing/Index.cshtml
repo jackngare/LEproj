@@ -42,10 +42,10 @@
                     <div class="form-group">
                         <div class="radio">
                             <label  style="width:50%">
-                                <input type="radio" checked="checked" ng-model="" value="address" id="address" name="optionsRadios"><strong>Address</strong> 
+                                <input type="radio" ng-checked="isAddress" data-ng-click="changeAddressType()" value="address" id="address" name="optionsRadios"><strong>Address</strong> 
                             </label>
                             <label style="width:30%">
-                                <input type="radio"  value="usng" id="usgn" name="optionsRadios" style="float:right"><strong>USNG</strong> 
+                                <input type="radio" ng-checked="!isAddress" value="usng" id="usgn" data-ng-click="changeAddressType()" name="optionsRadios" style="float:right"><strong>USNG</strong> 
                             </label>
 
                         </div>

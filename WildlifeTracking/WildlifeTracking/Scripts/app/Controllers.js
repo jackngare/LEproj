@@ -3,6 +3,8 @@
 app.controller('landingController', function ($scope, $q, userService, wildlifesightingService, speciesService, $timeout, $compile, DTOptionsBuilder, DTColumnBuilder, DTInstances, NgMap) {
     $scope.OperType = 1;//1 Means New Entry
     $scope.searchMode = true;
+    $scope.isAddress = true;
+
     // Instatiation of the USNG mapping function
     var usngConv = new USNG2();
     var utmMap = new usngConv.UTM();
@@ -22,6 +24,15 @@ app.controller('landingController', function ($scope, $q, userService, wildlifes
         graticuleDisplay = new USNGGraticule(vm.map, gridstyle);
         getAllWildlifeSightings();
     });
+
+    //changeAddressType
+    $scope.changeAddressType = function () {
+        if (!$scope.isAddress)
+            $scope.isAddress = true;
+        else
+            $scope.isAddress = false;
+        console.log('The value of IsAddress is ' + $scope.isAddress);
+    }
 
     //get all the species 
     getAllSpecies();
@@ -117,7 +128,6 @@ app.controller('landingController', function ($scope, $q, userService, wildlifes
         }
         rectangles = [];
     }
-
 
     vm.shadeMarkerUTMZones = function () {
         clearRectangles();
@@ -587,11 +597,37 @@ app.controller('landingController', function ($scope, $q, userService, wildlifes
         });
     }
 
+    vm.placeChanged = function () {
+        vm.types = "['address']";
+        vm.place = this.getPlace();
+        var address = vm.address;
+        console.log('The location before', address.substring(0, 4));
+        if (isNumeric(address.substring(0, 4)) && $scope.isAddress) {
+            console.log('The location after', address.substring(0, 4));
+            var loc = address.split(",");
+            var lat = parseFloat(loc[0]);
+            var lng = parseFloat(loc[1]);
+            var newlatlng = new google.maps.LatLng(lat, lng);
+            vm.map.setCenter(newlatlng);
+            vm.map.setZoom(8);
+        } else {
+            if (isNumeric(address.substring(0, 2)) && !$scope.isAddress) {
+                console.log('location using USNG');
+                convUSNG(address);
+            }
+            else {
+                console.log('location', JSON.stringify(vm.place.geometry.location));
+                vm.map.setCenter(vm.place.geometry.location);
+                vm.map.setZoom(8);
+            }
+        }
+    }
+
     //Convert a USNG string to a lat long for a marker and zooming
-    function convUSNG(txt) {
+    function convUSNG(location) {
         var usngZlev = null; //set up a zoom level for use later
         try {
-            var foundLLobj = usngConv.toLonLat(txt, null);
+            var foundLLobj = usngConv.toLonLat(location, null);
         }
         catch (err) {
             alert(err);
@@ -621,33 +657,13 @@ app.controller('landingController', function ($scope, $q, userService, wildlifes
             usngZlev = 21;
         }
 
-        map.setZoom(usngZlev);
+        //vm.map.setZoom(usngZlev);
         console.log("New zoom level is: " + usngZlev);
         var foundLatLng = new google.maps.LatLng(foundLLobj.lat, foundLLobj.lon);
-        map.setCenter(foundLatLng);
-        createMarker(foundLatLng, null);
-    }
-
-    vm.placeChanged = function () {
-        vm.types = "['address']";
-        vm.place = this.getPlace();
-        var address = vm.address;
-        console.log('The location before', address.substring(0, 4));
-        if (isNumeric(address.substring(0, 4))) {
-            console.log('The location after', address.substring(0, 4));
-            var loc = address.split(",");
-            var lat = parseFloat(loc[0]);
-            var lng = parseFloat(loc[1]);
-            var newlatlng = new google.maps.LatLng(lat, lng);
-            vm.map.setCenter(newlatlng);
-            vm.map.setZoom(8);
-        } else {
-            console.log('location', JSON.stringify(vm.place.geometry.location));
-            vm.map.setCenter(vm.place.geometry.location);
-            vm.map.setZoom(8);
-        }
-        console.log('The location after', vm.address);
-
+        vm.map.setCenter(foundLatLng);
+        vm.map.setZoom(8);
+        //map.setCenter(foundLatLng);
+        //createMarker(foundLatLng, null);
     }
 
     function isNumeric(n) {
@@ -657,7 +673,6 @@ app.controller('landingController', function ($scope, $q, userService, wildlifes
         return !isNaN(parseFloat(n)) && isFinite(n);
     }
 });
-
 
 //loginController
 app.controller('loginController', function ($scope, $q, userService, $timeout, $compile, DTOptionsBuilder, DTColumnBuilder, DTInstances, NgMap) {
@@ -1294,7 +1309,6 @@ app.controller('wildlifesightingController', function ($scope, $q, wildlifesight
     $scope.OperType = 1;//1 Means New Entry
     $scope.addMode = false;
     $scope.edit = edit;
-    $scope.delete = deleteRow;
     $scope.message = "";
     $scope.Location = "";
 
@@ -1338,15 +1352,18 @@ app.controller('wildlifesightingController', function ($scope, $q, wildlifesight
         lng = event.latLng.lng();
 
         $scope.Location = lat + ',' + lng;
+        $scope.USNG = usngConv.fromLonLat({ lon: lng, lat: lat}, 5);
         shadeUTMZone(event.latLng);
 
         marker.addListener('dragend', function (event) {
-            $scope.Location = lat + ',' + lng;
+            lat = event.latLng.lat();
+            lng = event.latLng.lng();
+            $scope.USNG = usngConv.fromLonLat({ lon: lng, lat: lat }, 5);
             shadeUTMZone(event.latLng);
-            console.log('Scope Location :' + $scope.Location);
+            console.log('Scope Location :' + $scope.USNG);
         });
 
-        console.log('Scope Location LngLat:' + lat + ',' + lng);
+        console.log('Scope Location USNG:' + $scope.USNG);
     }
 
 
@@ -1775,14 +1792,6 @@ app.controller('wildlifesightingController', function ($scope, $q, wildlifesight
         $scope.get(id);
     }
 
-    function deleteRow(id) {
-        //alert("inDelete");
-        $scope.message = 'You are trying to remove the row with ID: ' + id; --
-        // Delete some data and call server to make changes...
-        // Then reload the data so that DT is refreshed
-        $scope.dtInstance.reloadData();
-    }
-
     function createdRow(row, data, dataIndex) {
         // Recompiling so we can bind Angular directive to the DT
         $compile(angular.element(row).contents())($scope);
@@ -1829,6 +1838,7 @@ app.controller('wildlifesightingController', function ($scope, $q, wildlifesight
             Location: $scope.Location,
             Notes: $scope.Notes,
             SightingDate: $scope.SightingDate,
+            USNG:$scope.USNG,
             UserID: 2//hard coded here till we figure out how to retrieve session variable 
         };
 
@@ -1869,6 +1879,7 @@ app.controller('wildlifesightingController', function ($scope, $q, wildlifesight
             $scope.Location = res.Location;
             $scope.Notes = res.Notes;
             $scope.SightingDate = res.SightingDate;
+            $scope.USNG = res.USNG,
             $scope.OperType = 0;
 
             console.log('Location of Getting' + $scope.Location);
@@ -1891,6 +1902,8 @@ app.controller('wildlifesightingController', function ($scope, $q, wildlifesight
             console.log('Some Error in Getting Details', errorPl);
         });
     }
+
+
 
     //get all the species 
     getAllSpecies();
