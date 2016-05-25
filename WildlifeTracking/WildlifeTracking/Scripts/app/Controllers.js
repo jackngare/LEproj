@@ -81,6 +81,27 @@ app.controller('landingController', function ($scope, $q, userService, wildlifes
                         infowindow.open(vm.map, this);
                     });
 
+                    switch (vm.Wildlifesightings[i].SpeciesID) {
+                        case 1:
+                            marker.setIcon('http://maps.google.com/mapfiles/ms/icons/green-dot.png');
+                            break;
+                        case 4:
+                            marker.setIcon('http://maps.google.com/mapfiles/ms/icons/orange-dot.png');
+                            break;
+                        case 6:
+                            marker.setIcon('http://maps.google.com/mapfiles/ms/icons/yellow-dot.png');
+                            break;
+                        case 7:
+                            marker.setIcon('http://maps.google.com/mapfiles/ms/icons/purple-dot.png');
+                            break;
+                        case 10:
+                            marker.setIcon('http://maps.google.com/mapfiles/ms/icons/blue-dot.png');
+                            break;
+                        default:
+                            marker.setIcon('http://maps.google.com/mapfiles/ms/icons/red-dot.png');
+                            break;
+                    }
+
                     markers.push(marker);
                     clearRectangles();
                     for (var i = 0; i < markers.length; i++) {
