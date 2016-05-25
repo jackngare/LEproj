@@ -121,6 +121,13 @@ app.controller('landingController', function ($scope, $q, userService, wildlifes
                 clearRectangles();
                 vm.Wildlifesightings = wildlifesightings;
                 var length = vm.Wildlifesightings.length;
+
+
+                /* now inside your initialise function */
+                infowindow = new google.maps.InfoWindow({
+                    content: "holding..."
+                });
+
                 for (var i = 0; i < length; i++) {
                     // Do something with yourArray[i].
                     var loc = vm.Wildlifesightings[i].Location.split(",");
@@ -131,9 +138,40 @@ app.controller('landingController', function ($scope, $q, userService, wildlifes
                     var marker = new google.maps.Marker({
                         position: newlatlng,
                         map: vm.map,
-                        draggable: true,
+                        content: '<div>' +
+                                    '<img height="80" width="80" src="data:' + vm.Wildlifesightings[i].Photo + '" hspace="10" align="left" /> Address : ' + newlatlng + ' <br>' +
+                        ' USNG : ' + vm.Wildlifesightings[i].USNG + ' <br> Notes : ' + vm.Wildlifesightings[i].Notes + ' <br> Sighted by: ' + vm.Wildlifesightings[i].User.UserFullNames + '',
+                        clickable: true,
                         animation: google.maps.Animation.DROP
                     });
+
+                    google.maps.event.addListener(marker, 'click', function () {
+                        console.log(this.content);
+                        infowindow.setContent(this.content);
+                        infowindow.open(vm.map, this);
+                    });
+
+                    switch (vm.Wildlifesightings[i].SpeciesID) {
+                        case 1:
+                            marker.setIcon('http://maps.google.com/mapfiles/ms/icons/green-dot.png');
+                            break;
+                        case 4:
+                            marker.setIcon('http://maps.google.com/mapfiles/ms/icons/orange-dot.png');
+                            break;
+                        case 6:
+                            marker.setIcon('http://maps.google.com/mapfiles/ms/icons/yellow-dot.png');
+                            break;
+                        case 7:
+                            marker.setIcon('http://maps.google.com/mapfiles/ms/icons/purple-dot.png');
+                            break;
+                        case 10:
+                            marker.setIcon('http://maps.google.com/mapfiles/ms/icons/blue-dot.png');
+                            break;
+                        default:
+                            marker.setIcon('http://maps.google.com/mapfiles/ms/icons/red-dot.png');
+                            break;
+                    }
+
                     markers.push(marker);
                 }
 
