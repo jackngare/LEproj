@@ -258,6 +258,17 @@ app.service('wildlifesightingService', function ($http, $q) {
         return $http.get("/api/Wildlifesightings/GetWildlifesightingsBySpeciesId/" + SpeciesId);
     }
 
+    //Get All the Records for a specific user
+    this.getWildlifesighitingsbyUserId = function (UserId) {
+        return $http.get("/api/Wildlifesightings/GetWildlifesightingsByUserId/" + UserId);
+    }
+
+
+    //Get All the Records for a specific user
+    this.GetWildlifesightingsStatsByUserId = function (UserId) {
+        return $http.get("/api/Wildlifesightings/GetWildlifesightingsStatsByUserId/" + UserId);
+    }
+
 
     //Get All Wildlifesighting
     this.getAllWildlifesightings = function () {

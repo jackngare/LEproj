@@ -2271,7 +2271,7 @@ table.dataTable thead .sorting:after {
 }
 /* Google Maps */
 .google-map {
-  height: 300px;
+  height: 350px;
 }
 /* Validation */
 label.error {

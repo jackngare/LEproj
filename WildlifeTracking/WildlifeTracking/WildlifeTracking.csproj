@@ -250,6 +250,7 @@
     </Compile>
     <Compile Include="Helpers\HMTLHelperExtensions.cs" />
     <Compile Include="Infrastructure\WildlifeTrackingDb.cs" />
+    <Compile Include="Models\SightingStats.cs" />
     <Compile Include="Models\Species.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\Wildlifesighting.cs" />

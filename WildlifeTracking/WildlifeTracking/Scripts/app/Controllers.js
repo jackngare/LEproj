@@ -52,23 +52,23 @@ app.controller('landingController', function ($scope, $q, userService, wildlifes
             .success(function (wildlifesightings) {
                 vm.Wildlifesightings = wildlifesightings;
                 var length = vm.Wildlifesightings.length;
-                
-                  /* now inside your initialise function */
-                    infowindow = new google.maps.InfoWindow({
-                        content: "holding..."
-                    });
-                   
+
+                /* now inside your initialise function */
+                infowindow = new google.maps.InfoWindow({
+                    content: "holding..."
+                });
+
                 for (var i = 0; i < length; i++) {
                     // Do something with yourArray[i].
                     var loc = vm.Wildlifesightings[i].Location.split(",");
                     var lat = parseFloat(loc[0]);
                     var lng = parseFloat(loc[1]);
                     var newlatlng = new google.maps.LatLng(lat, lng);
-                    
+
                     var marker = new google.maps.Marker({
                         position: newlatlng,
                         map: vm.map,
-                        content: '<div>'+ 
+                        content: '<div>' +
                                     '<img height="80" width="80" src="data:' + vm.Wildlifesightings[i].Photo + '" hspace="10" align="left" /> Address : ' + newlatlng + ' <br>' +
                         ' USNG : ' + vm.Wildlifesightings[i].USNG + ' <br> Notes : ' + vm.Wildlifesightings[i].Notes + ' <br> Sighted by: ' + vm.Wildlifesightings[i].User.UserFullNames + '',
                         clickable: true,
@@ -115,7 +115,11 @@ app.controller('landingController', function ($scope, $q, userService, wildlifes
     };
 
     $scope.getWildlifeSightingsBySpeciesId = function () {
-        wildlifesightingService.getWildlifesighitingsbySpeciesId($scope.SpeciesID)
+        console.log($scope.SpeciesID);
+        if ($scope.SpeciesID == null) {
+            getAllWildlifeSightings();
+        } else {
+            wildlifesightingService.getWildlifesighitingsbySpeciesId($scope.SpeciesID)
             .success(function (wildlifesightings) {
                 clearMarkers();//clear all previous markers
                 clearRectangles();
@@ -182,6 +186,7 @@ app.controller('landingController', function ($scope, $q, userService, wildlifes
             .error(function (error) {
                 $scope.status = 'Unable to load wildlife sighitngs data: ' + error.message;
             });
+        }
     };
 
     // Removes the markers from the map, but keeps them in the array.
@@ -1208,7 +1213,6 @@ app.controller('userController', function ($scope, $q, userService, $timeout, $c
 
 });
 
-
 //speciesController
 app.controller('speciesController', function ($scope, $q, speciesService, $timeout, $compile, DTOptionsBuilder, DTColumnBuilder, DTInstances, NgMap) {
     $scope.OperType = 1;//1 Means New Entry
@@ -1341,6 +1345,8 @@ app.controller('dashboardController', function ($scope, $q, userService, wildlif
     var graticuleDisplay = null;
 
     var rectangle;
+    var markers = [];
+    var rectangles = [];
     var southEast, northWest;
 
     var vm = this;
@@ -1349,8 +1355,489 @@ app.controller('dashboardController', function ($scope, $q, userService, wildlif
         //Instatiated the graticuleDisplay
         graticuleDisplay = new USNGGraticule(vm.map, gridstyle);
         //get all the species 
-        getAllWildlifeSightings();
+        getWildlifeSightingsByUserId();
+        getUserStats();
     });
+    
+
+    //To Get User Detail on the Base of User ID
+    function getUserStats() {
+        var promiseGetSingle = wildlifesightingService.GetWildlifesightingsStatsByUserId(2);
+
+        promiseGetSingle.then(function (pl) {
+            var res = pl.data;
+            $scope.SpeciesCount = res.SpeciesCount;
+            $scope.AnimalsCount = res.AnimalsCount;
+            $scope.MonthlyCount = res.MonthlyCount;
+            $scope.YearlyCount = res.YearlyCount;
+        },
+        function (errorPl) {
+            console.log('Some Error in Getting Details', errorPl);
+        });
+    }
+
+
+    function getWildlifeSightingsByUserId() {
+        wildlifesightingService.getWildlifesighitingsbyUserId(2)
+            .success(function (wildlifesightings) {
+                vm.Wildlifesightings = wildlifesightings;
+                var length = vm.Wildlifesightings.length;
+
+                /* now inside your initialise function */
+                infowindow = new google.maps.InfoWindow({
+                    content: "holding..."
+                });
+
+                for (var i = 0; i < length; i++) {
+                    // Do something with yourArray[i].
+                    var loc = vm.Wildlifesightings[i].Location.split(",");
+                    var lat = parseFloat(loc[0]);
+                    var lng = parseFloat(loc[1]);
+                    var newlatlng = new google.maps.LatLng(lat, lng);
+
+                    var marker = new google.maps.Marker({
+                        position: newlatlng,
+                        map: vm.map,
+                        content: '<div>' +
+                                    '<img height="80" width="80" src="data:' + vm.Wildlifesightings[i].Photo + '" hspace="10" align="left" /> Address : ' + newlatlng + ' <br>' +
+                        ' USNG : ' + vm.Wildlifesightings[i].USNG + ' <br> Notes : ' + vm.Wildlifesightings[i].Notes + ' <br> Sighted by: ' + vm.Wildlifesightings[i].User.UserFullNames + '',
+                        clickable: true,
+                        animation: google.maps.Animation.DROP
+                    });
+
+                    google.maps.event.addListener(marker, 'click', function () {
+                        console.log(this.content);
+                        infowindow.setContent(this.content);
+                        infowindow.open(vm.map, this);
+                    });
+
+                    switch (vm.Wildlifesightings[i].SpeciesID) {
+                        case 1:
+                            marker.setIcon('http://maps.google.com/mapfiles/ms/icons/green-dot.png');
+                            break;
+                        case 4:
+                            marker.setIcon('http://maps.google.com/mapfiles/ms/icons/orange-dot.png');
+                            break;
+                        case 6:
+                            marker.setIcon('http://maps.google.com/mapfiles/ms/icons/yellow-dot.png');
+                            break;
+                        case 7:
+                            marker.setIcon('http://maps.google.com/mapfiles/ms/icons/purple-dot.png');
+                            break;
+                        case 10:
+                            marker.setIcon('http://maps.google.com/mapfiles/ms/icons/blue-dot.png');
+                            break;
+                        default:
+                            marker.setIcon('http://maps.google.com/mapfiles/ms/icons/red-dot.png');
+                            break;
+                    }
+
+                    markers.push(marker);
+                }
+
+                for (var i = 0; i < markers.length; i++) {
+                    drawUTMZone(markers[i].position);
+                }
+            })
+            .error(function (error) {
+                $scope.status = 'Unable to load wildlife sighitngs data: ' + error.message;
+            });
+    };
+
+
+    function drawUTMZone(location) {
+        console.log("Current zoom level is: " + vm.map.getZoom());
+
+
+
+        var mouseLL = location;
+        var mouseUSNG = usngConv.fromLonLat({ lon: mouseLL.lng(), lat: mouseLL.lat() }, 5);
+
+        var locati = mouseUSNG.substring(0, 6);
+        var leftBottomUSNG = mouseUSNG.substring(6, 12);
+        var rightTopUSNG = mouseUSNG.substring(12, 18);
+
+
+        //37N DC 7996 0840
+        //37N DC 7999 0849
+        //37N EB 99990 99990
+
+        var leftBottomLL = usngConv.toLonLat(locati + leftBottomUSNG + '0' + rightTopUSNG + '0', null);
+        southEast = locati + leftBottomUSNG + '0' + rightTopUSNG + '0';
+        northWest = locati + leftBottomUSNG + '99' + rightTopUSNG + '99';
+
+
+        if (vm.map.getZoom() == 12) {
+
+            var baseAddress = southEast.substring(0, 6);
+            var baseLon = southEast.substring(6, 9);
+            var baseLat = southEast.substring(13, 16);
+
+
+            var leftBottomLL = usngConv.toLonLat(baseAddress + baseLon + '00' + baseLat + '00', null);
+            var rightTopLL = usngConv.toLonLat(baseAddress + baseLon + '99' + baseLat + '99', null);
+
+
+            rectangle = new google.maps.Rectangle({
+                strokeColor: '#00cc66',
+                strokeOpacity: 0.8,
+                strokeWeight: 2,
+                fillColor: '#00cc66',
+                fillOpacity: 0.35,
+                map: vm.map,
+                bounds: new google.maps.LatLngBounds(
+                new google.maps.LatLng(leftBottomLL.lat, leftBottomLL.lon),
+                new google.maps.LatLng(rightTopLL.lat, rightTopLL.lon))
+            });
+
+            rectangles.push(rectangle);
+            //var panLocation = new google.maps.LatLng(rightTopLL.lat, rightTopLL.lon);
+            //vm.map.panTo(panLocation);
+
+        } else {
+            if (vm.map.getZoom() == 11) {
+
+                //37M CS 6580 7940
+                //37M DS 0490 4070
+                //36N VG 0740 3600
+                //37M ET 0260 7660
+
+                var baseAddress = southEast.substring(0, 6);
+                var baseLon = southEast.substring(6, 9);
+                var baseLat = southEast.substring(13, 16);
+
+                var newBaseLon = parseInt(baseLon);
+                var newBaseLat = parseInt(baseLat);
+                newBaseLat += 1;
+                var newTopRightLon = parseInt(baseLon);
+                newTopRightLon += 1;
+                var newTopRightLat = parseInt(baseLat);
+                newTopRightLat += 1;
+
+                console.log('Base Lon : ' + baseLon + ' Base Lat: ' + baseLat + ' New Base Lon : ' + newBaseLon + ' : ' + newBaseLat);
+
+                var leftBottomLL = usngConv.toLonLat(baseAddress + baseLon + '00' + baseLat + '00', null);
+                var rightTopLL = usngConv.toLonLat(baseAddress + baseLon + '99' + baseLat + '99', null);
+
+                rectangle = new google.maps.Rectangle({
+                    strokeColor: '#00cc66',
+                    strokeOpacity: 0.8,
+                    strokeWeight: 2,
+                    fillColor: '#00cc66',
+                    fillOpacity: 0.35,
+                    map: vm.map,
+                    bounds: new google.maps.LatLngBounds(
+                    new google.maps.LatLng(leftBottomLL.lat, leftBottomLL.lon),
+                    new google.maps.LatLng(rightTopLL.lat, rightTopLL.lon))
+                });
+
+                rectangles.push(rectangle);
+                //var panLocation = new google.maps.LatLng(leftBottomLL.lat, leftBottomLL.lon);
+                //vm.map.panTo(panLocation);
+
+            }
+
+            if (vm.map.getZoom() == 10) {
+
+                //37M CS 6580 7940
+                //37M DS 0490 4070
+                //37N CD 2670 3990
+
+                console.log('Hapa ni zoom level 10');
+
+                var baseAddress = southEast.substring(0, 6);
+                var baseLon = southEast.substring(6, 9);
+                var baseLat = southEast.substring(13, 16);
+
+                var leftBottomLL = usngConv.toLonLat(baseAddress + baseLon + '00' + baseLat + '00', null);
+                var rightTopLL = usngConv.toLonLat(baseAddress + baseLon + '99' + baseLat + '99', null);
+
+                rectangle = new google.maps.Rectangle({
+                    strokeColor: '#00cc66',
+                    strokeOpacity: 0.8,
+                    strokeWeight: 2,
+                    fillColor: '#00cc66',
+                    fillOpacity: 0.35,
+                    map: vm.map,
+                    bounds: new google.maps.LatLngBounds(
+                    new google.maps.LatLng(leftBottomLL.lat, leftBottomLL.lon),
+                    new google.maps.LatLng(rightTopLL.lat, rightTopLL.lon))
+                });
+
+                rectangles.push(rectangle);
+                //var panLocation = new google.maps.LatLng(rightTopLL.lat, rightTopLL.lon);
+                //vm.map.panTo(panLocation);
+            }
+
+            if (vm.map.getZoom() == 13 || vm.map.getZoom() <= 16) {
+
+                var baseAddress = southEast.substring(0, 6);
+                //var baseLon = southEast.substring(6, 10);
+                //var baseLat = southEast.substring(13, 17);
+                var baseLon = southEast.substring(6, 9);
+                var baseLat = southEast.substring(13, 16);
+
+                var leftBottomLL = usngConv.toLonLat(baseAddress + baseLon + '00' + baseLat + '00', null);
+                var rightTopLL = usngConv.toLonLat(baseAddress + baseLon + '99' + baseLat + '99', null);
+
+                rectangle = new google.maps.Rectangle({
+                    strokeColor: '#00cc66',
+                    strokeOpacity: 0.8,
+                    strokeWeight: 2,
+                    fillColor: '#00cc66',
+                    fillOpacity: 0.35,
+                    map: vm.map,
+                    bounds: new google.maps.LatLngBounds(
+                    new google.maps.LatLng(leftBottomLL.lat, leftBottomLL.lon),
+                    new google.maps.LatLng(rightTopLL.lat, rightTopLL.lon))
+                });
+                rectangles.push(rectangle);
+                //var panLocation = new google.maps.LatLng(rightTopLL.lat, rightTopLL.lon);
+                //vm.map.panTo(panLocation);
+            }
+
+            if (vm.map.getZoom() == 17 || vm.map.getZoom() == 18) {
+
+
+                var baseAddress = southEast.substring(0, 6);
+                var baseLon = southEast.substring(6, 10);
+                var baseLat = southEast.substring(13, 17);
+
+                var leftBottomLL = usngConv.toLonLat(baseAddress + baseLon + '00' + baseLat + '00', null);
+                var rightTopLL = usngConv.toLonLat(baseAddress + baseLon + '99' + baseLat + '99', null);
+
+                rectangle = new google.maps.Rectangle({
+                    strokeColor: '#00cc66',
+                    strokeOpacity: 0.8,
+                    strokeWeight: 2,
+                    fillColor: '#00cc66',
+                    fillOpacity: 0.35,
+                    map: vm.map,
+                    bounds: new google.maps.LatLngBounds(
+                    new google.maps.LatLng(leftBottomLL.lat, leftBottomLL.lon),
+                    new google.maps.LatLng(rightTopLL.lat, rightTopLL.lon))
+                });
+
+                rectangles.push(rectangle);
+                //var panLocation = new google.maps.LatLng(rightTopLL.lat, rightTopLL.lon);
+                //vm.map.panTo(panLocation);
+            }
+
+            if (vm.map.getZoom() == 19 || vm.map.getZoom() == 20) {
+
+
+                var baseAddress = southEast.substring(0, 6);
+                var baseLon = southEast.substring(6, 11);
+                var baseLat = southEast.substring(13, 18);
+
+                var leftBottomLL = usngConv.toLonLat(baseAddress + baseLon + '00' + baseLat + '00', null);
+                var rightTopLL = usngConv.toLonLat(baseAddress + baseLon + '99' + baseLat + '99', null);
+
+                rectangle = new google.maps.Rectangle({
+                    strokeColor: '#00cc66',
+                    strokeOpacity: 0.8,
+                    strokeWeight: 2,
+                    fillColor: '#00cc66',
+                    fillOpacity: 0.35,
+                    map: vm.map,
+                    bounds: new google.maps.LatLngBounds(
+                    new google.maps.LatLng(leftBottomLL.lat, leftBottomLL.lon),
+                    new google.maps.LatLng(rightTopLL.lat, rightTopLL.lon))
+                });
+
+                rectangles.push(rectangle);
+                //var panLocation = new google.maps.LatLng(rightTopLL.lat, rightTopLL.lon);
+                //vm.map.panTo(panLocation);
+            }
+
+            if (vm.map.getZoom() == 21) {
+
+
+                var baseAddress = southEast.substring(0, 6);
+                var baseLon = southEast.substring(6, 11);
+                var baseLat = southEast.substring(13, 18);
+
+                var leftBottomLL = usngConv.toLonLat(baseAddress + baseLon + '00' + baseLat + '00', null);
+                var rightTopLL = usngConv.toLonLat(baseAddress + baseLon + '99' + baseLat + '99', null);
+
+                rectangle = new google.maps.Rectangle({
+                    strokeColor: '#00cc66',
+                    strokeOpacity: 0.8,
+                    strokeWeight: 2,
+                    fillColor: '#00cc66',
+                    fillOpacity: 0.35,
+                    map: vm.map,
+                    bounds: new google.maps.LatLngBounds(
+                    new google.maps.LatLng(leftBottomLL.lat, leftBottomLL.lon),
+                    new google.maps.LatLng(rightTopLL.lat, rightTopLL.lon))
+                });
+
+                rectangles.push(rectangle);
+                //var panLocation = new google.maps.LatLng(rightTopLL.lat, rightTopLL.lon);
+                //vm.map.panTo(panLocation);
+            }
+            if (vm.map.getZoom() == 9) {
+
+                var baseAddress = southEast.substring(0, 6);
+
+                var leftBottomLL = usngConv.toLonLat(baseAddress + '0000' + '0000', null);
+                var rightTopLL = usngConv.toLonLat(baseAddress + '9999' + '9999', null);
+
+                rectangle = new google.maps.Rectangle({
+                    strokeColor: '#00cc66',
+                    strokeOpacity: 0.8,
+                    strokeWeight: 2,
+                    fillColor: '#00cc66',
+                    fillOpacity: 0.35,
+                    map: vm.map,
+                    bounds: new google.maps.LatLngBounds(
+                    new google.maps.LatLng(leftBottomLL.lat, leftBottomLL.lon),
+                    new google.maps.LatLng(rightTopLL.lat, rightTopLL.lon))
+                });
+
+                rectangles.push(rectangle);
+                //var panLocation = new google.maps.LatLng(rightTopLL.lat, rightTopLL.lon);
+                //vm.map.panTo(panLocation);
+            }
+
+
+            if (vm.map.getZoom() == 6 || vm.map.getZoom() <= 8) {
+
+                var baseAddress = southEast.substring(0, 6);
+
+                var leftBottomLL = usngConv.toLonLat(baseAddress + '0000' + '0000', null);
+                var rightTopLL = usngConv.toLonLat(baseAddress + '9999' + '9999', null);
+
+                rectangle = new google.maps.Rectangle({
+                    strokeColor: '#00cc66',
+                    strokeOpacity: 0.8,
+                    strokeWeight: 2,
+                    fillColor: '#00cc66',
+                    fillOpacity: 0.35,
+                    map: vm.map,
+                    bounds: new google.maps.LatLngBounds(
+                    new google.maps.LatLng(leftBottomLL.lat, leftBottomLL.lon),
+                    new google.maps.LatLng(rightTopLL.lat, rightTopLL.lon))
+                });
+
+                rectangles.push(rectangle);
+                //var panLocation = new google.maps.LatLng(rightTopLL.lat, rightTopLL.lon);
+                //vm.map.panTo(panLocation);
+            }
+
+
+            if (vm.map.getZoom() <= 5) {
+                /*
+                Calculating the eastern and western boundaries of a UTM is very straightforward.  
+                Developed by the U.S. Army, the Universal Transverse Mercator (UTM) is an international 
+                plane (rectangular) coordinate system. In the coordinate system, the world is divided into 
+                60 zones of 6 degrees longitude. Each zone extends 3 degrees east and west from its 
+                central meridian and are numbered consecutively west to east from the 180-degree meridian. 
+                Transverse Mercator projections may then be applied to each zone.
+
+
+                Here’s How:
+                    • UTM zones are all 6 degrees wide and increase from west to east starting at the -180 degree mark.
+                    • Calculate the eastern boundary of any UTM zone by multiplying the zone number by 6 and substract 180.
+                    • Subtract 6 degrees to obtain the western boundary.
+                    • Therefore to find the eastern boundary of UTM zone 11: Eastern boundary of zone 11 = (11 * 6) – 180 = -114 degrees.
+                    • Western boundary of zone 11 = -114 – 6 = -120 degrees.
+
+                Latitude is also divided into zones, but less regularly. Zones are lettered from A at the 
+                South Pole to Z at the North. The circle south of 80 degrees is divided into two zones, A and B. 
+                Thereafter zones are 8 degrees wide. Zone M is just south of the equator and N is north. Zone T, 
+                between 40 and 48 degrees north, includes Green Bay. Zone X, from 72 to 84 degrees north, 
+                is 12 degrees wide and zones Y and Z cover the north polar region north of 84 degrees. 
+                I and O are not used because they can be too easily confused with numbers.
+
+
+                */
+
+
+
+                var zoneNo = southEast.substring(0, 2);
+                var latZone = southEast.substring(2, 3);
+
+                var easternBoundary = parseInt(zoneNo);
+                easternBoundary = (easternBoundary * 6) - 180;
+                var westernBoundary = easternBoundary - 6;
+
+                var southernBoundary;
+
+                switch (latZone) {
+                    case "F":
+                        southernBoundary = -56;
+                        break;
+                    case "G":
+                        southernBoundary = -48;
+                        break;
+                    case "H":
+                        southernBoundary = -40;
+                        break;
+                    case "J":
+                        southernBoundary = -32;
+                        break;
+                    case "K":
+                        southernBoundary = -24;
+                        break;
+                    case "L":
+                        southernBoundary = -16;
+                        break;
+                    case "M":
+                        southernBoundary = -8;
+                        break;
+                    case "N":
+                        southernBoundary = 0;
+                        break;
+                    case "P":
+                        southernBoundary = 8;
+                        break;
+                    case "Q":
+                        southernBoundary = 16;
+                        break;
+                    case "R":
+                        southernBoundary = 24;
+                        break;
+                    case "S":
+                        southernBoundary = 32;
+                        break;
+                    case "T":
+                        southernBoundary = 40;
+                        break;
+                    case "U":
+                        southernBoundary = 48;
+                        break;
+                    case "V":
+                        southernBoundary = 56;
+                        break;
+                    case "W":
+                        southernBoundary = 64;
+                        break;
+                }
+
+
+                var northernBoundary = parseInt(southernBoundary);
+                northernBoundary += 8;
+
+                rectangle = new google.maps.Rectangle({
+                    strokeColor: '#00cc66',
+                    strokeOpacity: 0.8,
+                    strokeWeight: 2,
+                    fillColor: '#00cc66',
+                    fillOpacity: 0.35,
+                    map: vm.map,
+                    bounds: new google.maps.LatLngBounds(
+                    new google.maps.LatLng(southernBoundary, westernBoundary),
+                    new google.maps.LatLng(northernBoundary, easternBoundary))
+                });
+
+                rectangles.push(rectangle);
+                // var panLocation = new google.maps.LatLng(southernBoundary, easternBoundary)
+                //vm.map.setCenter(panLocation);
+
+            }
+        }
+    };
 
     function getAllWildlifeSightings() {
         wildlifesightingService.getAllWildlifesightings()
@@ -1428,7 +1915,7 @@ app.controller('wildlifesightingController', function ($scope, $q, wildlifesight
         lng = event.latLng.lng();
 
         $scope.Location = lat + ',' + lng;
-        $scope.USNG = usngConv.fromLonLat({ lon: lng, lat: lat}, 5);
+        $scope.USNG = usngConv.fromLonLat({ lon: lng, lat: lat }, 5);
         shadeUTMZone(event.latLng);
 
         marker.addListener('dragend', function (event) {
@@ -1917,7 +2404,7 @@ app.controller('wildlifesightingController', function ($scope, $q, wildlifesight
             Notes: $scope.Notes,
             SightingDate: $scope.SightingDate,
             USNG: $scope.USNG,
-            Photo:$scope.Image,
+            Photo: $scope.Image,
             UserID: 2//hard coded here till we figure out how to retrieve session variable 
         };
 

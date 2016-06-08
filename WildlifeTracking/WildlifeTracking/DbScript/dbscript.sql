@@ -71,6 +71,10 @@ GO
 
 
 ALTER TABLE dbo.WildlifeSightings
-	ADD USNG varchar(100) NULl
+	ADD USNG varchar(100) NULL
 GO
 
+
+ALTER TABLE dbo.WildlifeSightings
+	ADD Photo VARCHAR(MAX) NULL
+GO

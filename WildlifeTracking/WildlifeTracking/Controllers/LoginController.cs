@@ -26,7 +26,7 @@ namespace WildlifeTracking.Controllers
                 {
                     Session["LogedUserID"] = user.UserID.ToString();
                     Session["LogedUserFullname"] = user.UserFullNames.ToString();
-                    return RedirectToAction("Index", "Observation");
+                    return RedirectToAction("Index", "Home");
                 }
             }
             return View("Index");

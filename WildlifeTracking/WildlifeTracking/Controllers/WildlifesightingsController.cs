@@ -29,13 +29,56 @@ namespace WildlifeTracking.Controllers
         // GET: api/Wildlifesightings
         [HttpGet]
         [ActionName("GetWildlifesightingsBySpeciesId")]
-        public IQueryable<Wildlifesighting> GetWildlifesightingsBySpeciesId(int SpeciesId)
+        public IQueryable<Wildlifesighting> GetWildlifesightingsBySpeciesId(int id)
         {
-            return db.Wildlifesightings.Where(s => s.SpeciesID == SpeciesId)
+            return db.Wildlifesightings.Where(s => s.SpeciesID == id)
                                        .Include(s => s.Species)
                                        .Include(u => u.User);
         }
 
+        // GET: api/Wildlifesightings
+        [HttpGet]
+        [ActionName("GetWildlifesightingsByUserId")]
+        public IQueryable<Wildlifesighting> GetWildlifesightingsByUserId(int id)
+        {
+
+            var session = HttpContext.Current.Session;
+            if (session != null)
+            {
+                if (session["LogedUserID"] == null)
+                    id = 2;
+                else
+                    id = Int32.Parse(session["LogedUserID"].ToString());
+
+            }
+
+            return db.Wildlifesightings.Where(s => s.UserID == id)
+                                       .Include(s => s.Species)
+                                       .Include(u => u.User);
+        }
+
+        // GET: api/Wildlifesightings
+        [HttpGet]
+        [ActionName("GetWildlifesightingsStatsByUserId")]
+        public SightingStats GetWildlifesightingsStatsByUserId(int id)
+        {
+
+            var session = HttpContext.Current.Session;
+            if (session != null)
+            {
+                if (session["LogedUserID"] == null)
+                    id = 2;
+                else
+                    id = Int32.Parse(session["LogedUserID"].ToString());
+
+            }
+
+           var query= db.Wildlifesightings.Where(s => s.UserID == id)
+                                       .Include(s => s.Species)
+                                       .Include(u => u.User);
+
+            return new SightingStats { SpeciesCount = query.Select(p=>p.SpeciesID).Distinct().Count(),AnimalsCount=query.Count(),MonthlyCount=query.Where(p=> p.SightingDate.Month==DateTime.Now.Month).Count(),YearlyCount=query.Count() };
+        }
 
         // GET: api/Wildlifesightings/5
         [ResponseType(typeof(Wildlifesighting))]

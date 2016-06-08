@@ -24,8 +24,8 @@ namespace WildlifeTracking
 
             config.Routes.  MapHttpRoute(
                 name: "CustomApi",
-                routeTemplate: "api/{controller}/{action}/{SpeciesId}",
-                defaults: new { SpeciesId = RouteParameter.Optional }
+                routeTemplate: "api/{controller}/{action}/{id}",
+                defaults: new { id = RouteParameter.Optional }
             );
         }
     }
