@@ -14,5 +14,6 @@ namespace WildlifeTracking.Models
         [DataType(System.ComponentModel.DataAnnotations.DataType.Password)]
         public string UserPassword { get; set; }
         public string UserEmailAddress { get; set; }
+        public int UserTypeId { get; set; }
     }
 }

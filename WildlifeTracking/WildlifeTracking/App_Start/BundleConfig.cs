@@ -15,7 +15,9 @@ namespace WildlifeTracking
                       "~/Content/animate.css",
                       "~/Content/style.css",
                       "~/Content/leaflet.css",
-                      "~/Content/leaflet.draw.css"));
+                      "~/Content/leaflet.draw.css",
+                        "~/Content/plugins/buttons/buttons.dataTables.min.css"
+                      ));
 
             // Font Awesome icons
             bundles.Add(new StyleBundle("~/font-awesome/css").Include(
@@ -114,18 +116,33 @@ namespace WildlifeTracking
 
             // dataTables 
             bundles.Add(new ScriptBundle("~/plugins/dataTables").Include(
-                      "~/Scripts/plugins/dataTables/jquery.dataTables.js",
-                      "~/Scripts/plugins/dataTables/dataTables.bootstrap.js",
-                      "~/Scripts/plugins/dataTables/dataTables.responsive.js",
-                      "~/Scripts/plugins/dataTables/dataTables.tableTools.min.js",
-                      "~/Scripts/angulardatatables/angular-datatables.js",
-                      "~/Scripts/angulardatatables/angular-datatables.util.js",
-                      "~/Scripts/angulardatatables/angular-datatables.options.js",
-                      "~/Scripts/angulardatatables/angular-datatables.instances.js",
-                      "~/Scripts/angulardatatables/angular-datatables.factory.js",
-                      "~/Scripts/angulardatatables/angular-datatables.renderer.js",
-                      "~/Scripts/angulardatatables/angular-datatables.directive.js",
-                      "~/Scripts/angulardatatables/angular-datatables.tabletools.js"));
+                        "~/Scripts/plugins/dataTables/jquery.dataTables.min.js",
+                        "~/Scripts/plugins/dataTables/dataTables.bootstrap.js",
+                        "~/Scripts/plugins/dataTables/dataTables.responsive.js",
+                        "~/Scripts/plugins/dataTables/dataTables.tableTools.min.js",
+                        "~/Scripts/angulardatatables/angular-datatables.js",
+                        "~/Scripts/angulardatatables/angular-datatables.util.js",
+                        "~/Scripts/angulardatatables/angular-datatables.options.js",
+                        "~/Scripts/angulardatatables/angular-datatables.instances.js",
+                        "~/Scripts/angulardatatables/angular-datatables.factory.js",
+                        "~/Scripts/angulardatatables/angular-datatables.renderer.js",
+                        "~/Scripts/angulardatatables/angular-datatables.directive.js",
+                        "~/Scripts/angulardatatables/buttons/dataTables.buttons.js",
+                        "~/Scripts/angulardatatables/bootstrap/angular-datatables.bootstrap.min.js",
+                        "~/Scripts/angulardatatables/buttons/angular-datatables.buttons.min.js",
+                        "~/Scripts/angulardatatables/buttons/buttons.bootstrap.js",
+                        "~/Scripts/angulardatatables/buttons/buttons.colVis.js",
+                        "~/Scripts/angulardatatables/buttons/buttons.flash.js",
+                        "~/Scripts/angulardatatables/buttons/buttons.html5.js",
+                        "~/Scripts/angulardatatables/buttons/buttons.jqueryui.js",
+                        
+                        "~/Scripts/angulardatatables/buttons/buttons.semanticui.js",
+                       "~/Scripts/angulardatatables/buttons/jszip.min.js",
+                       "~/Scripts/angulardatatables/buttons/pdfmake.min.js",
+                       "~/Scripts/angulardatatables/buttons/vfs_fonts.js",
+                        "~/Scripts/angulardatatables/buttons/buttons.html5.js",
+                        "~/Scripts/angulardatatables/buttons/buttons.print.js",
+                        "~/Scripts/angulardatatables/angular-datatables.tabletools.js"));
 
             // jeditable 
             bundles.Add(new ScriptBundle("~/plugins/jeditable").Include(

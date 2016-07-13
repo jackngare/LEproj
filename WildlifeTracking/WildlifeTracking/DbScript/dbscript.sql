@@ -78,3 +78,8 @@ GO
 ALTER TABLE dbo.WildlifeSightings
 	ADD Photo VARCHAR(MAX) NULL
 GO
+
+
+ALTER TABLE dbo.Users
+	ADD UserTypeId int NULL DEFAULT 1
+GO

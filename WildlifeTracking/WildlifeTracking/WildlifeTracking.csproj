@@ -239,8 +239,10 @@
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\ObservationController.cs" />
     <Compile Include="Controllers\RegistrationController.cs" />
+    <Compile Include="Controllers\SightingsReportController.cs" />
     <Compile Include="Controllers\SpecieController.cs" />
     <Compile Include="Controllers\SpeciesController.cs" />
+    <Compile Include="Controllers\SpeciesReportController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
@@ -305,6 +307,7 @@
     <Content Include="Content\plugins\blueimp\img\video-play.svg" />
     <Content Include="Content\plugins\bootstrap-rtl\bootstrap-rtl.css" />
     <Content Include="Content\plugins\bootstrap-rtl\bootstrap-rtl.min.css" />
+    <Content Include="Content\plugins\buttons\buttons.dataTables.min.css" />
     <Content Include="Content\plugins\chosen\chosen-sprite%402x.png" />
     <Content Include="Content\plugins\chosen\chosen-sprite.png" />
     <Content Include="Content\plugins\chosen\chosen.css" />
@@ -420,6 +423,25 @@
     <Content Include="Scripts\angulardatatables\angular-datatables.renderer.js" />
     <Content Include="Scripts\angulardatatables\angular-datatables.tabletools.js" />
     <Content Include="Scripts\angulardatatables\angular-datatables.util.js" />
+    <Content Include="Scripts\angulardatatables\bootstrap\angular-datatables.bootstrap.js" />
+    <Content Include="Scripts\angulardatatables\bootstrap\angular-datatables.bootstrap.min.js" />
+    <Content Include="Scripts\angulardatatables\bootstrap\datatables.bootstrap.min.css" />
+    <Content Include="Scripts\angulardatatables\buttons\angular-datatables.buttons.js" />
+    <Content Include="Scripts\angulardatatables\buttons\angular-datatables.buttons.min.js" />
+    <Content Include="Scripts\angulardatatables\buttons\buttons.bootstrap.js" />
+    <Content Include="Scripts\angulardatatables\buttons\buttons.bootstrap4.js" />
+    <Content Include="Scripts\angulardatatables\buttons\buttons.colVis.js" />
+    <Content Include="Scripts\angulardatatables\buttons\buttons.flash.js" />
+    <Content Include="Scripts\angulardatatables\buttons\buttons.foundation.js" />
+    <Content Include="Scripts\angulardatatables\buttons\buttons.html5.js" />
+    <Content Include="Scripts\angulardatatables\buttons\buttons.html5.min.js" />
+    <Content Include="Scripts\angulardatatables\buttons\buttons.jqueryui.js" />
+    <Content Include="Scripts\angulardatatables\buttons\buttons.print.js" />
+    <Content Include="Scripts\angulardatatables\buttons\buttons.semanticui.js" />
+    <Content Include="Scripts\angulardatatables\buttons\dataTables.buttons.js" />
+    <Content Include="Scripts\angulardatatables\buttons\jszip.min.js" />
+    <Content Include="Scripts\angulardatatables\buttons\pdfmake.min.js" />
+    <Content Include="Scripts\angulardatatables\buttons\vfs_fonts.js" />
     <Content Include="Scripts\app\Controllers.js" />
     <Content Include="Scripts\app\inspinia.js" />
     <Content Include="Scripts\app\inspinia.min.js" />
@@ -496,6 +518,14 @@
     <Content Include="fonts\font-awesome\scss\_stacked.scss" />
     <Content Include="fonts\font-awesome\scss\_variables.scss" />
     <Content Include="Content\plugins\bootstrap-rtl\bootstrap-rtl.css.map" />
+    <Content Include="Content\plugins\buttons\buttons.bootstrap.scss" />
+    <Content Include="Content\plugins\buttons\buttons.bootstrap4.scss" />
+    <Content Include="Content\plugins\buttons\buttons.dataTables.scss" />
+    <Content Include="Content\plugins\buttons\buttons.foundation.scss" />
+    <Content Include="Content\plugins\buttons\buttons.jqueryui.scss" />
+    <Content Include="Content\plugins\buttons\buttons.semanticui.scss" />
+    <Content Include="Content\plugins\buttons\common.scss" />
+    <Content Include="Content\plugins\buttons\mixins.scss" />
     <None Include="Properties\PublishProfiles\wildlifetracker - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\wildlifetracker - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\wildlifetracking - FTP %282%29.pubxml" />
@@ -738,6 +768,7 @@
     <Content Include="Scripts\plugins\dataTables\dataTables.responsive.js" />
     <Content Include="Scripts\plugins\dataTables\dataTables.tableTools.min.js" />
     <Content Include="Scripts\plugins\dataTables\jquery.dataTables.js" />
+    <Content Include="Scripts\plugins\dataTables\jquery.dataTables.min.js" />
     <Content Include="Scripts\plugins\dataTables\swf\copy_csv_xls.swf" />
     <Content Include="Scripts\plugins\dataTables\swf\copy_csv_xls_pdf.swf" />
     <Content Include="Scripts\plugins\dropzone\dropzone.js" />
@@ -959,6 +990,8 @@
     <Content Include="Views\Observation\Index.cshtml" />
     <Content Include="Scripts\map\ng-maps.min.js" />
     <Content Include="Views\Registration\Index.cshtml" />
+    <Content Include="Views\SpeciesReport\Index.cshtml" />
+    <Content Include="Views\SightingsReport\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -1059,6 +1059,16 @@ app.controller('userController', function ($scope, $q, userService, $timeout, $c
         DTColumnBuilder.newColumn('UserName').withTitle('User Name'),
         DTColumnBuilder.newColumn('UserFullNames').withTitle('Full Names'),
         DTColumnBuilder.newColumn('UserEmailAddress').withTitle('Email Address'),
+        DTColumnBuilder.newColumn('UserTypeId').withTitle('User Type').renderWith(function (data) {
+            switch (data) {
+                case 0:
+                    return 'Administrator'
+                case 1:
+                    return 'Other'
+                default:
+                    return 'Unknown'
+            };
+        }),
         DTColumnBuilder.newColumn(null).withTitle('Actions').notSortable().renderWith(actionsHtml).withClass("text-center")
     ];
 
@@ -1111,8 +1121,8 @@ app.controller('userController', function ($scope, $q, userService, $timeout, $c
             UserFullNames: $scope.UserFullNames,
             UserEmailAddress: $scope.UserEmailAddress,
             UserPassword: $scope.UserPassword,
-            UserName: $scope.UserName
-
+            UserName: $scope.UserName,
+            UserTypeId:1//default user type is "Other"
         };
         if ($scope.OperType === 1) {
             var promisePost = userService.post(User);
@@ -1137,7 +1147,10 @@ app.controller('userController', function ($scope, $q, userService, $timeout, $c
         $scope.addMode = !$scope.addMode;
     };
 
-
+    $scope.UserTypes = [
+            { UserTypeId: 0, Name: "Administrator" },
+            { UserTypeId: 1, Name: "Other" }
+    ];
 
     //To Clear all input controls.
     function ClearModels() {
@@ -1146,6 +1159,7 @@ app.controller('userController', function ($scope, $q, userService, $timeout, $c
         $scope.UserName = "";
         $scope.UserPassword = "";
         $scope.UserEmailAddress = "";
+        $scope.UserTypeId = "";
     }
 
     //To Create new record and Edit an existing Record.
@@ -1154,8 +1168,8 @@ app.controller('userController', function ($scope, $q, userService, $timeout, $c
             UserFullNames: $scope.UserFullNames,
             UserEmailAddress: $scope.UserEmailAddress,
             UserPassword: $scope.UserPassword,
-            UserName: $scope.UserName
-
+            UserName: $scope.UserName,
+            UserTypeId: $scope.UserTypeId
         };
         if ($scope.OperType === 1) {
             var promisePost = userService.post(User);
@@ -1193,6 +1207,7 @@ app.controller('userController', function ($scope, $q, userService, $timeout, $c
             $scope.UserName = res.UserName;
             $scope.UserFullNames = res.UserFullNames;
             $scope.UserPassword = res.UserPassword;
+            $scope.UserTypeId= res.UserTypeId
             $scope.OperType = 0;
         },
         function (errorPl) {
@@ -1209,8 +1224,8 @@ app.controller('userController', function ($scope, $q, userService, $timeout, $c
         $scope.UserName = "";
         $scope.UserEmailAddress = "";
         $scope.UserPassword = "";
+        $scope.UserTypeId="";
     }
-
 });
 
 //speciesController
@@ -2332,7 +2347,7 @@ app.controller('wildlifesightingController', function ($scope, $q, wildlifesight
 
 
     $scope.dtOptions = DTOptionsBuilder.fromFnPromise(function () {
-        return wildlifesightingService.getWildlifesightings();
+        return wildlifesightingService.getWildlifeObservationsByUserId(1);
     }).withPaginationType('full_numbers').withOption('createdRow', createdRow);
 
     $scope.dtColumns = [
@@ -2480,4 +2495,110 @@ app.controller('wildlifesightingController', function ($scope, $q, wildlifesight
 
             });
     };
+});
+
+
+//speciesReportController
+app.controller('speciesReportController', function ($scope, $q, speciesService, $timeout, $compile, DTOptionsBuilder, DTColumnBuilder, DTInstances, NgMap) {
+
+    $scope.dtOptions = DTOptionsBuilder.fromFnPromise(function () {
+        return speciesService.getSpecies();
+    }).withPaginationType('full_numbers').withDOM('frtip').withOption('createdRow', createdRow).withButtons([
+        {
+            extend: "pdf",
+            exportOptions: {
+                columns: ':visible'
+            }
+        },
+        {
+            extend: "copy",
+            exportOptions: {
+                columns: ':visible'
+            }
+        },
+            {
+                extend: "csv",
+                exportOptions: {
+                    columns: ':visible'
+                }
+            },
+            {
+                extend: 'print',
+                exportOptions: {
+                    columns: ':visible'
+                }
+            }
+    ]);
+
+
+    $scope.dtColumns = [
+        DTColumnBuilder.newColumn('SpeciesID').withTitle('User ID').notVisible(),
+        DTColumnBuilder.newColumn('SpeciesName').withTitle('Species Name'),
+        DTColumnBuilder.newColumn('SpeciesDescription').withTitle('Species Description')
+
+    ];
+
+    DTInstances.getLast().then(function (dtInstance) {
+        $scope.dtInstance = dtInstance;
+    });
+
+    function createdRow(row, data, dataIndex) {
+        // Recompiling so we can bind Angular directive to the DT
+        $compile(angular.element(row).contents())($scope);
+    }
+});
+
+
+//sightingsReportController
+app.controller('sightingsReportController', function ($scope, $q, wildlifesightingService, $timeout, $compile, $filter, DTOptionsBuilder, DTColumnBuilder, DTInstances, NgMap) {
+
+    $scope.dtOptions = DTOptionsBuilder.fromFnPromise(function () {
+        return wildlifesightingService.getWildlifesightings();
+    }).withPaginationType('full_numbers').withDOM('frtip').withOption('createdRow', createdRow).withButtons([
+        {
+            extend: "pdf",
+            exportOptions: {
+                columns: ':visible'
+            }
+        },
+        {
+            extend: "copy",
+            exportOptions: {
+                columns: ':visible'
+            }
+        },
+            {
+                extend: "csv",
+                exportOptions: {
+                    columns: ':visible'
+                }
+            },
+            {
+                extend: 'print',
+                exportOptions: {
+                    columns: ':visible'
+                }
+            }
+    ]);
+
+
+    $scope.dtColumns = [
+        DTColumnBuilder.newColumn('WildlifeSightingID').withTitle('ID').notVisible(),
+        DTColumnBuilder.newColumn('Species.SpeciesName').withTitle('Species Name'),
+        DTColumnBuilder.newColumn('Notes').withTitle('Notes'),
+        DTColumnBuilder.newColumn('User.UserFullNames').withTitle('Sighted By'),
+       DTColumnBuilder.newColumn('SightingDate').withTitle('Date Sighted').renderWith(function (data, type) {
+           return $filter('date')(data, 'dd MMM yyyy', '+0000');    //could use currency/date or any angular filter
+       }),
+        DTColumnBuilder.newColumn('USNG').withTitle('Location')
+    ];
+
+    DTInstances.getLast().then(function (dtInstance) {
+        $scope.dtInstance = dtInstance;
+    });
+
+    function createdRow(row, data, dataIndex) {
+        // Recompiling so we can bind Angular directive to the DT
+        $compile(angular.element(row).contents())($scope);
+    }
 });

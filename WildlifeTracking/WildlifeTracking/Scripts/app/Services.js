@@ -294,6 +294,28 @@ app.service('wildlifesightingService', function ($http, $q) {
 
         return deferred.promise;
     };
+
+    //Get the Wildlifesighting by user id 
+    this.getWildlifeObservationsByUserId = function (UserId) {
+
+        //Implement a promise ($q)
+        var deferred = $q.defer();
+
+        $http.get("/api/Wildlifesightings/GetWildlifesightingsByUserId/" + UserId)
+          .then(function (result) {
+              //Successful            
+              //Tell anyone that binds to the topics that it has been initialised
+              deferred.resolve(result.data);     //Data can be returned as parameters
+          },
+        function () {
+            //Error - We dont want the data service to interact with the UI directly
+            deferred.reject();
+        });
+
+        return deferred.promise;
+    };
+
+
     //Update the Record
     this.put = function (WildlifesightingID, Wildlifesighting) {
         var request = $http({
