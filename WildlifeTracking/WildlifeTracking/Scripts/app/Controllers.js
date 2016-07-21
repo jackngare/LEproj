@@ -2503,21 +2503,15 @@ app.controller('speciesReportController', function ($scope, $q, speciesService, 
 
     $scope.dtOptions = DTOptionsBuilder.fromFnPromise(function () {
         return speciesService.getSpecies();
-    }).withPaginationType('full_numbers').withDOM('frtip').withOption('createdRow', createdRow).withButtons([
+    }).withPaginationType('full_numbers').withDOM('Bfrtip').withOption('createdRow', createdRow).withButtons([
         {
-            extend: "pdf",
-            exportOptions: {
-                columns: ':visible'
-            }
-        },
-        {
-            extend: "copy",
+            extend: 'copy',
             exportOptions: {
                 columns: ':visible'
             }
         },
             {
-                extend: "csv",
+                extend: 'csv',
                 exportOptions: {
                     columns: ':visible'
                 }
@@ -2532,10 +2526,9 @@ app.controller('speciesReportController', function ($scope, $q, speciesService, 
 
 
     $scope.dtColumns = [
-        DTColumnBuilder.newColumn('SpeciesID').withTitle('User ID').notVisible(),
+        DTColumnBuilder.newColumn('SpeciesID').withTitle('Species ID').notVisible(),
         DTColumnBuilder.newColumn('SpeciesName').withTitle('Species Name'),
         DTColumnBuilder.newColumn('SpeciesDescription').withTitle('Species Description')
-
     ];
 
     DTInstances.getLast().then(function (dtInstance) {
@@ -2556,19 +2549,13 @@ app.controller('sightingsReportController', function ($scope, $q, wildlifesighti
         return wildlifesightingService.getWildlifesightings();
     }).withPaginationType('full_numbers').withDOM('frtip').withOption('createdRow', createdRow).withButtons([
         {
-            extend: "pdf",
-            exportOptions: {
-                columns: ':visible'
-            }
-        },
-        {
-            extend: "copy",
+            extend: 'copy',
             exportOptions: {
                 columns: ':visible'
             }
         },
             {
-                extend: "csv",
+                extend: 'csv',
                 exportOptions: {
                     columns: ':visible'
                 }
