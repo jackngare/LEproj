@@ -100,6 +100,8 @@ namespace WildlifeTracking.Controllers
         }
 
         // GET: api/Wildlifesightings/5
+        [ActionName("GetWildlifesighting")]
+        [HttpGet]
         [ResponseType(typeof(Wildlifesighting))]
         public IHttpActionResult GetWildlifesighting(int id)
         {

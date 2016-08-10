@@ -2583,6 +2583,7 @@ app.controller('wildlifesightingController', function ($scope, $q, wildlifesight
             $scope.SightingDate = res.SightingDate;
             $scope.USNG = res.USNG,
             $scope.Image = res.Photo,
+            $scope.WildlifeSightingID = res.WildlifeSightingID,
             $scope.OperType = 0;
 
             var loc = $scope.Location.split(",")

@@ -250,7 +250,7 @@ app.service('wildlifesightingService', function ($http, $q) {
 
     //Get Single Records
     this.get = function (WildlifesightingID) {
-        return $http.get("/api/Wildlifesightings/" + WildlifesightingID);
+        return $http.get("/api/Wildlifesightings/GetWildlifesighting/" + WildlifesightingID);
     }
 
     //Get All the Records for a specific species
