@@ -33,7 +33,16 @@ namespace WildlifeTracking.Controllers
         {
             return db.Wildlifesightings.Where(s => s.SpeciesID == id)
                                        .Include(s => s.Species)
-                                       .Include(u => u.User);
+                                       .Include(u => u.User)
+                                      ;
+        }
+
+        // GET: api/Wildlifesightings
+        [HttpGet]
+        [ActionName("getWildlifesightingsCountBySpeciesId")]
+        public Int32 getWildlifesightingsCountBySpeciesId(int id)
+        {
+            return db.Wildlifesightings.Where(s => s.SpeciesID == id).Count();                      
         }
 
         // GET: api/Wildlifesightings
@@ -57,6 +66,16 @@ namespace WildlifeTracking.Controllers
                                        .Include(u => u.User);
         }
 
+
+        // GET: api/Wildlifesightings
+        [HttpGet]
+        [ActionName("GetWildlifeSightingByUserId")]
+        public IQueryable<Wildlifesighting> GetWildlifeSightingByUserId(int id)
+        {
+            return db.Wildlifesightings.Where(s => s.UserID == id)
+                                       .Include(s => s.Species)
+                                       .Include(u => u.User);
+        }
         // GET: api/Wildlifesightings
         [HttpGet]
         [ActionName("GetWildlifesightingsStatsByUserId")]

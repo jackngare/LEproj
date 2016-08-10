@@ -57,9 +57,9 @@
                         </div>
                 </div>
                 <div class="col-sm-4">
-                    <div class="form-group" id="data_2"><label>Date</label> </div>
-                    <div class="input-group date">
-                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span><input type="date" data-ng-model="TargetDate" format-date class="form-control">
+                    <div class="form-group" id="data_2"><label>Sighted By</label> </div>
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="fa fa-users"></i></span><select class="form-control" ng-model="UserID" ng-options="user.UserID as user.UserFullNames for user in Users" ng-change="getWildlifeSightingsByUserId()"><option value="">All</option></select>
                     </div>
                 </div>
                 
