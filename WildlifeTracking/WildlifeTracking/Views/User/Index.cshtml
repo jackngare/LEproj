@@ -30,41 +30,41 @@
                         <div class="col-sm-6 col-sm-offset-0">
                             <div class="form-group"><label>Full Name*</label></div>
                             <div class="input-group">
-                                <span class="input-group-addon"><i class="fa fa-user"></i></span><input type="text" data-ng-model="UserFullNames" class="form-control" focus-me="{{addMode}}">
+                                <span class="input-group-addon"><i class="fa fa-user"></i></span><input type="text" data-ng-model="UserFullNames" class="form-control" required="" focus-me="{{addMode}}">
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group"><label>User Name*</label> </div>
                             <div class="input-group">
-                                <span class="input-group-addon"><i class="fa fa-users"></i></span><input type="text" data-ng-model="UserName" class="form-control" />
+                                <span class="input-group-addon"><i class="fa fa-users"></i></span><input type="text" data-ng-model="UserName" required="" class="form-control" />
                             </div>
                         </div>
                         <div class="col-sm-6 col-sm-offset-0">
                             <br />
                             <div class="form-group" id="data_1"><label>Password*</label></div>
                             <div class="input-group date">
-                                <span class="input-group-addon"><i class="fa fa-user-secret"></i></span><input type="password" data-ng-model="UserPassword" class="form-control">
+                                <span class="input-group-addon"><i class="fa fa-user-secret"></i></span><input type="password" data-ng-model="UserPassword" required="" class="form-control">
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <br />
                             <div class="form-group" id="data_2"><label>Email Address*</label> </div>
                             <div class="input-group">
-                                <span class="input-group-addon"><i class="fa fa-envelope"></i></span><input type="text" data-ng-model="UserEmailAddress" class="form-control" />
+                                <span class="input-group-addon"><i class="fa fa-envelope"></i></span><input type="text" data-ng-model="UserEmailAddress" required="" class="form-control" />
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <br />
                             <div class="form-group" id="data_2"><label>User Types*</label> </div>
                             <div class="input-group">
-                                <span class="input-group-addon"><i class="fa fa-linux"></i></span><select class="form-control" ng-model="UserTypeId" ng-options="usertype.UserTypeId as usertype.Name for usertype in UserTypes"></select>
+                                <span class="input-group-addon"><i class="fa fa-linux"></i></span><select class="form-control" required="" ng-model="UserTypeId" required="" ng-options="usertype.UserTypeId as usertype.Name for usertype in UserTypes"></select>
                             </div>
                         </div>
                         <div class="form-group">
                             <div class="col-sm-4 col-sm-offset-0">
                                 <br />
                                 <div class="form-group" id="data_2"><label></label> </div>
-                                <button class="btn btn-primary" data-ng-click="save()" type="submit">Save changes</button>
+                                <button class="btn btn-primary" data-ng-click="save()" ng-disabled="addUser.$invalid" type="submit">Save changes</button>
                                 <button class="btn btn-white" data-ng-click="toggleAdd()" type="button">Cancel</button>
                                 <br />
                                 <br />
