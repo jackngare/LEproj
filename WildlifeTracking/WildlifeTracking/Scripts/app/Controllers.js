@@ -2010,6 +2010,7 @@ app.controller('wildlifesightingController', function ($scope, $q, wildlifesight
     $scope.edit = edit;
     $scope.message = "";
     $scope.Location = "";
+    $scope.SightingDate = $filter('date')(Date.now(), 'MM/dd/yyyy');
 
     // Instatiation of the USNG mapping function
     var usngConv = new USNG2();
@@ -2521,7 +2522,6 @@ app.controller('wildlifesightingController', function ($scope, $q, wildlifesight
     function ClearModels() {
         $scope.SpeciesID = "";
         $scope.Location = "";
-        $scope.SightingDate = "";
         $scope.Notes = "";
         $scope.OperType = 1;
         $scope.Image = "";
