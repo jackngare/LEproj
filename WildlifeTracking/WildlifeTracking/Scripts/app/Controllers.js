@@ -94,21 +94,17 @@ app.controller('landingController', function ($scope, $filter,$q, userService, w
 
                 for (var i = 0; i < length; i++) {
                     // Do something with yourArray[i].
-                    var countOfSpecies;
                     var loc = vm.Wildlifesightings[i].Location.split(",");
                     var lat = parseFloat(loc[0]);
                     var lng = parseFloat(loc[1]);
                     var newlatlng = new google.maps.LatLng(lat, lng);
 
-                    countOfSpecies=getSpeciesCount(vm.Wildlifesightings[i].Species.SpeciesID)
-
-                    console.log('Getting species data : ',countOfSpecies);
                     var marker = new google.maps.Marker({
                         position: newlatlng,
                         map: vm.map,
                         content: '<div>' +
                                     '<img height="90" width="90" src="data:' + vm.Wildlifesightings[i].Photo + '" hspace="5" align="left" /> Address (USNG) : ' + vm.Wildlifesightings[i].USNG + '  <br> Species Name : ' + vm.Wildlifesightings[i].Species.SpeciesName + ' <br>' +
-                        ' Number Sighted : ' + countOfSpecies + ' <br> Sighted by : ' + vm.Wildlifesightings[i].User.UserFullNames + ' <br> Notes: ' + vm.Wildlifesightings[i].Notes + '',
+                        ' Number Sighted : ' + vm.Wildlifesightings[i].NumberSighted + ' <br> Sighted by : ' + vm.Wildlifesightings[i].User.UserFullNames + ' <br> Notes: ' + vm.Wildlifesightings[i].Notes + '',
                         clickable: true,
                         animation: google.maps.Animation.DROP
                     });
@@ -177,16 +173,12 @@ app.controller('landingController', function ($scope, $filter,$q, userService, w
                     var lng = parseFloat(loc[1]);
                     var newlatlng = new google.maps.LatLng(lat, lng);
 
-
-                    countOfSpecies = getSpeciesCount(vm.Wildlifesightings[i].Species.SpeciesID)
-
-                    console.log('Getting species data : ', countOfSpecies);
                     var marker = new google.maps.Marker({
                         position: newlatlng,
                         map: vm.map,
                         content: '<div>' +
                                     '<img height="90" width="90" src="data:' + vm.Wildlifesightings[i].Photo + '" hspace="5" align="left" /> Address (USNG) : ' + vm.Wildlifesightings[i].USNG + '  <br> Species Name : ' + vm.Wildlifesightings[i].Species.SpeciesName + ' <br>' +
-                        ' Number Sighted : ' + countOfSpecies + ' <br> Sighted by : ' + vm.Wildlifesightings[i].User.UserFullNames + ' <br> Notes: ' + vm.Wildlifesightings[i].Notes + '',
+                        ' Number Sighted : ' + vm.Wildlifesightings[i].NumberSighted + ' <br> Sighted by : ' + vm.Wildlifesightings[i].User.UserFullNames + ' <br> Notes: ' + vm.Wildlifesightings[i].Notes + '',
                         clickable: true,
                         animation: google.maps.Animation.DROP
                     });
@@ -257,15 +249,12 @@ app.controller('landingController', function ($scope, $filter,$q, userService, w
                     var newlatlng = new google.maps.LatLng(lat, lng);
 
 
-                    countOfSpecies = getSpeciesCount(vm.Wildlifesightings[i].Species.SpeciesID)
-
-                    console.log('Getting species data : ', countOfSpecies);
                     var marker = new google.maps.Marker({
                         position: newlatlng,
                         map: vm.map,
                         content: '<div>' +
                                     '<img height="90" width="90" src="data:' + vm.Wildlifesightings[i].Photo + '" hspace="5" align="left" /> Address (USNG) : ' + vm.Wildlifesightings[i].USNG + '  <br> Species Name : ' + vm.Wildlifesightings[i].Species.SpeciesName + ' <br>' +
-                        ' Number Sighted : ' + countOfSpecies + ' <br> Sighted by : ' + vm.Wildlifesightings[i].User.UserFullNames + ' <br> Notes: ' + vm.Wildlifesightings[i].Notes + '',
+                        ' Number Sighted : ' + vm.Wildlifesightings[i].NumberSighted + ' <br> Sighted by : ' + vm.Wildlifesightings[i].User.UserFullNames + ' <br> Notes: ' + vm.Wildlifesightings[i].Notes + '',
                         clickable: true,
                         animation: google.maps.Animation.DROP
                     });
@@ -2476,6 +2465,7 @@ app.controller('wildlifesightingController', function ($scope, $q, wildlifesight
         DTColumnBuilder.newColumn('WildlifeSightingID').withTitle('WildlifeSightingID ID').notVisible(),
         DTColumnBuilder.newColumn('Species.SpeciesName').withTitle('Species Name'),
         DTColumnBuilder.newColumn('Location').withTitle('Location'),
+        DTColumnBuilder.newColumn('NumberSighted').withTitle('Number Sighted'),
         DTColumnBuilder.newColumn('SightingDate').withTitle('Date Sighted').renderWith(function (data, type) {
             return $filter('date')(data, 'dd MMM yyyy', '+0000');    //could use currency/date or any angular filter
         }),
@@ -2524,6 +2514,7 @@ app.controller('wildlifesightingController', function ($scope, $q, wildlifesight
         $scope.Location = "";
         $scope.Notes = "";
         $scope.OperType = 1;
+        $scope.NumberSighted=0;
         $scope.Image = "";
         if (marker)
             marker.setMap(null);
@@ -2541,6 +2532,7 @@ app.controller('wildlifesightingController', function ($scope, $q, wildlifesight
             SightingDate: $scope.SightingDate,
             USNG: $scope.USNG,
             Photo: $scope.Image,
+            NumberSighted: $scope.NumberSighted,
             UserID: 2//hard coded here till we figure out how to retrieve session variable 
         };
 
@@ -2583,6 +2575,7 @@ app.controller('wildlifesightingController', function ($scope, $q, wildlifesight
             $scope.SightingDate = res.SightingDate;
             $scope.USNG = res.USNG,
             $scope.Image = res.Photo,
+            $scope.NumberSighted = res.NumberSighted,
             $scope.WildlifeSightingID = res.WildlifeSightingID,
             $scope.OperType = 0;
 
@@ -2747,21 +2740,17 @@ app.controller('sightingsReportController', function ($scope, $q, wildlifesighti
 
                 for (var i = 0; i < length; i++) {
                     // Do something with yourArray[i].
-                    var countOfSpecies;
                     var loc = vm.Wildlifesightings[i].Location.split(",");
                     var lat = parseFloat(loc[0]);
                     var lng = parseFloat(loc[1]);
                     var newlatlng = new google.maps.LatLng(lat, lng);
 
-                    countOfSpecies=getSpeciesCount(vm.Wildlifesightings[i].Species.SpeciesID)
-
-                    console.log('Getting species data : ',countOfSpecies);
                     var marker = new google.maps.Marker({
                         position: newlatlng,
                         map: vm.map,
                         content: '<div>' +
                                     '<img height="90" width="90" src="data:' + vm.Wildlifesightings[i].Photo + '" hspace="5" align="left" /> Address (USNG) : ' + vm.Wildlifesightings[i].USNG + '  <br> Species Name : ' + vm.Wildlifesightings[i].Species.SpeciesName + ' <br>' +
-                        ' Number Sighted : ' + countOfSpecies + ' <br> Sighted by : ' + vm.Wildlifesightings[i].User.UserFullNames + ' <br> Notes: ' + vm.Wildlifesightings[i].Notes + '',
+                        ' Number Sighted : ' + vm.Wildlifesightings[i].NumberSighted + ' <br> Sighted by : ' + vm.Wildlifesightings[i].User.UserFullNames + ' <br> Notes: ' + vm.Wildlifesightings[i].Notes + '',
                         clickable: true,
                         animation: google.maps.Animation.DROP
                     });
@@ -2830,16 +2819,12 @@ app.controller('sightingsReportController', function ($scope, $q, wildlifesighti
                     var lng = parseFloat(loc[1]);
                     var newlatlng = new google.maps.LatLng(lat, lng);
 
-
-                    countOfSpecies = getSpeciesCount(vm.Wildlifesightings[i].Species.SpeciesID)
-
-                    console.log('Getting species data : ', countOfSpecies);
                     var marker = new google.maps.Marker({
                         position: newlatlng,
                         map: vm.map,
                         content: '<div>' +
                                     '<img height="90" width="90" src="data:' + vm.Wildlifesightings[i].Photo + '" hspace="5" align="left" /> Address (USNG) : ' + vm.Wildlifesightings[i].USNG + '  <br> Species Name : ' + vm.Wildlifesightings[i].Species.SpeciesName + ' <br>' +
-                        ' Number Sighted : ' + countOfSpecies + ' <br> Sighted by : ' + vm.Wildlifesightings[i].User.UserFullNames + ' <br> Notes: ' + vm.Wildlifesightings[i].Notes + '',
+                        ' Number Sighted : ' + vm.Wildlifesightings[i].NumberSighted + ' <br> Sighted by : ' + vm.Wildlifesightings[i].User.UserFullNames + ' <br> Notes: ' + vm.Wildlifesightings[i].Notes + '',
                         clickable: true,
                         animation: google.maps.Animation.DROP
                     });
@@ -2909,16 +2894,12 @@ app.controller('sightingsReportController', function ($scope, $q, wildlifesighti
                     var lng = parseFloat(loc[1]);
                     var newlatlng = new google.maps.LatLng(lat, lng);
 
-
-                    countOfSpecies = getSpeciesCount(vm.Wildlifesightings[i].Species.SpeciesID)
-
-                    console.log('Getting species data : ', countOfSpecies);
                     var marker = new google.maps.Marker({
                         position: newlatlng,
                         map: vm.map,
                         content: '<div>' +
                                     '<img height="90" width="90" src="data:' + vm.Wildlifesightings[i].Photo + '" hspace="5" align="left" /> Address (USNG) : ' + vm.Wildlifesightings[i].USNG + '  <br> Species Name : ' + vm.Wildlifesightings[i].Species.SpeciesName + ' <br>' +
-                        ' Number Sighted : ' + countOfSpecies + ' <br> Sighted by : ' + vm.Wildlifesightings[i].User.UserFullNames + ' <br> Notes: ' + vm.Wildlifesightings[i].Notes + '',
+                        ' Number Sighted : ' + vm.Wildlifesightings[i].NumberSighted + ' <br> Sighted by : ' + vm.Wildlifesightings[i].User.UserFullNames + ' <br> Notes: ' + vm.Wildlifesightings[i].Notes + '',
                         clickable: true,
                         animation: google.maps.Animation.DROP
                     });
